@@ -61,9 +61,9 @@ public class Robot  {
 	public void followingLine(int seconds) throws IOException {
 		
 		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
-		InputStream s = new FileInputStream(new File("Toxic.bmp"));
-		face = Image.createImage(s);
-		g.drawImage(face, 15, 15, g.HCENTER);
+		//InputStream s = new FileInputStream(new File("Toxic.bmp"));
+		//face = Image.createImage(s);
+		//g.drawImage(face, 15, 15, g.HCENTER);
 		
 		colorMode = colorSensor.getRedMode();
 		gyroMode = gyro.getAngleAndRateMode();
@@ -106,57 +106,7 @@ public class Robot  {
 			//g.clear();
 		}
 		
-		
-		
-		
-		
-		//for(int i = 0; i < seconds * 10; ++i) {
-		/*while (true){
-			// takes sample
-			colorMode.fetchSample(sample, 0);
-			
-			// if sample says white turn right
-			if(sample[0] >= RobotMath.ON_WHITE_MIN) {
-				g.drawString("RIGHT" + sample[0], 0, 0, GraphicsLCD.VCENTER);
-				Delay.msDelay(10);
-				g.clear();
-				
-				turnRight();
-			} else if(sample[0] <= RobotMath.ON_LINE_MAX) { // if says black turn left
-				g.drawString("LEFT" + sample[0], 0, 0, GraphicsLCD.VCENTER);
-				Delay.msDelay(10);
-				g.clear();
-				
-				turnLeft();
-			} else {
-				g.drawString("FORWARD" + sample[0], 0, 0, GraphicsLCD.VCENTER);
-				Delay.msDelay(10);
-				g.clear();
-				forward();
-			
-		}}*/
-		
-		
-		//Delay.msDelay(100);
 	}
-	
-	/*private void turnLeft() {
-		setSpeed(TURN_SPEED,SPEED);
-		motorL.forward();
-		motorR.forward();
-	}
-	
-	private void turnRight() {
-		setSpeed(SPEED,TURN_SPEED);
-		motorL.forward();
-		motorR.forward();
-	}
-	
-	private void forward() {
-		setSpeed(SPEED, SPEED);
-		motorL.forward();
-		motorR.forward();
-	}*/
 	
 	public boolean senseLine()
 	{
