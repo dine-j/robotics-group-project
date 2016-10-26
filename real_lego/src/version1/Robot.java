@@ -158,11 +158,27 @@ public class Robot  {
 		motorR.forward();
 	}*/
 	
+	public void goInSemiCircle() {
+		int t = 8;
+		motorR.setSpeed(202);
+		motorL.setSpeed(106);
+		for(int i = 0; i < t; ++i) {
+			forward();
+			Delay.msDelay(5);
+		}
+		stop();
+	}
+	
 	public boolean senseLine()
 	{
 		colorMode.fetchSample(colourSample, 0);
 		
 		return colourSample[0] < RobotMath.ON_LINE_MAX;
+	}
+	
+	public void forward() {
+		motorL.forward();
+		motorR.forward();
 	}
 	
 	public void stop() {
