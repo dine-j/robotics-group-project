@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="lejos.robotics.SampleProvider"/>
+<fullyQualifiedTypeName name="lejos.hardware.sensor.EV3GyroSensor"/>
+<fullyQualifiedTypeName name="lejos.hardware.Button"/>
+<fullyQualifiedTypeName name="lejos.hardware.lcd.Image"/>
+<fullyQualifiedTypeName name="java.io.InputStream"/>
+<fullyQualifiedTypeName name="java.io.FileInputStream"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+</qualifiedTypeNameHistroy>
