@@ -114,7 +114,7 @@ public class Robot  {
 		motorL.setSpeed(106);
 		for(int i = 0; i < t; ++i) {
 			forward();
-			Delay.msDelay(5);
+			Delay.msDelay(1000);
 		}
 		stop();
 	}

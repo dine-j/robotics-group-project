@@ -1,2 +1,14 @@
+# IntelliJ
 *.iml
 .idea/
+
+# Eclipse
+.metadata/
+.recommenders/
+*/.settings/
+.classpath
+.project
+META-INF/
+
+# Other
+*/bin/
