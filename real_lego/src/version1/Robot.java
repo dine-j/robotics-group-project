@@ -73,11 +73,11 @@ public class Robot  {
 		//The first element contains angular velocity (in degrees / second). The second element contain angle (in degrees). 
 		gyroSample = new float[gyroMode.sampleSize()];
 		
-		float kp = 210f; // to set to 500(for next time)
+		float kp = 500f; // to set to 500(for next time)
 		float ki = 0f;
 		float kd = 0f;
 		float offset = 0.3f;
-		int tp = 80;
+		int tp = 20;
 		float integral = 0f;
 		float derivative = 0f;
 		float lastError = 0f;
@@ -96,9 +96,16 @@ public class Robot  {
 			float powerL = tp + turn;
 			float powerR = tp - turn;
 			
-			setSpeed((int)powerL, (int)powerR);
-			motorL.forward();
-			motorR.forward();
+			setSpeed(powerL, powerR);
+
+			if(powerL > 0)
+				motorL.forward();
+			else
+				motorL.backward();
+			if(powerR > 0)
+				motorR.forward();
+			else
+				motorR.backward();
 			
 			lastError = error;
 			//g.drawString(sample[0] + " PR:" + (int)powerR + " PL:" + (int)powerL , 0, 0, GraphicsLCD.VCENTER);
@@ -128,9 +135,9 @@ public class Robot  {
 		ultrasonicSensor.close();
 	}
 	
-	private void setSpeed(int speedL, int speedR) {
-		motorL.setSpeed(speedL);
-		motorR.setSpeed(speedR);
+	private void setSpeed(float powerL, float powerR) {
+		motorL.setSpeed(powerL);
+		motorR.setSpeed(powerR);
 	}
 
 
