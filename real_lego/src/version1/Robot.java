@@ -1,23 +1,15 @@
 package version1;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import lejos.hardware.BrickFinder;
-import lejos.hardware.Button;
-import lejos.hardware.Key;
-import lejos.hardware.KeyListener;
 import lejos.hardware.lcd.GraphicsLCD;
 import lejos.hardware.lcd.Image;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
-import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorMode;
-import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
 /**
@@ -30,59 +22,49 @@ import lejos.utility.Delay;
 
 public class Robot  {
 	
-	private final int SPEED = 200;
-	private final int TURN_SPEED = 80;
-	
 	private EV3LargeRegulatedMotor motorL, motorR;
 	private EV3MediumRegulatedMotor visionMotor;
 	
 	private EV3ColorSensor colorSensor;
 	private EV3UltrasonicSensor ultrasonicSensor;
-	//private EV3GyroSensor gyro; //taken out for now
 	private SensorMode colorMode;
-	private SampleProvider gyroMode;
 	
 	private float[] colourSample;
-	//private float[] gyroSample;
+	private float[] ultrasonicSample;
 	
 	private Image face;
 	
-	public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor /*, EV3GyroSensor gyro*/) {
+	public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor) {
 		this.motorL = motorL;
 		this.motorR	= motorR;
 		this.visionMotor = visionMotor;
 		this.colorSensor = colorSensor;
 		this.ultrasonicSensor = ultrasonicSensor;
-		//this.gyro = gyro;
-		
-		setSpeed(SPEED,SPEED);
+
+		this.ultrasonicSensor.getDistanceMode();
 	}
 	
-	public void followingLine(int seconds) throws IOException {
+	public void followingLine() {
 		
 		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
-		//InputStream s = new FileInputStream(new File("Toxic.bmp"));
-		//face = Image.createImage(s);
-		//g.drawImage(face, 15, 15, g.HCENTER);
 		
 		colorMode = colorSensor.getRedMode();
-		//gyroMode = gyro.getAngleAndRateMode();
 		colourSample = new float[colorMode.sampleSize()];
+
+		ultrasonicSample = new float[1];
+		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
+
 		
-		//The sample contains two elements.
-		//The first element contains angular velocity (in degrees / second). The second element contain angle (in degrees). 
-		//gyroSample = new float[gyroMode.sampleSize()];
-		
-		float kp = 800f; //was 500 but worked for slow speed only
+		float kp = 800f;
 		float ki = 0f;
 		float kd = 0f;
 		float offset = 0.3f;
-		int tp = 250;  //was 20 in last commit but very slow
+		int tp = 250;
 		float integral = 0f;
 		float derivative = 0f;
 		float lastError = 0f;
 		
-		while (true)
+		while (ultrasonicSample[0] > 0.1)
 		{
 			// takes sample
 			colorMode.fetchSample(colourSample, 0);
@@ -91,30 +73,34 @@ public class Robot  {
 			float error = lightVal - offset;
 			integral += error;
 			derivative = error - lastError;
-			
-			float turn = kp * error + ki * integral + kd * derivative;
-			float powerL = tp + turn;
-			float powerR = tp - turn;
-			
-			setSpeed(powerL, powerR);
 
-			if(powerL > 0)
-				motorL.forward();
-			else
-				motorL.backward();
-			if(powerR > 0)
-				motorR.forward();
-			else
-				motorR.backward();
+			setSpeed(kp, ki, kd, tp, integral, derivative, error);
 			
 			lastError = error;
-			//g.drawString(sample[0] + " PR:" + (int)powerR + " PL:" + (int)powerL , 0, 0, GraphicsLCD.VCENTER);
+
+			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 			Delay.msDelay(5);
-			//g.clear();
 		}
 		
 	}
-	
+
+	private void setSpeed(float kp, float ki, float kd, int tp, float integral, float derivative, float error) {
+		float turn = kp * error + ki * integral + kd * derivative;
+		float powerL = tp + turn;
+		float powerR = tp - turn;
+
+		setSpeed(powerL, powerR);
+
+		if(powerL > 0)
+            motorL.forward();
+        else
+            motorL.backward();
+		if(powerR > 0)
+            motorR.forward();
+        else
+            motorR.backward();
+	}
+
 	public boolean senseLine()
 	{
 		colorMode.fetchSample(colourSample, 0);

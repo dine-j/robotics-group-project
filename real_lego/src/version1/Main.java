@@ -8,7 +8,6 @@ import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
-import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 
 /**
@@ -28,11 +27,15 @@ public class Main {
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
 		//EV3GyroSensor gyro = new EV3GyroSensor(SensorPort.S4);
 		
-		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor  /*, gyro*/);
-		//wait for any button press to start following line
+		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
 		Button.waitForAnyPress();
 		int seconds = 20;
-		r.followingLine(seconds);
+		r.followingLine();
+		// if robot stops following line
+		// then obstacle is in the way
+		// then r.avoidObstacle()
+		// once done
+		// r.followingLine()
 		r.stop();
 		r.shutdown();
 	}

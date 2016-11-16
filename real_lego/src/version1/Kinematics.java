@@ -19,9 +19,9 @@ public class Kinematics {
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
 		EV3GyroSensor gyro = new EV3GyroSensor(SensorPort.S4);
 		
-		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor, gyro);
+		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
 		
-		r.goInSemiCircle();
+		//r.goInSemiCircle();
 		
 		r.stop();
 		r.shutdown();
