@@ -31,6 +31,7 @@ public class Main {
 		Button.waitForAnyPress();
 		int seconds = 20;
 		r.followingLine();
+		r.avoidObstacle();
 		// if robot stops following line
 		// then obstacle is in the way
 		// then r.avoidObstacle()

@@ -30,7 +30,6 @@ public class Robot  {
 	private SensorMode colorMode;
 	
 	private float[] colourSample;
-	private float[] ultrasonicSample;
 	
 	private Image face;
 	
@@ -51,7 +50,7 @@ public class Robot  {
 		colorMode = colorSensor.getRedMode();
 		colourSample = new float[colorMode.sampleSize()];
 
-		ultrasonicSample = new float[1];
+		float[] ultrasonicSample = new float[1];
 		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 
 		
@@ -82,6 +81,41 @@ public class Robot  {
 			Delay.msDelay(5);
 		}
 		
+	}
+
+	public  void avoidObstacle() {
+		// Position Robot
+		setSpeed(90, 90);
+		motorL.backward();
+		motorR.forward();
+		Delay.msDelay(1000);
+		visionMotor.rotate(90);
+
+		// Start avoiding obstacle
+		float[] ultrasonicSample = new float[1];
+
+		float kp = 800f;
+		float ki = 0f;
+		float kd = 0f;
+		float offset = 0.07f;
+		int tp = 250;
+		float integral = 0f;
+		float derivative = 0f;
+		float lastError = 0f;
+
+		while(true) {
+			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
+
+			float distance = ultrasonicSample[0];
+			float error = distance - offset;
+			integral += error;
+			derivative = error - lastError;
+
+			setSpeed(kp, ki, kd, tp, integral, derivative, error);
+
+			lastError = error;
+			Delay.msDelay(5);
+		}
 	}
 
 	private void setSpeed(float kp, float ki, float kd, int tp, float integral, float derivative, float error) {
