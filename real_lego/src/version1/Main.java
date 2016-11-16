@@ -13,7 +13,7 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 
 /**
  * Motors: left= A right = D  Rotation= B
- * Sensors: Vision= 2,  Color = 1, Gyro = 4
+ * Sensors: Vision= 2,  Color = 1,   TAKEN OUT FOR NOW: Gyro = 4
  *
  */
 
@@ -26,9 +26,9 @@ public class Main {
 		
 		EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S1);
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
-		EV3GyroSensor gyro = new EV3GyroSensor(SensorPort.S4);
+		//EV3GyroSensor gyro = new EV3GyroSensor(SensorPort.S4);
 		
-		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor, gyro);
+		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor  /*, gyro*/);
 		//wait for any button press to start following line
 		Button.waitForAnyPress();
 		int seconds = 20;

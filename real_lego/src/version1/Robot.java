@@ -38,22 +38,22 @@ public class Robot  {
 	
 	private EV3ColorSensor colorSensor;
 	private EV3UltrasonicSensor ultrasonicSensor;
-	private EV3GyroSensor gyro;
+	//private EV3GyroSensor gyro; //taken out for now
 	private SensorMode colorMode;
 	private SampleProvider gyroMode;
 	
 	private float[] colourSample;
-	private float[] gyroSample;
+	//private float[] gyroSample;
 	
 	private Image face;
 	
-	public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor, EV3GyroSensor gyro) {
+	public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor /*, EV3GyroSensor gyro*/) {
 		this.motorL = motorL;
 		this.motorR	= motorR;
 		this.visionMotor = visionMotor;
 		this.colorSensor = colorSensor;
 		this.ultrasonicSensor = ultrasonicSensor;
-		this.gyro = gyro;
+		//this.gyro = gyro;
 		
 		setSpeed(SPEED,SPEED);
 	}
@@ -66,12 +66,12 @@ public class Robot  {
 		//g.drawImage(face, 15, 15, g.HCENTER);
 		
 		colorMode = colorSensor.getRedMode();
-		gyroMode = gyro.getAngleAndRateMode();
+		//gyroMode = gyro.getAngleAndRateMode();
 		colourSample = new float[colorMode.sampleSize()];
 		
 		//The sample contains two elements.
 		//The first element contains angular velocity (in degrees / second). The second element contain angle (in degrees). 
-		gyroSample = new float[gyroMode.sampleSize()];
+		//gyroSample = new float[gyroMode.sampleSize()];
 		
 		float kp = 500f; // to set to 500(for next time)
 		float ki = 0f;
