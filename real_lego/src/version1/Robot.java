@@ -38,22 +38,22 @@ public class Robot  {
 	
 	private EV3ColorSensor colorSensor;
 	private EV3UltrasonicSensor ultrasonicSensor;
-	private EV3GyroSensor gyro;
+	//private EV3GyroSensor gyro; //taken out for now
 	private SensorMode colorMode;
 	private SampleProvider gyroMode;
 	
 	private float[] colourSample;
-	private float[] gyroSample;
+	//private float[] gyroSample;
 	
 	private Image face;
 	
-	public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor, EV3GyroSensor gyro) {
+	public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor /*, EV3GyroSensor gyro*/) {
 		this.motorL = motorL;
 		this.motorR	= motorR;
 		this.visionMotor = visionMotor;
 		this.colorSensor = colorSensor;
 		this.ultrasonicSensor = ultrasonicSensor;
-		this.gyro = gyro;
+		//this.gyro = gyro;
 		
 		setSpeed(SPEED,SPEED);
 	}
@@ -66,18 +66,18 @@ public class Robot  {
 		//g.drawImage(face, 15, 15, g.HCENTER);
 		
 		colorMode = colorSensor.getRedMode();
-		gyroMode = gyro.getAngleAndRateMode();
+		//gyroMode = gyro.getAngleAndRateMode();
 		colourSample = new float[colorMode.sampleSize()];
 		
 		//The sample contains two elements.
 		//The first element contains angular velocity (in degrees / second). The second element contain angle (in degrees). 
-		gyroSample = new float[gyroMode.sampleSize()];
+		//gyroSample = new float[gyroMode.sampleSize()];
 		
-		float kp = 210f; // to set to 500(for next time)
+		float kp = 800f; //was 500 but worked for slow speed only
 		float ki = 0f;
 		float kd = 0f;
 		float offset = 0.3f;
-		int tp = 80;
+		int tp = 250;  //was 20 in last commit but very slow
 		float integral = 0f;
 		float derivative = 0f;
 		float lastError = 0f;
@@ -96,9 +96,16 @@ public class Robot  {
 			float powerL = tp + turn;
 			float powerR = tp - turn;
 			
-			setSpeed((int)powerL, (int)powerR);
-			motorL.forward();
-			motorR.forward();
+			setSpeed(powerL, powerR);
+
+			if(powerL > 0)
+				motorL.forward();
+			else
+				motorL.backward();
+			if(powerR > 0)
+				motorR.forward();
+			else
+				motorR.backward();
 			
 			lastError = error;
 			//g.drawString(sample[0] + " PR:" + (int)powerR + " PL:" + (int)powerL , 0, 0, GraphicsLCD.VCENTER);
@@ -108,27 +115,11 @@ public class Robot  {
 		
 	}
 	
-	public void goInSemiCircle() {
-		int t = 8;
-		motorR.setSpeed(202);
-		motorL.setSpeed(106);
-		for(int i = 0; i < t; ++i) {
-			forward();
-			Delay.msDelay(1000);
-		}
-		stop();
-	}
-	
 	public boolean senseLine()
 	{
 		colorMode.fetchSample(colourSample, 0);
 		
 		return colourSample[0] < RobotMath.ON_LINE_MAX;
-	}
-	
-	public void forward() {
-		motorL.forward();
-		motorR.forward();
 	}
 	
 	public void stop() {
@@ -144,12 +135,8 @@ public class Robot  {
 		ultrasonicSensor.close();
 	}
 	
-	private void setSpeed(int speedL, int speedR) {
-		motorL.setSpeed(speedL);
-		motorR.setSpeed(speedR);
+	private void setSpeed(float powerL, float powerR) {
+		motorL.setSpeed(powerL);
+		motorR.setSpeed(powerR);
 	}
-
-
-	
-	
 }

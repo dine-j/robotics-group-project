@@ -13,3 +13,4 @@ META-INF/
 # Other
 */bin/
 *.jar
+*.class
