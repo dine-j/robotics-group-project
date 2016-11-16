@@ -73,11 +73,11 @@ public class Robot  {
 		//The first element contains angular velocity (in degrees / second). The second element contain angle (in degrees). 
 		//gyroSample = new float[gyroMode.sampleSize()];
 		
-		float kp = 500f; // to set to 500(for next time)
+		float kp = 800f; //was 500 but worked for slow speed only
 		float ki = 0f;
 		float kd = 0f;
 		float offset = 0.3f;
-		int tp = 20;
+		int tp = 250;  //was 20 in last commit but very slow
 		float integral = 0f;
 		float derivative = 0f;
 		float lastError = 0f;
