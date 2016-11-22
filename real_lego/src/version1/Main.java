@@ -30,7 +30,7 @@ public class Main {
 		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
 		Button.waitForAnyPress();
 		int seconds = 20;
-		r.followingLine();
+		//r.followingLine();
 		r.avoidObstacle();
 		// if robot stops following line
 		// then obstacle is in the way

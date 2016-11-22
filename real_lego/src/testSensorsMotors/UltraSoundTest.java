@@ -12,12 +12,8 @@ import lejos.utility.Delay;
 public class UltraSoundTest {
 
 	public static void main(String[] args) {
-		EV3LargeRegulatedMotor motorL = new EV3LargeRegulatedMotor(MotorPort.A);
-		EV3LargeRegulatedMotor motorR = new EV3LargeRegulatedMotor(MotorPort.D);
-		EV3UltrasonicSensor ultraSonicSensor = new EV3UltrasonicSensor(SensorPort.S1);
+		EV3UltrasonicSensor ultraSonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
 		
-		motorL.setSpeed(360);
-		motorR.setSpeed(360);
 		
 		ultraSonicSensor.enable();
 		
@@ -25,23 +21,15 @@ public class UltraSoundTest {
 		float[] sample = new float[sampleProvider.sampleSize()];
 		sampleProvider.fetchSample(sample, 0);
 		
-//		for(int i = 0; i < 100; i++) {
-//			sampleProvider.fetchSample(sample, 0); 
-//
-//			GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
-//			g.drawString("" + sample[0], 0, 0, GraphicsLCD.VCENTER);
-//			Delay.msDelay(1000);
-//			g.clear();
-//		}
-		
-		while(sample[0] > 0.1) {
-			motorL.forward();
-			motorR.forward();
-			sampleProvider.fetchSample(sample, 0);
+		for(int i = 0; i < 100; i++) {
+			sampleProvider.fetchSample(sample, 0); 
+
+			GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
+			g.drawString("" + sample[0], 0, 0, GraphicsLCD.VCENTER);
+			Delay.msDelay(1000);
+			g.clear();
 		}
 		
-		motorL.stop();
-		motorR.stop();
 		
 		ultraSonicSensor.disable();
 		ultraSonicSensor.close();

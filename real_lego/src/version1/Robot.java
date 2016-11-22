@@ -90,15 +90,18 @@ public class Robot  {
 		motorR.forward();
 		Delay.msDelay(1000);
 		visionMotor.rotate(90);
+		
+		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
+		
 
 		// Start avoiding obstacle
 		float[] ultrasonicSample = new float[1];
 
-		float kp = 800f;
+		float kp = 500f;
 		float ki = 0f;
 		float kd = 0f;
 		float offset = 0.07f;
-		int tp = 250;
+		int tp = 20;
 		float integral = 0f;
 		float derivative = 0f;
 		float lastError = 0f;
@@ -114,7 +117,12 @@ public class Robot  {
 			setSpeed(kp, ki, kd, tp, integral, derivative, error);
 
 			lastError = error;
+			
+			g.drawString("" + ultrasonicSample[0], 0, 0, GraphicsLCD.VCENTER);
+			
 			Delay.msDelay(5);
+			g.clear();
+			
 		}
 	}
 
