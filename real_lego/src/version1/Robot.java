@@ -1,7 +1,5 @@
 package version1;
 
-import java.io.IOException;
-
 import lejos.hardware.BrickFinder;
 import lejos.hardware.lcd.GraphicsLCD;
 import lejos.hardware.lcd.Image;
@@ -21,7 +19,7 @@ import lejos.utility.Delay;
  */
 
 public class Robot  {
-	
+
 	private EV3LargeRegulatedMotor motorL, motorR;
 	private EV3MediumRegulatedMotor visionMotor;
 	
@@ -54,11 +52,11 @@ public class Robot  {
 		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 
 		
-		float kp = 800f;
+		float kp = 800f; //was 500 but worked for slow speed only
 		float ki = 0f;
 		float kd = 0f;
 		float offset = 0.3f;
-		int tp = 250;
+		int tp = 250;  //was 20 in last commit but very slow
 		float integral = 0f;
 		float derivative = 0f;
 		float lastError = 0f;
@@ -72,15 +70,21 @@ public class Robot  {
 			float error = lightVal - offset;
 			integral += error;
 			derivative = error - lastError;
+			
+			float turn = kp * error + ki * integral + kd * derivative;
+			float powerL = tp - turn;
+			float powerR = tp + turn;
+			
+			setSpeed(powerL, powerR);
 
 			setSpeed(kp, ki, kd, tp, integral, derivative, error);
-			
+
 			lastError = error;
 
 			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 			Delay.msDelay(5);
 		}
-		
+
 	}
 
 	public  void avoidObstacle() {
@@ -90,9 +94,9 @@ public class Robot  {
 		motorR.forward();
 		Delay.msDelay(1000);
 		visionMotor.rotate(90);
-		
+
 		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
-		
+
 
 		// Start avoiding obstacle
 		float[] ultrasonicSample = new float[1];
@@ -117,12 +121,12 @@ public class Robot  {
 			setSpeed(kp, ki, kd, tp, integral, derivative, error);
 
 			lastError = error;
-			
+
 			g.drawString("" + ultrasonicSample[0], 0, 0, GraphicsLCD.VCENTER);
-			
+
 			Delay.msDelay(5);
 			g.clear();
-			
+
 		}
 	}
 

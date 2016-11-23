@@ -25,11 +25,9 @@ public class Main {
 		
 		EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S1);
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
-		//EV3GyroSensor gyro = new EV3GyroSensor(SensorPort.S4);
-		
+
 		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
 		Button.waitForAnyPress();
-		int seconds = 20;
 		//r.followingLine();
 		r.avoidObstacle();
 		// if robot stops following line
