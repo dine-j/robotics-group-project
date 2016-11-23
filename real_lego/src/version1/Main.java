@@ -28,11 +28,9 @@ public class Main {
 
 		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
 		Button.waitForAnyPress();
-		//r.followingLine();
+		r.followingLine();
 		r.avoidObstacle();
-		r.followWall();
 //		r.followingLine();
-//		r.avoidObstacle();
 		// if robot stops following line
 		// then obstacle is in the way
 		// then r.avoidObstacle()
