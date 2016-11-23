@@ -42,18 +42,18 @@ public class Robot  {
 
 		this.ultrasonicSensor.getDistanceMode();
 	}
-	
+
 	public void followingLine() {
-		
+
 		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
-		
+
 		colorMode = colorSensor.getRedMode();
 		colourSample = new float[colorMode.sampleSize()];
 
 		float[] ultrasonicSample = new float[1];
 		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 
-		
+
 		float kp = 800f;
 		float ki = 0f;
 		float kd = 0f;
@@ -62,25 +62,60 @@ public class Robot  {
 		float integral = 0f;
 		float derivative = 0f;
 		float lastError = 0f;
-		
+
 		while (ultrasonicSample[0] > 0.1)
 		{
 			// takes sample
 			colorMode.fetchSample(colourSample, 0);
-			
+
 			float lightVal = colourSample[0];
 			float error = lightVal - offset;
 			integral += error;
 			derivative = error - lastError;
 
 			setSpeed(kp, ki, kd, tp, integral, derivative, error);
-			
+
 			lastError = error;
 
 			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 			Delay.msDelay(5);
 		}
-		
+
+	}
+
+	public void followWall() {
+		visionMotor.rotate(90);
+
+		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
+
+		float[] ultrasonicSample = new float[1];
+		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
+
+
+		float kp = 800f;
+		float ki = 0f;
+		float kd = 0f;
+		float offset = 0.07f;
+		int tp = 250;
+		float integral = 0f;
+		float derivative = 0f;
+		float lastError = 0f;
+
+		while (true)
+		{
+			// takes sample
+			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
+
+			float distance = ultrasonicSample[0];
+			float error = distance - offset;
+			integral += error;
+			derivative = error - lastError;
+
+			setSpeed(kp, ki, kd, tp, integral, derivative, error);
+
+			lastError = error;
+			Delay.msDelay(5);
+		}
 	}
 
 	public  void avoidObstacle() {
@@ -138,15 +173,15 @@ public class Robot  {
 	public boolean senseLine()
 	{
 		colorMode.fetchSample(colourSample, 0);
-		
+
 		return colourSample[0] < RobotMath.ON_LINE_MAX;
 	}
-	
+
 	public void stop() {
 		motorL.stop();
 		motorR.stop();
 	}
-	
+
 	public void shutdown() {
 		motorL.close();
 		motorR.close();
@@ -154,7 +189,7 @@ public class Robot  {
 		colorSensor.close();
 		ultrasonicSensor.close();
 	}
-	
+
 	private void setSpeed(float powerL, float powerR) {
 		motorL.setSpeed(powerL);
 		motorR.setSpeed(powerR);
