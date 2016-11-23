@@ -92,11 +92,11 @@ public class Robot  {
 		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 
 
-		float kp = 800f;
+		float kp = 500;
 		float ki = 0f;
 		float kd = 0f;
-		float offset = 0.07f;
-		int tp = 250;
+		float offset = 0.12f;
+		int tp = 20;
 		float integral = 0f;
 		float derivative = 0f;
 		float lastError = 0f;
@@ -107,6 +107,7 @@ public class Robot  {
 			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 
 			float distance = ultrasonicSample[0];
+			if(distance > 0.4) distance = 0.4f;
 			float error = distance - offset;
 			integral += error;
 			derivative = error - lastError;
