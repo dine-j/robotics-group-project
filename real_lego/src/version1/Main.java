@@ -30,7 +30,9 @@ public class Main {
 		Button.waitForAnyPress();
 		r.followingLine();
 		r.avoidObstacle();
-//		r.followingLine();
+		r.turnRight();
+		r.lookAhead();
+		r.followingLine();
 		// if robot stops following line
 		// then obstacle is in the way
 		// then r.avoidObstacle()
