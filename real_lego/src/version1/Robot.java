@@ -40,11 +40,11 @@ public class Robot  {
 
 		this.ultrasonicSensor.getDistanceMode();
 	}
-	
+
 	public void followingLine() {
-		
+
 		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
-		
+
 		colorMode = colorSensor.getRedMode();
 		colourSample = new float[colorMode.sampleSize()];
 
@@ -70,21 +70,15 @@ public class Robot  {
 			float error = lightVal - offset;
 			integral += error;
 			derivative = error - lastError;
-			
-			float turn = kp * error + ki * integral + kd * derivative;
-			float powerL = tp - turn;
-			float powerR = tp + turn;
-			
-			setSpeed(powerL, powerR);
 
 			setSpeed(kp, ki, kd, tp, integral, derivative, error);
-
+			
 			lastError = error;
 
 			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 			Delay.msDelay(5);
 		}
-
+		
 	}
 
 	public  void avoidObstacle() {
@@ -95,16 +89,13 @@ public class Robot  {
 		Delay.msDelay(1000);
 		visionMotor.rotate(90);
 
-		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
-
-
 		// Start avoiding obstacle
 		float[] ultrasonicSample = new float[1];
 
 		float kp = 500f;
 		float ki = 0f;
 		float kd = 0f;
-		float offset = 0.07f;
+		float offset = 0.12f;
 		int tp = 20;
 		float integral = 0f;
 		float derivative = 0f;
@@ -121,12 +112,7 @@ public class Robot  {
 			setSpeed(kp, ki, kd, tp, integral, derivative, error);
 
 			lastError = error;
-
-			g.drawString("" + ultrasonicSample[0], 0, 0, GraphicsLCD.VCENTER);
-
 			Delay.msDelay(5);
-			g.clear();
-
 		}
 	}
 
