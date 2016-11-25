@@ -41,7 +41,7 @@ public class Robot  {
 		
 		float kp = 500f;//800f;//750f; //was 500 but worked for slow speed only
 		float ki = 0f;
-		float kd = 0f; //150f;//0f;//10f;
+		float kd = 10f;//0f; 
 		float offset = 0.3f;
 		int tp = 180;//250;  //was 20 in last commit but very slow
 		float integral = 0f;
