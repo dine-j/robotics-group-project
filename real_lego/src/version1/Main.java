@@ -32,7 +32,9 @@ public class Main {
 		r.avoidObstacle();
 		r.turnRight();
 		r.lookAhead();
+		//r.followingLineSlow(10);
 		r.followingLine();
+		
 		// if robot stops following line
 		// then obstacle is in the way
 		// then r.avoidObstacle()

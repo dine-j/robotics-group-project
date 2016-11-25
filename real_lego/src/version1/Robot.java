@@ -39,11 +39,11 @@ public class Robot  {
 		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 
 		
-		float kp = 750f; //was 500 but worked for slow speed only
+		float kp = 500f;//800f;//750f; //was 500 but worked for slow speed only
 		float ki = 0f;
-		float kd = 10f;
+		float kd = 0f; //150f;//0f;//10f;
 		float offset = 0.3f;
-		int tp = 250;  //was 20 in last commit but very slow
+		int tp = 180;//250;  //was 20 in last commit but very slow
 		float integral = 0f;
 		float derivative = 0f;
 		float lastError = 0f;
@@ -56,7 +56,7 @@ public class Robot  {
 			float lightVal = colourSample[0];
 			float error = lightVal - offset;
 			integral += error;
-			derivative = error - lastError;
+			derivative = error - lastError;//if (error > 0.05) derivative = error - lastError; else derivative = 0f; //trying this
 
 			setSpeed(kp, ki, kd, tp, integral, derivative, error);
 			
@@ -79,8 +79,9 @@ public class Robot  {
 		Delay.msDelay(1000);
 		visionMotor.rotate(-90);
 
-        colorMode = colorSensor.getColorIDMode();
+        colorMode = colorSensor.getRedMode();  // changed from getIDMode
         colourSample = new float[colorMode.sampleSize()];
+        colourSample[0] = 1.0f;
 
 		// Start avoiding obstacle
 		float[] ultrasonicSample = new float[1];
@@ -94,7 +95,7 @@ public class Robot  {
 		float derivative = 0f;
 		float lastError = 0f;
 
-		while(true) {
+		while(colourSample[0] > RobotMath.ON_BORDER_MAX) {
 			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 
 			float distance = ultrasonicSample[0];
@@ -128,9 +129,55 @@ public class Robot  {
 	}
 
 	public void turnRight() {
-        setSpeed(100, 100);
-        motorL.backward();
-        motorR.forward();
+//		setSpeed(100, 100);
+//		motorR.backward();
+//		motorL.backward();
+//		Delay.msDelay(2000);
+		
+		
+//		setSpeed(180, 20);
+//        motorL.forward();   //L motor now going forward!!
+//        motorR.forward();
+//        Delay.msDelay(3000); //added this
+		
+		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
+		g.clear();
+		g.drawString("Stepping over line", 0, 0, GraphicsLCD.HCENTER);
+		
+		setSpeed(100, 100);
+		motorR.forward();
+		motorL.forward();
+		Delay.msDelay(700);
+		
+		colorMode = colorSensor.getRedMode();  // changed from getIDMode
+        colourSample = new float[colorMode.sampleSize()];
+        colourSample[0] = 1.0f;
+        
+        
+		while(colourSample[0] > RobotMath.ON_BORDER_MAX) {
+			setSpeed(180, 20);
+	        motorL.forward();   //L motor now going forward!!
+	        motorR.forward();
+	    	Delay.msDelay(5);
+	    	colorMode.fetchSample(colourSample, 0);
+	    	g.clear();
+	    	g.drawString("RIGHT", 0, 0, GraphicsLCD.HCENTER);
+		}
+		g.clear();
+    	g.drawString("2ndStepping over line", 0, 0, GraphicsLCD.HCENTER);
+		
+		setSpeed(120, 50);
+		motorL.forward();   
+		motorR.backward();
+		Delay.msDelay(800); 
+		
+		setSpeed(0, 180);
+		motorL.forward();   
+		motorR.forward();
+		Delay.msDelay(400);
+		
+		g.clear();
+		  
     }
 
     public void lookAhead() {
@@ -142,7 +189,7 @@ public class Robot  {
 		float powerL = tp + turn;
 		float powerR = tp - turn;
 
-		setSpeed(powerL, powerR);
+		setSpeed(powerR, powerL); // setSpeed(powerL, powerR); for the moment.....
 
 		if(powerL > 0)
             motorL.forward();
@@ -154,12 +201,12 @@ public class Robot  {
             motorR.backward();
 	}
 
-	public boolean senseLine()
-	{
-		colorMode.fetchSample(colourSample, 0);
-		
-		return colourSample[0] < RobotMath.ON_LINE_MAX;
-	}
+//	public boolean senseLine()
+//	{
+//		colorMode.fetchSample(colourSample, 0);
+//		
+//		return colourSample[0] < RobotMath.ON_LINE_MAX;
+//	}
 	
 	public void stop() {
 		motorL.stop();
@@ -178,4 +225,44 @@ public class Robot  {
 		motorL.setSpeed(powerL);
 		motorR.setSpeed(powerR);
 	}
+	
+	public void followingLineSlow(int secs) {
+
+		colorMode = colorSensor.getRedMode();
+		colourSample = new float[colorMode.sampleSize()];
+
+		float[] ultrasonicSample = new float[1];
+		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
+
+		
+		float kp = 500f; //was 500 but worked for slow speed only
+		float ki = 0f;
+		float kd = 0f;
+		float offset = 0.3f;
+		int tp = 80;  //was 20 in last commit but very slow
+		float integral = 0f;
+		float derivative = 0f;
+		float lastError = 0f;
+		
+		int loops = 200 * secs;
+		for(int i = 0; i < loops; i++)
+		{
+			// takes sample
+			colorMode.fetchSample(colourSample, 0);
+			
+			float lightVal = colourSample[0];
+			float error = lightVal - offset;
+			integral += error;
+			derivative = error - lastError;
+
+			setSpeed(kp, ki, kd, tp, integral, derivative, error);
+			
+			lastError = error;
+
+			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
+			Delay.msDelay(5);
+		}
+		
+	}
+	
 }
