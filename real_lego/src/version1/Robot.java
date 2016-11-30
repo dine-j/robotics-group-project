@@ -42,7 +42,6 @@ public class Robot  {
 			Delay.msDelay(200);
 			g.clear();
 		}
-		//followingLineSlow(2);
 	}
 
 	public void followingLine() {
@@ -143,17 +142,6 @@ public class Robot  {
 	}
 
 	public void turnRight() {
-//		setSpeed(100, 100);
-//		motorR.backward();
-//		motorL.backward();
-//		Delay.msDelay(2000);
-		
-		
-//		setSpeed(180, 20);
-//        motorL.forward();   //L motor now going forward!!
-//        motorR.forward();
-//        Delay.msDelay(3000); //added this
-		
 		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
 		g.clear();
 		g.drawString("Stepping over line", 0, 0, GraphicsLCD.HCENTER);
@@ -215,13 +203,6 @@ public class Robot  {
             motorR.backward();
 	}
 
-//	public boolean senseLine()
-//	{
-//		colorMode.fetchSample(colourSample, 0);
-//		
-//		return colourSample[0] < RobotMath.ON_LINE_MAX;
-//	}
-	
 	public void stop() {
 		motorL.stop();
 		motorR.stop();

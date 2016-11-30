@@ -16,7 +16,7 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
  *
  */
 
-public class KnownObstacle {
+public class KnownObstacleMain {
 	
 	public static void main(String args[]) throws IOException {
 		EV3LargeRegulatedMotor motorL = new EV3LargeRegulatedMotor(MotorPort.A);
@@ -33,24 +33,14 @@ public class KnownObstacle {
 		
 		r.curtain();
 		
-		//for(int i = 0; i < 3; i++){
-			r.followingLine();
-			r.avoidObstacle(distanceAroundObstacle);
-			r.turnRight();
-			r.lookAhead();
-		//}
-//		r.followingLine();
-//		r.avoidObstacle();
-//		r.turnRight();
-//		r.lookAhead();
-//		//r.followingLineSlow(10);
+		r.followingLine();
+		r.avoidObstacle(distanceAroundObstacle);
+		r.turnRight();
+		r.lookAhead();
+
 		r.followingLine();
 		
-		// if robot stops following line
-		// then obstacle is in the way
-		// then r.avoidObstacle()
-		// once done
-		// r.followingLine()
+
 		r.stop();
 		r.shutdown();
 	}
