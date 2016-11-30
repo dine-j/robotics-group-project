@@ -10,13 +10,7 @@ import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 
-/**
- * Motors: left= A right = D  Rotation= B
- * Sensors: Vision= 2,  Color = 1,   TAKEN OUT FOR NOW: Gyro = 4
- *
- */
-
-public class Main {
+public class MainTest {
 	
 	public static void main(String args[]) throws IOException {
 		EV3LargeRegulatedMotor motorL = new EV3LargeRegulatedMotor(MotorPort.A);
@@ -29,25 +23,12 @@ public class Main {
 		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
 		Button.waitForAnyPress();
 		
-		r.curtain();
-		
-		
-		for(int i = 0; i < 3; i++){
-			r.followingLine();
-			r.avoidObstacle();
-			r.turnRight();
-			r.lookAhead();
-		}
+		//r.curtain();
 		
 		//r.turnRight();
 
-		r.followingLine();
-		
-		// if robot stops following line
-		// then obstacle is in the way
-		// then r.avoidObstacle()
-		// once done
-		// r.followingLine()
+		//r.followingLine();
+		r.headTwitching();
 		r.stop();
 		r.shutdown();
 	}

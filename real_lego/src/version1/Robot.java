@@ -104,7 +104,7 @@ public class Robot  {
 		float kp = 500f;
 		float ki = 0f;
 		float kd = 0f;
-		float offset = 0.07f;
+		float offset = 0.08f; //0.07f;
 		int tp = 70;
 		float integral = 0f;
 		float derivative = 0f;
@@ -144,52 +144,51 @@ public class Robot  {
 	}
 
 	public void turnRight() {
-//		setSpeed(100, 100);
-//		motorR.backward();
-//		motorL.backward();
-//		Delay.msDelay(2000);
-		
-		
-//		setSpeed(180, 20);
-//        motorL.forward();   //L motor now going forward!!
-//        motorR.forward();
-//        Delay.msDelay(3000); //added this
 		
 		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
 		g.clear();
 		g.drawString("Stepping over line", 0, 0, GraphicsLCD.HCENTER);
 		
+		
+		// move forward over the line
 		setSpeed(100, 100);
 		motorR.forward();
 		motorL.forward();
-		Delay.msDelay(700);
+		Delay.msDelay(700); 
 		
-		colorMode = colorSensor.getRedMode();  // changed from getIDMode
+		colorMode = colorSensor.getRedMode(); 
         colourSample = new float[colorMode.sampleSize()];
         colourSample[0] = 1.0f;
         
         
 		while(colourSample[0] > RobotMath.ON_BORDER_MAX) {
-			setSpeed(180, 20);
-	        motorL.forward();   //L motor now going forward!!
-	        motorR.forward();
+			setSpeed(180, 50);
+	        motorL.forward();   
+	        motorR.backward();
 	    	Delay.msDelay(5);
 	    	colorMode.fetchSample(colourSample, 0);
 	    	g.clear();
 	    	g.drawString("RIGHT", 0, 0, GraphicsLCD.HCENTER);
 		}
+		
 		g.clear();
     	g.drawString("2ndStepping over line", 0, 0, GraphicsLCD.HCENTER);
 		
-		setSpeed(120, 50);
+    	while(colourSample[0] < RobotMath.ON_BORDER_MAX) {
+    		setSpeed(120, 50);
+    		motorL.forward();   
+    		motorR.backward();
+    		colorMode.fetchSample(colourSample, 0);
+    	}
+		setSpeed(120, 50);// turn a bit more just in case
 		motorL.forward();   
 		motorR.backward();
-		Delay.msDelay(800); 
+		Delay.msDelay(200); 
 		
 		setSpeed(0, 180);
 		motorL.forward();   
 		motorR.forward();
-		Delay.msDelay(400);
+		Delay.msDelay(100);
 		
 		g.clear();
 		  
@@ -197,6 +196,26 @@ public class Robot  {
 
     public void lookAhead() {
         visionMotor.rotate(90);
+    }
+    
+    public void headTwitching(){
+    	int sign = -1;
+    	
+//    	for (int i= 0; i<12; i++)
+//    	{
+//    		visionMotor.rotate((int) (10*i*Math.pow(sign,i)));
+//    		Delay.msDelay(400);
+//    	}
+    	visionMotor.rotate(90);
+		Delay.msDelay(400);
+		visionMotor.rotate(-90);
+		Delay.msDelay(400);
+		visionMotor.rotate(45);
+		Delay.msDelay(400);
+		visionMotor.rotate(-45);
+		Delay.msDelay(400);
+		visionMotor.rotate(120);
+		Delay.msDelay(400);
     }
 
 	private void setSpeed(float kp, float ki, float kd, int tp, float integral, float derivative, float error) {
