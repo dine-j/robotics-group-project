@@ -83,7 +83,7 @@ public class Robot  {
 		
 	}
 
-	public  void avoidObstacle() {
+	public  void avoidObstacle(float offset) {
 
         GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
 
@@ -104,7 +104,6 @@ public class Robot  {
 		float kp = 500f;
 		float ki = 0f;
 		float kd = 0f;
-		float offset = 0.07f;
 		int tp = 70;
 		float integral = 0f;
 		float derivative = 0f;

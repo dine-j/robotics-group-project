@@ -16,7 +16,7 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
  *
  */
 
-public class Main {
+public class KnownObstacle {
 	
 	public static void main(String args[]) throws IOException {
 		EV3LargeRegulatedMotor motorL = new EV3LargeRegulatedMotor(MotorPort.A);
@@ -28,12 +28,14 @@ public class Main {
 
 		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
 		Button.waitForAnyPress();
+
+		float distanceAroundObstacle = 0.07f;
 		
 		r.curtain();
 		
 		//for(int i = 0; i < 3; i++){
 			r.followingLine();
-			r.avoidObstacle();
+			r.avoidObstacle(distanceAroundObstacle);
 			r.turnRight();
 			r.lookAhead();
 		//}
