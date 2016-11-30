@@ -29,12 +29,14 @@ public class Main {
 		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
 		Button.waitForAnyPress();
 		
-		for(int i = 0; i < 3; i++){
+		r.curtain();
+		
+		//for(int i = 0; i < 3; i++){
 			r.followingLine();
 			r.avoidObstacle();
 			r.turnRight();
 			r.lookAhead();
-		}
+		//}
 //		r.followingLine();
 //		r.avoidObstacle();
 //		r.turnRight();

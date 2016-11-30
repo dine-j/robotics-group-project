@@ -29,6 +29,21 @@ public class Robot  {
 
 		this.ultrasonicSensor.getDistanceMode();
 	}
+	
+	public void curtain() {
+		
+		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
+		float[] ultrasonicSample = new float[1];
+		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
+		while (ultrasonicSample[0] < 0.15)
+		{
+			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
+			g.drawString(Float.toString(ultrasonicSample[0]), 0, 0, GraphicsLCD.HCENTER);
+			Delay.msDelay(200);
+			g.clear();
+		}
+		//followingLineSlow(2);
+	}
 
 	public void followingLine() {
 
