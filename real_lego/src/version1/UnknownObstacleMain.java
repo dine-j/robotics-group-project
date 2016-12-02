@@ -27,17 +27,19 @@ public class UnknownObstacleMain {
 		r.curtain();
 		
 		
-		for(int i = 0; i < 4; i++){
-			r.followingLine();
+		for(int i = 0; i < 10; i++){
+			r.followingLineScan();
 			r.stop();
 			r.turnAngle(r.scanHead2());
 			r.goFoward();
 			r.avoidObstacle();
 			r.turnRight();
 			r.lookAhead();
+			r.followingLine();
+			r.stop();
+			Button.waitForAnyPress();
 		}
 
-		r.followingLine();
 		r.stop();
 		r.shutdown();
 	}
