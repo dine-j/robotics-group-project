@@ -82,8 +82,8 @@ public class UnknownRobot  {
 		float derivative = 0f;
 		float lastError = 0f;
 		
-		final int HEAD_MS_DELAY = 80;
-		final int HEAD_ROTATE_ANGLE = 25;
+		final int HEAD_MS_DELAY = 60;
+		final int HEAD_ROTATE_ANGLE = 35;
 		while (ultrasonicSample[0] > 0.20)//0.09)
 		{
 			
@@ -279,68 +279,7 @@ public void followingLine() {
         visionMotor.rotateTo(0);
     }
     
-    public void headTwitching(){
-    	visionMotor.rotate(90);
-		Delay.msDelay(400);
-		visionMotor.rotate(-90);
-		Delay.msDelay(400);
-		visionMotor.rotate(45);
-		Delay.msDelay(400);
-		visionMotor.rotate(-45);
-		Delay.msDelay(400);
-		visionMotor.rotate(120);
-		Delay.msDelay(400);
-    }
-    
-    /**
-     * 
-     * @return The angle that it thinks give the closest distance
-     */
-    public int scanHead(){
-    	
-    	GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();	
-    	
-    	final int ANGLE_START = 70;
-    	final int NUMBER_OF_SEGMENTS = 10;
-    	int segmentSize = (ANGLE_START * 2 ) / NUMBER_OF_SEGMENTS; 
-    	
-    	float[] results = new float[NUMBER_OF_SEGMENTS + 1];
-    	visionMotor.rotateTo(-ANGLE_START);
-    	
-    	float[] ultrasonicSample = new float[1];
-    	ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-    	
-    	results[0] = ultrasonicSample[0]; 
-    	for(int i = 1; i< NUMBER_OF_SEGMENTS + 1; i++)
-    	{
-        	visionMotor.rotate(segmentSize);
-        	Delay.msDelay(20);
-        	
-        	ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-        	results[i] = ultrasonicSample[0]; 
-        	
-        	g.clear();
-			Delay.msDelay(5);
-			g.drawString(Float.toString(ultrasonicSample[0]), 0, 0, GraphicsLCD.HCENTER);
-    	}
-    	
-    	// find index of minimum
-    	
-    	float currentMin = results[0];
-    	int indexOfMin = 0;
-    	for ( int i = 0; i < results.length; i++ )
-    	{
-    		if ( results[i] < currentMin) { currentMin = results[i]; indexOfMin = i; }
-    	}
-    	
-    	// calculate angle
-    	
-    	int angle = indexOfMin * segmentSize - ANGLE_START;
-    	visionMotor.rotateTo(0); 
-    	
-    	
-    	return angle;
-    }
+   
     /**
      * 
      * @return The angle that it thinks give the closest distance
@@ -369,7 +308,7 @@ public void followingLine() {
         	results[i] = ultrasonicSample[0]; 
         	
         	g.clear();
-			Delay.msDelay(5);
+			Delay.msDelay(80);
 			g.drawString(Float.toString(ultrasonicSample[0]), 0, 0, GraphicsLCD.HCENTER);
     	}
     	
@@ -411,7 +350,6 @@ public void followingLine() {
     }
  
     
-    
     public void turnAngle(int angle){
     	setSpeed(120,120);
     	if (angle >= 0){
@@ -448,13 +386,6 @@ public void followingLine() {
             motorR.backward();
 	}
 
-//	public boolean senseLine()
-//	{
-//		colorMode.fetchSample(colourSample, 0);
-//		
-//		return colourSample[0] < RobotMath.ON_LINE_MAX;
-//	}
-	
 	public void stop() {
 		motorL.stop();
 		motorR.stop();
@@ -473,43 +404,6 @@ public void followingLine() {
 		motorR.setSpeed(powerR);
 	}
 	
-	public void followingLineSlow(int secs) {
 
-		colorMode = colorSensor.getRedMode();
-		colourSample = new float[colorMode.sampleSize()];
-
-		float[] ultrasonicSample = new float[1];
-		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-
-		
-		float kp = 500f; //was 500 but worked for slow speed only
-		float ki = 0f;
-		float kd = 0f;
-		float offset = 0.3f;
-		int tp = 80;  //was 20 in last commit but very slow
-		float integral = 0f;
-		float derivative = 0f;
-		float lastError = 0f;
-		
-		int loops = 200 * secs;
-		for(int i = 0; i < loops; i++)
-		{
-			// takes sample
-			colorMode.fetchSample(colourSample, 0);
-			
-			float lightVal = colourSample[0];
-			float error = lightVal - offset;
-			integral += error;
-			derivative = error - lastError;
-
-			setSpeed(kp, ki, kd, tp, integral, derivative, error);
-			
-			lastError = error;
-
-			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-			Delay.msDelay(5);
-		}
-		
-	}
 	
 }

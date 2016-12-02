@@ -39,6 +39,12 @@ public class UnknownObstacleMain {
 			r.stop();
 			Button.waitForAnyPress();
 		}
+		
+//		for(int i = 0; i < 10; i++){
+//			r.turnAngle(r.scanHead2());
+//			Button.waitForAnyPress();
+//		}
+		
 
 		r.stop();
 		r.shutdown();
