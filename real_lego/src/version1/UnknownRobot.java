@@ -139,7 +139,7 @@ public class UnknownRobot  {
 		float derivative = 0f;
 		float lastError = 0f;
 
-		while(colourSample[0] > RobotMath.ON_BORDER_MAX) {
+		while(colourSample[0] > 0.4){ //RobotMath.ON_BORDER_MAX) {
 			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 
 			float distance = ultrasonicSample[0];
@@ -190,7 +190,7 @@ public class UnknownRobot  {
         colourSample[0] = 1.0f;
         
         
-		while(colourSample[0] > RobotMath.ON_BORDER_MAX) {
+		while(colourSample[0] > 0.4){//RobotMath.ON_BORDER_MAX) {
 			setSpeed(180, 50);
 	        motorL.forward();   
 	        motorR.backward();
@@ -203,7 +203,7 @@ public class UnknownRobot  {
 		g.clear();
     	g.drawString("2ndStepping over line", 0, 0, GraphicsLCD.LEFT);
 		
-    	while(colourSample[0] < RobotMath.ON_BORDER_MAX) {
+    	while(colourSample[0] < 0.4) { //RobotMath.ON_BORDER_MAX) {
     		setSpeed(120, 50);
     		motorL.forward();   
     		motorR.backward();
