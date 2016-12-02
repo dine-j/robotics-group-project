@@ -19,6 +19,7 @@ public class Robot  {
 	private SensorMode colorMode;
 	
 	private float[] colourSample;
+	private int counter = 0;
 	
 	
 	public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor) {
@@ -57,7 +58,7 @@ public class Robot  {
 		
 		while (ultrasonicSample[0] > 0.09){
 			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-			Delay.msDelay(20);
+			Delay.msDelay(5);
 		}
 	}
 
@@ -71,7 +72,7 @@ public class Robot  {
 		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 
 		
-		float kp = 500f;//800f;//750f; //was 500 but worked for slow speed only
+		float kp = 500f;//500f;//800f;//750f; //was 500 but worked for slow speed only
 		float ki = 0f;
 		float kd = 10f;//0f; 
 		float offset = 0.3f;
@@ -80,8 +81,17 @@ public class Robot  {
 		float derivative = 0f;
 		float lastError = 0f;
 		
-		while (ultrasonicSample[0] > 0.18)//0.09)
+		final int HEAD_MS_DELAY = 80;
+		final int HEAD_ROTATE_ANGLE = 25;
+		while (ultrasonicSample[0] > 0.15)//0.09)
 		{
+			
+			counter++;
+			if(counter == 0) visionMotor.rotateTo(HEAD_ROTATE_ANGLE, true);
+			else if(counter == HEAD_MS_DELAY) visionMotor.rotateTo(0, true);
+			else if(counter == 2*HEAD_MS_DELAY) visionMotor.rotateTo(-HEAD_ROTATE_ANGLE, true);
+			else if (counter > 3*HEAD_MS_DELAY) counter = -1;
+			
 			// takes sample
 			colorMode.fetchSample(colourSample, 0);
 			
@@ -98,6 +108,8 @@ public class Robot  {
 			Delay.msDelay(5);
 		}
 		
+		//experiment
+		visionMotor.rotateTo(0, true);
 	}
 
 	public  void avoidObstacle() {
@@ -120,9 +132,9 @@ public class Robot  {
 
 		float kp = 500f;
 		float ki = 0f;
-		float kd = 0f;
+		float kd = 10f;
 		float offset = 0.07f;// 0.08f; //0.07f;
-		int tp = 90; //70;
+		int tp = 130; //70;
 		float integral = 0f;
 		float derivative = 0f;
 		float lastError = 0f;
@@ -189,7 +201,7 @@ public class Robot  {
 		}
 		
 		g.clear();
-    	g.drawString("2ndStepping over line", 0, 0, GraphicsLCD.HCENTER);
+    	g.drawString("2ndStepping over line", 0, 0, GraphicsLCD.LEFT);
 		
     	while(colourSample[0] < RobotMath.ON_BORDER_MAX) {
     		setSpeed(120, 50);
@@ -230,7 +242,7 @@ public class Robot  {
     
     /**
      * 
-     * @return The angle that it thinks is the closest
+     * @return The angle that it thinks give the closest distance
      */
     public int scanHead(){
     	
@@ -279,7 +291,7 @@ public class Robot  {
     }
     /**
      * 
-     * @return The angle that it thinks is the closest
+     * @return The angle that it thinks give the closest distance
      */
     public int scanHead2(){
     	
@@ -326,13 +338,13 @@ public class Robot  {
     	
     	final int SMALL_ERROR = 6;
     	
-    	visionMotor.rotateTo(angle+6); Delay.msDelay(200);
+    	visionMotor.rotateTo(angle+SMALL_ERROR); Delay.msDelay(200);
     	ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0); Delay.msDelay(50);
     	float result1 = ultrasonicSample[0]; 
-    	visionMotor.rotate(-6); Delay.msDelay(200);
+    	visionMotor.rotate(-SMALL_ERROR); Delay.msDelay(200);
     	ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0); Delay.msDelay(50);
     	float resultCenter = ultrasonicSample[0]; 
-    	visionMotor.rotate(-6); Delay.msDelay(200);
+    	visionMotor.rotate(-SMALL_ERROR); Delay.msDelay(200);
     	ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);Delay.msDelay(50);
     	float result2 = ultrasonicSample[0]; 
     	

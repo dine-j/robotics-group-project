@@ -34,7 +34,7 @@ public class MainTest {
 		r.curtain();
 		
 		
-		for(int i = 0; i < 3; i++){
+		for(int i = 0; i < 4; i++){
 			r.followingLine();
 			r.stop();
 			r.turnAngle(r.scanHead2());
