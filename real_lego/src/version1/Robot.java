@@ -102,8 +102,8 @@ public class Robot  {
 
 		float kp = 500f;
 		float ki = 0f;
-		float kd = 0f;
-		int tp = 70;
+		float kd = 10f;
+		int tp = 130; //70;
 		float integral = 0f;
 		float derivative = 0f;
 		float lastError = 0f;
