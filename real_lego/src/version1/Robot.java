@@ -53,7 +53,7 @@ public class Robot  {
 		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 
 		
-		float kp = 500f;//800f;//750f; //was 500 but worked for slow speed only
+		float kp = 600f;//800f;//750f; //was 500 but worked for slow speed only
 		float ki = 0f;
 		float kd = 10f;//0f; 
 		float offset = 0.3f;

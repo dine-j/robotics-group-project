@@ -58,7 +58,7 @@ public class UnknownRobot  {
 		
 		while (ultrasonicSample[0] > 0.09){
 			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-			Delay.msDelay(5);
+			//Delay.msDelay(2);
 		}
 	}
 
@@ -84,7 +84,7 @@ public class UnknownRobot  {
 		
 		final int HEAD_MS_DELAY = 80;
 		final int HEAD_ROTATE_ANGLE = 25;
-		while (ultrasonicSample[0] > 0.15)//0.09)
+		while (ultrasonicSample[0] > 0.20)//0.09)
 		{
 			
 			counter++;
@@ -252,9 +252,9 @@ public void followingLine() {
 		}
 		
 		g.clear();
-    	g.drawString("2ndStepping over line", 0, 0, GraphicsLCD.LEFT);
+    	//g.drawString("2ndStepping over line", 0, 0, GraphicsLCD.LEFT);
 		
-    	while(colourSample[0] < 0.4) { //RobotMath.ON_BORDER_MAX) {
+    	while(colourSample[0] <= 0.4) { //RobotMath.ON_BORDER_MAX) {
     		setSpeed(120, 50);
     		motorL.forward();   
     		motorR.backward();
@@ -270,7 +270,8 @@ public void followingLine() {
 		motorR.forward();
 		Delay.msDelay(100);
 		
-		g.clear();
+		//g.clear();
+		g.drawString(""+ colourSample[0], 0, 0, GraphicsLCD.HCENTER);
 		  
     }
 
