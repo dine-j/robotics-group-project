@@ -9,6 +9,7 @@ import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.utility.Delay;
 
 public class MainTest {
 	
@@ -23,12 +24,38 @@ public class MainTest {
 		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
 		Button.waitForAnyPress();
 		
-		//r.curtain();
+//		for(int i= 0; i < 6; i++){
+//			r.turnAngle(r.scanHead());
+//			Delay.msDelay(100);
+//			r.lookAhead();
+//			Delay.msDelay(500);
+//		}
+//		
+		r.curtain();
+		
+		
+		for(int i = 0; i < 3; i++){
+			r.followingLine();
+			r.stop();
+			r.turnAngle(r.scanHead2());
+			r.goFoward();
+			r.avoidObstacle();
+			r.turnRight();
+			r.lookAhead();
+		}
 		
 		//r.turnRight();
 
-		//r.followingLine();
-		r.headTwitching();
+		r.followingLine();
+		
+		
+		
+//		r.turnAngle(90);
+//		Delay.msDelay(1000);
+//		r.turnAngle(60);
+//		Delay.msDelay(1000);
+//		r.turnAngle(30);
+		
 		r.stop();
 		r.shutdown();
 	}
