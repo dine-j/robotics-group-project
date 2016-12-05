@@ -72,7 +72,7 @@ public class Robot  {
 			integral += error;
 			derivative = error - lastError;//if (error > 0.05) derivative = error - lastError; else derivative = 0f; //trying this
 
-			setSpeed(kp, ki, kd, tp, integral, derivative, error);
+			adjustSpeed(kp, ki, kd, tp, integral, derivative, error);
 			
 			lastError = error;
 
@@ -186,12 +186,12 @@ public class Robot  {
         visionMotor.rotate(90);
     }
 
-	private void setSpeed(float kp, float ki, float kd, int tp, float integral, float derivative, float error) {
+	private void adjustSpeed(float kp, float ki, float kd, int tp, float integral, float derivative, float error) {
 		float turn = kp * error + ki * integral + kd * derivative;
 		float powerL = tp + turn;
 		float powerR = tp - turn;
 
-		setSpeed(powerR, powerL); // setSpeed(powerL, powerR); for the moment.....
+		setSpeed(powerR, powerL); // adjustSpeed(powerL, powerR); for the moment.....
 
 		if(powerL > 0)
             motorL.forward();
@@ -250,7 +250,7 @@ public class Robot  {
 			integral += error;
 			derivative = error - lastError;
 
-			setSpeed(kp, ki, kd, tp, integral, derivative, error);
+			adjustSpeed(kp, ki, kd, tp, integral, derivative, error);
 			
 			lastError = error;
 
