@@ -31,14 +31,14 @@ public class KnownObstacleMain {
 
 		float distanceAroundObstacle = 0.07f;
 		
-		r.curtain();
+		r.start();
 		
-		r.followingLine();
+		r.followLine();
 		r.avoidObstacle(distanceAroundObstacle);
 		r.turnRight();
 		r.lookAhead();
 
-		r.followingLine();
+		r.followLine();
 		
 
 		r.stop();

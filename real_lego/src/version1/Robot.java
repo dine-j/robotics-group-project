@@ -30,13 +30,13 @@ public class Robot  {
 		this.ultrasonicSensor.getDistanceMode();
 	}
 	
-	public void curtain() {
-		
+	public void start() {
 		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
 		float[] ultrasonicSample = new float[1];
+
 		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-		while (ultrasonicSample[0] < 0.15)
-		{
+		
+		while (ultrasonicSample[0] < 0.15) {
 			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 			g.drawString(Float.toString(ultrasonicSample[0]), 0, 0, GraphicsLCD.HCENTER);
 			Delay.msDelay(200);
@@ -44,7 +44,7 @@ public class Robot  {
 		}
 	}
 
-	public void followingLine() {
+	public void followLine() {
 
 		colorMode = colorSensor.getRedMode();
 		colourSample = new float[colorMode.sampleSize()];
@@ -82,7 +82,7 @@ public class Robot  {
 		
 	}
 
-	public void followingLineScan() {
+	public void followLineScan() {
 		int counter = 0;
 
 		colorMode = colorSensor.getRedMode();
