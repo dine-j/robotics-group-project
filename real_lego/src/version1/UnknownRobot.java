@@ -19,8 +19,6 @@ public class UnknownRobot  {
 	private SensorMode colorMode;
 	
 	private float[] colourSample;
-	private int counter = 0;
-	
 	
 	public UnknownRobot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor) {
 		this.motorL = motorL;
@@ -61,7 +59,7 @@ public class UnknownRobot  {
 	}
 
 	public void followingLineScan() {
-		counter = 0;
+		int counter = 0;
 
 		colorMode = colorSensor.getRedMode();
 		colourSample = new float[colorMode.sampleSize()];
@@ -150,8 +148,7 @@ public class UnknownRobot  {
 	}
 
 	public  void avoidObstacle() {
-		
-		counter = 0;
+		int counter = 0;
 
         GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
 
