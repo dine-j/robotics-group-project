@@ -9,7 +9,6 @@ import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
-import lejos.utility.Delay;
 
 public class UnknownObstacleMain {
 	
@@ -30,8 +29,8 @@ public class UnknownObstacleMain {
 		for(int i = 0; i < 10; i++){
 			r.followingLineScan();
 			r.stop();
-			r.turnAngle(r.scanHead2());
-			r.goFoward();
+			r.turnAngle(r.scanHead());
+			r.goForward();
 			r.avoidObstacle();
 			r.turnRight();
 			r.lookAhead();
@@ -41,7 +40,7 @@ public class UnknownObstacleMain {
 		}
 		
 //		for(int i = 0; i < 10; i++){
-//			r.turnAngle(r.scanHead2());
+//			r.turnAngle(r.scanHead());
 //			Button.waitForAnyPress();
 //		}
 		

@@ -44,10 +44,9 @@ public class UnknownRobot  {
 			Delay.msDelay(200);
 			g.clear();
 		}
-		//followingLineSlow(2);
 	}
 	
-	public void goFoward(){
+	public void goForward(){
 		
 		float[] ultrasonicSample = new float[1];
 		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
@@ -58,7 +57,6 @@ public class UnknownRobot  {
 		
 		while (ultrasonicSample[0] > 0.09){
 			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-			//Delay.msDelay(2);
 		}
 	}
 
@@ -229,7 +227,6 @@ public void followingLine() {
 		g.clear();
 		g.drawString("Stepping over line", 0, 0, GraphicsLCD.LEFT);
 		
-		
 		// move forward over the line
 		setSpeed(100, 100);
 		motorR.forward();
@@ -284,7 +281,7 @@ public void followingLine() {
      * 
      * @return The angle that it thinks give the closest distance
      */
-    public int scanHead2(){
+    public int scanHead(){
     	
     	GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();	
     	
@@ -344,8 +341,7 @@ public void followingLine() {
     	
     	
     	visionMotor.rotateTo(0); 
-    	
-    	
+
     	return angle;
     }
  
@@ -403,7 +399,4 @@ public void followingLine() {
 		motorL.setSpeed(powerL);
 		motorR.setSpeed(powerR);
 	}
-	
-
-	
 }
