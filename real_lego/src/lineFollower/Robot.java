@@ -1,4 +1,4 @@
-package version1;
+package lineFollower;
 
 import lejos.hardware.BrickFinder;
 import lejos.hardware.lcd.GraphicsLCD;
@@ -35,7 +35,7 @@ public class Robot  {
 		float[] ultrasonicSample = new float[1];
 
 		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-		
+
 		while (ultrasonicSample[0] < 0.15) {
 			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 			g.drawString(Float.toString(ultrasonicSample[0]), 0, 0, GraphicsLCD.HCENTER);

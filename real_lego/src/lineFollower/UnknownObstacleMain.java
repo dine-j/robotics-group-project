@@ -1,4 +1,4 @@
-package version1;
+package lineFollower;
 
 import java.io.IOException;
 
