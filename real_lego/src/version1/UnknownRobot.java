@@ -96,7 +96,7 @@ public class UnknownRobot  {
 			integral += error;
 			derivative = error - lastError;//if (error > 0.05) derivative = error - lastError; else derivative = 0f; //trying this
 
-			setSpeed(kp, ki, kd, tp, integral, derivative, error);
+			adjustSpeed(kp, ki, kd, tp, integral, derivative, error);
 			
 			lastError = error;
 
@@ -108,7 +108,6 @@ public class UnknownRobot  {
 		visionMotor.rotateTo(0, true);
 	}
 
-	
 	public void followingLine() {
 
 		colorMode = colorSensor.getRedMode();
@@ -138,7 +137,7 @@ public class UnknownRobot  {
 			integral += error;
 			derivative = error - lastError;//if (error > 0.05) derivative = error - lastError; else derivative = 0f; //trying this
 
-			setSpeed(kp, ki, kd, tp, integral, derivative, error);
+			adjustSpeed(kp, ki, kd, tp, integral, derivative, error);
 			
 			lastError = error;
 
@@ -147,7 +146,7 @@ public class UnknownRobot  {
 		}
 	}
 
-	public  void avoidObstacle() {
+	public void avoidObstacle() {
 		int counter = 0;
 
         GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
@@ -334,8 +333,7 @@ public class UnknownRobot  {
 
     	return angle;
     }
- 
-    
+
     public void turnAngle(int angle){
     	setSpeed(120,120);
     	if (angle >= 0) {
@@ -353,12 +351,12 @@ public class UnknownRobot  {
     	stop();
     }
 
-	private void setSpeed(float kp, float ki, float kd, int tp, float integral, float derivative, float error) {
+	private void adjustSpeed(float kp, float ki, float kd, int tp, float integral, float derivative, float error) {
 		float turn = kp * error + ki * integral + kd * derivative;
 		float powerL = tp + turn;
 		float powerR = tp - turn;
 
-		setSpeed(powerR, powerL); // setSpeed(powerL, powerR); for the moment.....
+		setSpeed(powerR, powerL); // adjustSpeed(powerL, powerR); for the moment.....
 
 		if(powerL > 0)
             motorL.forward();
