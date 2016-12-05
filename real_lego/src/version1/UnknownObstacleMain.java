@@ -20,9 +20,11 @@ public class UnknownObstacleMain {
 		EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S1);
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
 
-		UnknownRobot r = new UnknownRobot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
+		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
+		float distanceAroundObstacle = 0.07f;
+
 		Button.waitForAnyPress();
-			
+
 		r.curtain();
 		
 		
@@ -31,19 +33,13 @@ public class UnknownObstacleMain {
 			r.stop();
 			r.turnAngle(r.findClosestPoint());
 			r.goForward();
-			r.avoidObstacle();
+			r.avoidObstacle(distanceAroundObstacle);
 			r.turnRight();
 			r.lookAhead();
 			r.followingLine();
 			r.stop();
 			Button.waitForAnyPress();
 		}
-		
-//		for(int i = 0; i < 10; i++){
-//			r.turnAngle(r.findClosestPoint());
-//			Button.waitForAnyPress();
-//		}
-		
 
 		r.stop();
 		r.shutdown();
