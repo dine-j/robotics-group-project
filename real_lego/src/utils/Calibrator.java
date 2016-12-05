@@ -1,4 +1,4 @@
-package testSensorsMotors;
+package utils;
 
 import lejos.hardware.BrickFinder;
 import lejos.hardware.lcd.GraphicsLCD;
@@ -17,6 +17,7 @@ public class Calibrator {
 		EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S1);
 		SensorMode colorMode = colorSensor.getRedMode();
 		float[] sample = new float[colorMode.sampleSize()];
+
 		for(int i = 0; i < 10; i++) {
 			colorMode.fetchSample(sample, 0);
 			GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
