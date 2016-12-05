@@ -62,7 +62,6 @@ public class UnknownRobot  {
 
 	public void followingLineScan() {
 		counter = 0;
-		
 
 		colorMode = colorSensor.getRedMode();
 		colourSample = new float[colorMode.sampleSize()];
@@ -112,8 +111,7 @@ public class UnknownRobot  {
 	}
 
 	
-public void followingLine() {
-		
+	public void followingLine() {
 
 		colorMode = colorSensor.getRedMode();
 		colourSample = new float[colorMode.sampleSize()];
@@ -149,10 +147,7 @@ public void followingLine() {
 			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 			Delay.msDelay(5);
 		}
-		
-		//experiment
 	}
-
 
 	public  void avoidObstacle() {
 		
@@ -275,13 +270,12 @@ public void followingLine() {
     public void lookAhead() {
         visionMotor.rotateTo(0);
     }
-    
-   
+
     /**
      * 
      * @return The angle that it thinks give the closest distance
      */
-    public int scanHead(){
+    public int findClosestPoint(){
     	
     	GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();	
     	
@@ -336,9 +330,8 @@ public void followingLine() {
     	ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);Delay.msDelay(50);
     	float result2 = ultrasonicSample[0]; 
     	
-    	if( result1 < resultCenter && result1 < result2) angle -= 6;
+    	if(result1 < resultCenter && result1 < result2) angle -= 6;
     	else if(result2 < resultCenter && result2 < result1) angle += 6;
-    	
     	
     	visionMotor.rotateTo(0); 
 
@@ -348,12 +341,10 @@ public void followingLine() {
     
     public void turnAngle(int angle){
     	setSpeed(120,120);
-    	if (angle >= 0){
+    	if (angle >= 0) {
     		motorR.backward();
         	motorL.forward();
-    	}
-    	else
-    	{
+    	} else {
     		motorR.forward();
         	motorL.backward();
     	}
@@ -361,7 +352,7 @@ public void followingLine() {
     	if (angle < 0 ) angle = - angle;
     	
     	final int NINETY = 1300;
-    	Delay.msDelay(  (int)(angle/90.0 * NINETY));
+    	Delay.msDelay((int)(angle/90.0 * NINETY));
     	stop();
     }
 

@@ -29,7 +29,7 @@ public class UnknownObstacleMain {
 		for(int i = 0; i < 10; i++){
 			r.followingLineScan();
 			r.stop();
-			r.turnAngle(r.scanHead());
+			r.turnAngle(r.findClosestPoint());
 			r.goForward();
 			r.avoidObstacle();
 			r.turnRight();
@@ -40,7 +40,7 @@ public class UnknownObstacleMain {
 		}
 		
 //		for(int i = 0; i < 10; i++){
-//			r.turnAngle(r.scanHead());
+//			r.turnAngle(r.findClosestPoint());
 //			Button.waitForAnyPress();
 //		}
 		
