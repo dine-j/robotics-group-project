@@ -422,14 +422,14 @@ public class Robot  {
 
 		setSpeed(powerR, powerL); // adjustSpeed(powerL, powerR); for the moment.....
 
-		if(powerL > 0)
+//		if(powerL > 0)
             motorL.forward();
-        else
-            motorL.backward();
-		if(powerR > 0)
+//        else
+//            motorL.backward();
+//		if(powerR > 0)
             motorR.forward();
-        else
-            motorR.backward();
+//        else
+//            motorR.backward();
 	}
 
 	public void stop() {
