@@ -41,9 +41,10 @@ public class KnownObstacleMain {
 			r.turnRight();
 			r.lookAhead();
 			r.followLine();
+			r.stop();
 			Button.waitForAnyPress();
 		}
-		
+
 		r.stop();
 		
 		r.shutdown();
