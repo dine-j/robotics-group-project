@@ -28,6 +28,7 @@ public class Robot  {
 		this.ultrasonicSensor = ultrasonicSensor;
 
 		this.ultrasonicSensor.getDistanceMode();
+		this.visionMotor.rotateTo(0);
 	}
 	
 	public void start() {
@@ -159,14 +160,54 @@ public class Robot  {
 
 		int seconds = 1;
 
-		while(colourSample[0] > 0.4 || seconds > 0){ //RobotMath.ON_BORDER_MAX) {
-			counter++;
-			if( counter % 200 == 0 ) seconds--;
+		while(seconds > 0){ //RobotMath.ON_BORDER_MAX) {
+			++counter;
+			if(counter % 200 == 0)
+				--seconds;
 
 			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 
 			float distance = ultrasonicSample[0];
-			if(distance > 0.3f) distance = 0.3f;
+			if(distance > 0.3f)
+				distance = 0.3f;
+			float error = distance - offset;
+			integral += error;
+			derivative = error - lastError;
+
+			float turn = kp * error + ki * integral + kd * derivative;
+			float powerR = tp + turn;
+			float powerL = tp - turn;
+
+			setSpeed(powerL, powerR);
+
+			if(powerL > 0)
+				motorL.forward();
+			else
+				motorL.backward();
+			if(powerR > 0)
+				motorR.forward();
+			else
+				motorR.backward();
+
+			lastError = error;
+
+			colorMode.fetchSample(colourSample, 0);
+			g.drawString(Float.toString(colourSample[0]), 0, 0, GraphicsLCD.HCENTER);
+			Delay.msDelay(5);
+			g.clear();
+		}
+
+		kp = 850f;
+		ki = 0f;
+		kd = 10f;
+		tp = 250; //70;
+
+		while(colourSample[0] > 0.4) { //RobotMath.ON_BORDER_MAX) {
+			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
+
+			float distance = ultrasonicSample[0];
+			if(distance > 0.3f)
+				distance = 0.3f;
 			float error = distance - offset;
 			integral += error;
 			derivative = error - lastError;
@@ -346,7 +387,7 @@ public class Robot  {
 
 	public void turnAngle(int angle){
 		setSpeed(120,120);
-		if (angle >= 0) {
+		if (angle > 0) {
 			motorR.backward();
 			motorL.forward();
 		} else {
@@ -354,7 +395,7 @@ public class Robot  {
 			motorL.backward();
 		}
 
-		if (angle < 0 ) angle = - angle;
+		if (angle < 0) angle = - angle;
 
 		final int NINETY = 1300;
 		Delay.msDelay((int)(angle/90.0 * NINETY));
