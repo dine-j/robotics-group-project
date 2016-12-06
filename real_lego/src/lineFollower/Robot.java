@@ -249,6 +249,19 @@ public class Robot  {
 			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 		}
 	}
+	
+	public void adjustToMinimunDistance(){
+		float[] ultrasonicSample = new float[1];
+		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
+
+		if(ultrasonicSample[0] < 0.05){
+			motorL.backward();
+			motorR.backward();
+			setSpeed(120, 120);
+			Delay.msDelay(1000);
+		}
+		
+	}
 
 	public void turnRight() {
 		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
@@ -397,7 +410,7 @@ public class Robot  {
 
 		if (angle < 0) angle = - angle;
 
-		final int NINETY = 1300;
+		final int NINETY = 1100;
 		Delay.msDelay((int)(angle/90.0 * NINETY));
 		stop();
 	}

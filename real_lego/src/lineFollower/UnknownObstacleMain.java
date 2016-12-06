@@ -33,6 +33,7 @@ public class UnknownObstacleMain {
 			r.followLineScan();
 			r.stop();
 			r.turnAngle(r.findClosestPoint());
+			r.adjustToMinimunDistance();
 			r.goForward();
 			r.positionToTurnAround(delayForPositioning);
 			r.avoidObstacle(distanceAroundObstacle);
