@@ -91,7 +91,6 @@ public class Robot  {
 		float[] ultrasonicSample = new float[1];
 		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 
-
 		float kp = 500f;//500f;//800f;//750f; //was 500 but worked for slow speed only
 		float ki = 0f;
 		float kd = 10f;//0f;
@@ -103,9 +102,7 @@ public class Robot  {
 
 		final int HEAD_MS_DELAY = 60;
 		final int HEAD_ROTATE_ANGLE = 35;
-		while (ultrasonicSample[0] > 0.20)//0.09)
-		{
-
+		while (ultrasonicSample[0] > 0.20) {
 			counter++;
 			if(counter == 0) visionMotor.rotateTo(HEAD_ROTATE_ANGLE, true);
 			else if(counter == HEAD_MS_DELAY) visionMotor.rotateTo(0, true);
@@ -132,17 +129,18 @@ public class Robot  {
 		visionMotor.rotateTo(0, true);
 	}
 
+	public void positionToTurnAround(int delay) {
+		visionMotor.rotate(-90);
+		setSpeed(120, 120);
+		motorR.backward();
+		motorL.forward();
+		Delay.msDelay(delay);
+	}
+
 	public void avoidObstacle(float offset) {
 		int counter = 0;
 
 		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
-
-		// Position Robot
-		setSpeed(120, 120);
-		motorR.backward();
-		motorL.forward();
-		Delay.msDelay(1000);
-		visionMotor.rotate(-90);
 
 		colorMode = colorSensor.getRedMode();  // changed from getIDMode
 		colourSample = new float[colorMode.sampleSize()];
@@ -283,8 +281,7 @@ public class Robot  {
 		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 
 		results[0] = ultrasonicSample[0];
-		for(int i = 1; i< NUMBER_OF_SEGMENTS + 1; i++)
-		{
+		for(int i = 1; i < NUMBER_OF_SEGMENTS + 1; ++i) {
 			visionMotor.rotate(segmentSize);
 			Delay.msDelay(20);
 
@@ -297,37 +294,53 @@ public class Robot  {
 		}
 
 		// find index of minimum
-
 		float currentMin = results[0];
 		int indexOfMin = 0;
-		for ( int i = 0; i < results.length; i++ )
-		{
-			if ( results[i] < currentMin) { currentMin = results[i]; indexOfMin = i; }
+		for (int i = 0; i < results.length; ++i) {
+			if (results[i] < currentMin) {
+				currentMin = results[i];
+				indexOfMin = i;
+			}
 		}
 
 		// calculate angle
-
 		int angle = indexOfMin * segmentSize - ANGLE_START;
 
 		// do a second pass
-
 		final int SMALL_ERROR = 6;
 
-		visionMotor.rotateTo(angle+SMALL_ERROR); Delay.msDelay(200);
-		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0); Delay.msDelay(50);
+		visionMotor.rotateTo(angle + SMALL_ERROR);
+		Delay.msDelay(200);
+
+		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
+		Delay.msDelay(50);
+
 		float result1 = ultrasonicSample[0];
-		visionMotor.rotate(-SMALL_ERROR); Delay.msDelay(200);
-		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0); Delay.msDelay(50);
+
+		visionMotor.rotate(-SMALL_ERROR);
+		Delay.msDelay(200);
+
+		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
+		Delay.msDelay(50);
+
 		float resultCenter = ultrasonicSample[0];
-		visionMotor.rotate(-SMALL_ERROR); Delay.msDelay(200);
-		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);Delay.msDelay(50);
+
+		visionMotor.rotate(-SMALL_ERROR);
+		Delay.msDelay(200);
+
+		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
+		Delay.msDelay(50);
+
 		float result2 = ultrasonicSample[0];
 
-		if(result1 < resultCenter && result1 < result2) angle -= 6;
-		else if(result2 < resultCenter && result2 < result1) angle += 6;
+		if(result1 < resultCenter && result1 < result2)
+			angle -= 6;
+		else if(result2 < resultCenter && result2 < result1)
+			angle += 6;
 
 		visionMotor.rotateTo(0);
-
+		g.clear();
+		g.drawString(Float.toString(resultCenter), 0, 0, GraphicsLCD.HCENTER);
 		return angle;
 	}
 

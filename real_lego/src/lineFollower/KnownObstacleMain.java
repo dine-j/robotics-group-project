@@ -12,7 +12,7 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 
 /**
  * Motors: left= A right = D  Rotation= B
- * Sensors: Vision= 2,  Color = 1,   TAKEN OUT FOR NOW: Gyro = 4
+ * Sensors: Vision= 2,  Color = 1
  *
  */
 
@@ -30,10 +30,13 @@ public class KnownObstacleMain {
 		Button.waitForAnyPress();
 
 		float distanceAroundObstacle = 0.07f;
+		int delayForPositioning = 1900;
 		
 		r.start();
 		
 		r.followLine();
+		r.stop();
+		r.positionToTurnAround(delayForPositioning);
 		r.avoidObstacle(distanceAroundObstacle);
 		r.turnRight();
 		r.lookAhead();

@@ -22,6 +22,7 @@ public class UnknownObstacleMain {
 
 		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
 		float distanceAroundObstacle = 0.07f;
+		int delayForPositioning = 1800;
 
 		Button.waitForAnyPress();
 
@@ -33,6 +34,7 @@ public class UnknownObstacleMain {
 			r.stop();
 			r.turnAngle(r.findClosestPoint());
 			r.goForward();
+			r.positionToTurnAround(delayForPositioning);
 			r.avoidObstacle(distanceAroundObstacle);
 			r.turnRight();
 			r.lookAhead();
