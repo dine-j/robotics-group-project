@@ -32,19 +32,21 @@ public class KnownObstacleMain {
 		float distanceAroundObstacle = 0.07f;
 		int delayForPositioning = 1900;
 		
-		r.start();
+		for(int i = 0; i < 10; i++){
+			r.start();
+			r.followLine();
+			r.stop();
+			r.positionToTurnAround(delayForPositioning);
+			r.avoidObstacle(distanceAroundObstacle);
+			r.turnRight();
+			r.lookAhead();
+			r.followLine();
+			Button.waitForAnyPress();
+		}
 		
-		r.followLine();
-		r.stop();
-		r.positionToTurnAround(delayForPositioning);
-		r.avoidObstacle(distanceAroundObstacle);
-		r.turnRight();
-		r.lookAhead();
 
-		r.followLine();
+		r.stop();
 		
-
-		r.stop();
 		r.shutdown();
 	}
 }
