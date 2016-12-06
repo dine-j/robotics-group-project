@@ -32,7 +32,7 @@ public class KnownObstacleMain {
 		float distanceAroundObstacle = 0.07f;
 		int delayForPositioning = 1900;
 		
-		for(int i = 0; i < 10; i++){
+		for(int i = 0; i < 10; i++) {
 			r.start();
 			r.followLine();
 			r.stop();
@@ -44,7 +44,6 @@ public class KnownObstacleMain {
 			Button.waitForAnyPress();
 		}
 		
-
 		r.stop();
 		
 		r.shutdown();

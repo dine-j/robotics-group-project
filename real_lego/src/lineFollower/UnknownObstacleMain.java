@@ -26,15 +26,12 @@ public class UnknownObstacleMain {
 
 		Button.waitForAnyPress();
 
-		
-		
-		
 		for(int i = 0; i < 10; i++){
 			r.start();
 			r.followLineScan();
 			r.stop();
 			r.turnAngle(r.findClosestPoint());
-			r.adjustToMinimunDistance();
+			r.adjustToMinimumDistance();
 			r.goForward();
 			r.positionToTurnAround(delayForPositioning);
 			r.avoidObstacle(distanceAroundObstacle);
