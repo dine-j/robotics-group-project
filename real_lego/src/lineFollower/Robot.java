@@ -156,7 +156,7 @@ public class Robot  {
 		float derivative = 0f;
 		float lastError = 0f;
 
-		int seconds = 1;
+		int seconds = 2;
 
 		while(seconds > 0) {
 			++counter;
@@ -407,7 +407,7 @@ public class Robot  {
 
 		if (angle < 0) angle = - angle;
 
-		final int NINETY = 1100;
+		final int NINETY = 1050;
 		Delay.msDelay((int)(angle/90.0 * NINETY));
 		stop();
 	}

@@ -30,7 +30,7 @@ public class KnownObstacleMain {
 		Button.waitForAnyPress();
 
 		float distanceAroundObstacle = 0.07f;
-		int delayForPositioning = 1900;
+		int delayForPositioning = 1950;
 		
 		for(int i = 0; i < 10; i++) {
 			r.start();
