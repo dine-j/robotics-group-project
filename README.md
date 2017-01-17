@@ -57,8 +57,10 @@ leJOS has a [dedicated plugin](https://sourceforge.net/projects/lejos/) for Wind
 
 ### IntelliJ users
 
-**Dependencies:** lejos-ev3-code as external library
-**Sources:** lejos-ev3-code/ev3classes/src and lejos-ev3-code/DBusJava/src
+* **Dependencies:** lejos-ev3-code as external library
+* **Sources:** 
+  * lejos-ev3-code/ev3classes/src
+  * lejos-ev3-code/DBusJava/src
 
 
 ## Team members
