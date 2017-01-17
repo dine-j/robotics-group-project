@@ -46,6 +46,21 @@ LEGO EV3 Robots are used in this project and Java is required to be used for pro
 TODO
 
 
+## Dependencies
+
+* Java 7
+* leJOS library
+
+### Eclipse users
+
+leJOS has a [dedicated plugin](https://sourceforge.net/projects/lejos/) for Windows.
+
+### IntelliJ users
+
+**Dependencies:** lejos-ev3-code as external library
+**Sources:** lejos-ev3-code/ev3classes/src and lejos-ev3-code/DBusJava/src
+
+
 ## Team members
 
 * **Maksymilian Gajowniczek** - [codemaks](https://github.com/codemaks)
