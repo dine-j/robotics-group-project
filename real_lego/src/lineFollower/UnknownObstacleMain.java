@@ -22,7 +22,7 @@ public class UnknownObstacleMain {
 
 		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
 		float distanceAroundObstacle = 0.07f;
-		int delayForPositioning = 1800;
+		int delayForPositioning = 1600;
 
 		Button.waitForAnyPress();
 

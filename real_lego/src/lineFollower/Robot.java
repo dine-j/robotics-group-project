@@ -407,7 +407,7 @@ public class Robot  {
 
 		if (angle < 0) angle = - angle;
 
-		final int NINETY = 1050;
+		final int NINETY = 1100;
 		Delay.msDelay((int)(angle/90.0 * NINETY));
 		stop();
 	}
