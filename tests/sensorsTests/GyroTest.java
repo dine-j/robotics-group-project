@@ -4,6 +4,7 @@ import lejos.hardware.BrickFinder;
 import lejos.hardware.lcd.GraphicsLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.MotorPort;
+import lejos.hardware.port.Port;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.robotics.SampleProvider;
@@ -17,15 +18,16 @@ public class GyroTest {
         EV3LargeRegulatedMotor motorL = new EV3LargeRegulatedMotor(MotorPort.A);
         EV3LargeRegulatedMotor motorR = new EV3LargeRegulatedMotor(MotorPort.D);
 
-        EV3GyroSensor gyro = new EV3GyroSensor(SensorPort.S1);
+        EV3GyroSensor gyro = new EV3GyroSensor((Port) SensorPort.S1);
 
         SampleProvider sampleProvider = gyro.getAngleMode();
         float[] sample = new float[sampleProvider.sampleSize()];
         sampleProvider.fetchSample(sample, 0);
 
+        gyro.reset();
         motorL.setSpeed(150);
 
-        for(int i = 0; i < 100; i++) {
+        for(int i = 0; i < 20; i++) {
             sampleProvider.fetchSample(sample, 0);
 
             GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
