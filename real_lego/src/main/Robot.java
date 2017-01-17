@@ -1,4 +1,4 @@
-package lineFollower;
+package main;
 
 import lejos.hardware.BrickFinder;
 import lejos.hardware.lcd.GraphicsLCD;

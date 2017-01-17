@@ -1,9 +1,7 @@
-package testSensorsMotors;
+package tests.sensorsTests;
 
 import lejos.hardware.BrickFinder;
 import lejos.hardware.lcd.GraphicsLCD;
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;

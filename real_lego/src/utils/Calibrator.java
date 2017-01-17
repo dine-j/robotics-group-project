@@ -8,7 +8,7 @@ import lejos.hardware.sensor.SensorMode;
 import lejos.utility.Delay;
 
 /**
- * Tests the (red mode) color sensor
+ * tests the (red mode) color sensor
  * Prints 0.0 - 1.0 for 10 seconds to screen
  *
  */

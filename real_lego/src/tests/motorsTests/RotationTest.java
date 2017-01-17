@@ -1,4 +1,4 @@
-package testSensorsMotors;
+package tests.motorsTests;
 
 import lejos.hardware.motor.*;
 import lejos.hardware.port.MotorPort;

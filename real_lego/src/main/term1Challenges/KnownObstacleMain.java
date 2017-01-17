@@ -1,4 +1,4 @@
-package lineFollower;
+package main.term1Challenges;
 
 import java.io.IOException;
 
@@ -9,8 +9,15 @@ import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
+import main.Robot;
 
-public class UnknownObstacleMain {
+/**
+ * Motors: left= A right = D  Rotation= B
+ * Sensors: Vision= 2,  Color = 1
+ *
+ */
+
+public class KnownObstacleMain {
 	
 	public static void main(String args[]) throws IOException {
 		EV3LargeRegulatedMotor motorL = new EV3LargeRegulatedMotor(MotorPort.A);
@@ -21,18 +28,15 @@ public class UnknownObstacleMain {
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
 
 		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
-		float distanceAroundObstacle = 0.07f;
-		int delayForPositioning = 1600;
-
 		Button.waitForAnyPress();
 
-		for(int i = 0; i < 10; i++){
+		float distanceAroundObstacle = 0.07f;
+		int delayForPositioning = 1950;
+		
+		for(int i = 0; i < 10; i++) {
 			r.start();
-			r.followLineScan();
+			r.followLine();
 			r.stop();
-			r.turnAngle(r.findClosestPoint());
-			r.adjustToMinimumDistance();
-			r.goForward();
 			r.positionToTurnAround(delayForPositioning);
 			r.avoidObstacle(distanceAroundObstacle);
 			r.turnRight();
@@ -43,6 +47,7 @@ public class UnknownObstacleMain {
 		}
 
 		r.stop();
+		
 		r.shutdown();
 	}
 }
