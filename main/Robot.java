@@ -259,7 +259,7 @@ public class Robot  {
 		float[] sample = new float[sampleProvider.sampleSize()];
 		sampleProvider.fetchSample(sample, 0);
 
-		float kp = 500f;
+		float kp = 0.7f;
 		float ki = 0f;
 		float kd = 0f;
 		float offset = 0f;
