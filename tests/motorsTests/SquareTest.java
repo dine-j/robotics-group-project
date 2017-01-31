@@ -1,4 +1,5 @@
 package tests.motorsTests;
+
 import lejos.hardware.motor.*;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;
@@ -7,7 +8,7 @@ import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.SensorMode;
 import lejos.utility.Delay;
 
-public class DistanceTest {
+public class SquareTest {
 	public static void main(String[] args) {		
 		EV3LargeRegulatedMotor motorL = new EV3LargeRegulatedMotor(MotorPort.A);
 		EV3LargeRegulatedMotor motorR = new EV3LargeRegulatedMotor(MotorPort.D);
@@ -22,53 +23,24 @@ public class DistanceTest {
 			if (touchSample[0] == 1.0) break;
 		}
 
-
-
-		//motorR.forward();
-		//motorL.forward();
-
-		//motorR.setSpeed(speed);
 		final int DEGREES = 2100;
-		final int MORE = 1000;
+		//final int NINETY = 254;  //calculated from 7.7cm radius from center
 		
-		motorL.rotate(DEGREES,true);
-		motorR.rotate(DEGREES);
-		
-		Delay.msDelay(20000);
-		
-		motorL.rotate(DEGREES,true);
-		motorR.rotate(DEGREES);
-//		
-		Delay.msDelay(20000);
-		
-		motorL.rotate(DEGREES,true);
-		motorR.rotate(DEGREES);
-		
-//		motorL.rotate(-DEGREES,true);
-//		motorR.rotate(-DEGREES);
-		
-//		Delay.msDelay(3000);
-//		
-//		motorL.rotate(DEGREES + MORE,true);
-//		motorR.rotate(DEGREES + MORE);
-//		
-//		Delay.msDelay(1000);
-//		
-//		motorL.rotate(-DEGREES - MORE,true);
-//		motorR.rotate(-DEGREES - MORE);
-		
-		
+		final int NINETY = 270;
 
-
-		//motorR.rotate(3000, true);
-		//motorL.rotate(3000, true);
-
-
-
-		//motorL.stop();
-		//motorR.stop();
+		for (int i = 0; i < 3; i++){
+			for (int square =0 ; square < 4; square++){
+				motorL.rotate(DEGREES/2,true);
+				motorR.rotate(DEGREES/2);
+				Delay.msDelay(1000);
+				motorL.rotate(NINETY,true);
+				motorR.rotate(-NINETY);
+				Delay.msDelay(1000);
+			}
+		}
+		
+	
 	}
+	
 
 }
-
-
