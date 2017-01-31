@@ -240,8 +240,7 @@ public class Robot  {
 	}
 
 	public void goForward(){
-
-		/*float[] ultrasonicSample = new float[1];
+		float[] ultrasonicSample = new float[1];
 		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 
 		motorL.forward();
@@ -250,39 +249,6 @@ public class Robot  {
 
 		while (ultrasonicSample[0] > 0.09){
 			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-		}*/
-
-		float[] ultrasonicSample = new float[1];
-		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-
-		SampleProvider sampleProvider = gyro.getAngleMode();
-		float[] sample = new float[sampleProvider.sampleSize()];
-		sampleProvider.fetchSample(sample, 0);
-
-		float kp = 0.7f;
-		float ki = 0f;
-		float kd = 0f;
-		float offset = 0f;
-		int tp = 20;
-		float integral = 0f;
-		float derivative = 0f;
-		float lastError = 0f;
-
-		while (ultrasonicSample[0] > 0.09) {
-			// takes sample
-			sampleProvider.fetchSample(sample, 0);
-
-			float angleVal = sample[0];
-			float error = angleVal - offset;
-			integral += error;
-			derivative = error - lastError;
-
-			adjustSpeed(kp, ki, kd, tp, integral, derivative, error);
-
-			lastError = error;
-
-			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-			Delay.msDelay(5);
 		}
 	}
 	
