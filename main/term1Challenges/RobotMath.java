@@ -1,4 +1,4 @@
-package main;
+package main.term1Challenges;
 
 
 
