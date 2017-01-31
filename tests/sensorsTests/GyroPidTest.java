@@ -25,6 +25,7 @@ public class GyroPidTest {
 
         Button.waitForAnyPress();
 
+        gyro.reset();
         goForward();
 
         motorL.stop();
@@ -39,20 +40,24 @@ public class GyroPidTest {
         float[] sample = new float[sampleProvider.sampleSize()];
         sampleProvider.fetchSample(sample, 0);
 
-        float kp = 10f;
+        float kp = 4f;
         float ki = 0f;
         float kd = 0f;
         float offset = 0f;
-        int tp = 20;
+        int tp = 80;
         float integral = 0f;
         float derivative = 0f;
         float lastError = 0f;
+
+        int counter = 0;
 
         while (true) {
             // takes sample
             sampleProvider.fetchSample(sample, 0);
 
             float angleVal = sample[0];
+            if(counter % 10 == 0)
+                System.out.println(angleVal);
             float error = angleVal - offset;
             integral += error;
             derivative = error - lastError;
@@ -62,6 +67,7 @@ public class GyroPidTest {
             lastError = error;
 
             Delay.msDelay(5);
+            ++counter;
         }
     }
 
