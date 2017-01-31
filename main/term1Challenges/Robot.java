@@ -5,8 +5,10 @@ import lejos.hardware.lcd.GraphicsLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorMode;
+import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
 public class Robot  {
@@ -17,18 +19,21 @@ public class Robot  {
 	private EV3ColorSensor colorSensor;
 	private EV3UltrasonicSensor ultrasonicSensor;
 	private SensorMode colorMode;
+	private EV3GyroSensor gyro;
 	
 	private float[] colourSample;
 	
-	public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor) {
+	public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor, EV3GyroSensor gyro) {
 		this.motorL = motorL;
 		this.motorR	= motorR;
 		this.visionMotor = visionMotor;
 		this.colorSensor = colorSensor;
 		this.ultrasonicSensor = ultrasonicSensor;
+		this.gyro = gyro;
 
 		this.ultrasonicSensor.getDistanceMode();
 		this.visionMotor.rotateTo(0);
+		this.gyro.reset();
 	}
 	
 	public void start() {
@@ -235,7 +240,6 @@ public class Robot  {
 	}
 
 	public void goForward(){
-
 		float[] ultrasonicSample = new float[1];
 		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
 

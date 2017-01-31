@@ -20,7 +20,7 @@ public class UnknownObstacleMain {
 		EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S1);
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
 
-		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
+		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor, null);
 		float distanceAroundObstacle = 0.07f;
 		int delayForPositioning = 1600;
 

@@ -26,7 +26,7 @@ public class KnownObstacleMain {
 		EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S1);
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
 
-		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor);
+		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor, null);
 		Button.waitForAnyPress();
 
 		float distanceAroundObstacle = 0.07f;
