@@ -9,6 +9,18 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorMode;
 import lejos.utility.Delay;
 
+/*
+ * Port D: MotorL
+ * Port A: MotorR
+ * Port B: HeadRotatingMotor
+ * 
+ * Port 1: Gyro
+ * Port 2: Ultrasound
+ * Port 3: Touch
+ * Port 4: Color
+ */
+
+
 public class Robot  {
 
 	private EV3LargeRegulatedMotor motorL, motorR;
