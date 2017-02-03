@@ -12,8 +12,8 @@ import lejos.utility.Delay;
 
 public class SquareRotation {
 
-    private static RegulatedMotor motorL;
-    private static RegulatedMotor motorR;
+    private static EV3LargeRegulatedMotor motorL;
+    private static EV3LargeRegulatedMotor motorR;
     private static EV3GyroSensor gyro;
 
     private static final int DEGREES_PER_METER = 2100;
@@ -29,7 +29,7 @@ public class SquareRotation {
         for(int i = 0; i < 4; ++i) {
             travel();
             Delay.msDelay(1000);
-            rotate();
+            rotatePID();
             Delay.msDelay(1000);
         }
     }
@@ -38,6 +38,8 @@ public class SquareRotation {
     * Make robot travel for 50 cm
      */
     private static void travel() {
+        motorL.setSpeed(120);
+        motorR.setSpeed(120);
         int distance = DEGREES_PER_METER / 2;
         motorL.rotate(distance, true);
         motorR.rotate(distance);
@@ -65,5 +67,44 @@ public class SquareRotation {
         // Debugging
 //        float angle = sample[0];
 //        System.out.println(angle);
+    }
+
+    /*
+    * Make robot rotate 90 degrees anticlockwise using PID
+     */
+    private static void rotatePID() {
+        gyro.reset();
+        SampleProvider sampleProvider = gyro.getAngleMode();
+        float[] sample = new float[sampleProvider.sampleSize()];
+        sampleProvider.fetchSample(sample, 0);
+
+        float kp = 0.7f;
+        float ki = 0f;
+        float kd = 0f;
+        int tp = 10;
+        float integral = 0f;
+        float derivative = 0f;
+
+        while(sample[0] <= 90) {
+            float angle = sample[0];
+            float error = angle - 90;
+
+            float turn = kp * error + ki * integral + kd * derivative;
+            float powerL = tp + turn;
+            float powerR = tp - turn;
+
+            motorL.setSpeed(powerL);
+            motorR.setSpeed(powerR);
+
+            motorR.forward();
+            motorL.backward();
+
+            sampleProvider.fetchSample(sample, 0);
+            Delay.msDelay(2);
+        }
+
+        // Debugging
+        float angle = sample[0];
+        System.out.println(angle);
     }
 }
