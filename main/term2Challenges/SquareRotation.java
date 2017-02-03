@@ -10,7 +10,7 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
-public class RotationSquare {
+public class SquareRotation {
 
     private static RegulatedMotor motorL;
     private static RegulatedMotor motorR;
@@ -62,6 +62,7 @@ public class RotationSquare {
             Delay.msDelay(2);
         }
 
+        // Debugging
 //        float angle = sample[0];
 //        System.out.println(angle);
     }
