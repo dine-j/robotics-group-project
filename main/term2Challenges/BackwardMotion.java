@@ -22,6 +22,9 @@ public class BackwardMotion {
         motorL = new EV3LargeRegulatedMotor(MotorPort.D);
         motorR = new EV3LargeRegulatedMotor(MotorPort.A);
 
+        motorL.setSpeed(120);
+        motorR.setSpeed(120);
+
         gyro = new EV3GyroSensor((Port) SensorPort.S1);
 
         Button.waitForAnyPress();
@@ -33,6 +36,7 @@ public class BackwardMotion {
 
         for(int i = 0; i < 10; ++i) {
             moveBackward();
+            Delay.msDelay(2000);
             // Record error
             sampleProvider.fetchSample(sample, 0);
             float angle = sample[0];
