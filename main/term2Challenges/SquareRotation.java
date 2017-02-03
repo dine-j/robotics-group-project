@@ -6,7 +6,6 @@ import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.Port;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3GyroSensor;
-import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
@@ -85,7 +84,7 @@ public class SquareRotation {
         float integral = 0f;
         float derivative = 0f;
 
-        while(sample[0] <= 90) {
+        while(sample[0] < 90) {
             float angle = sample[0];
             float error = angle - 90;
 
