@@ -20,7 +20,6 @@ import lejos.utility.Delay;
  * Port 4: Color
  */
 
-
 public class Robot  {
 
 	private EV3LargeRegulatedMotor motorL, motorR;
