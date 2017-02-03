@@ -1,4 +1,4 @@
-package main.term2Challenges;
+package main.term2Challenges.errorAnalysis;
 
 import lejos.hardware.Button;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -10,7 +10,7 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
-public class ForwardMotion {
+public class BackwardMotion {
 
     private static RegulatedMotor motorL;
     private static RegulatedMotor motorR;
@@ -35,7 +35,7 @@ public class ForwardMotion {
         sampleProvider.fetchSample(sample, 0);
 
         for(int i = 0; i < 10; ++i) {
-            moveForward();
+            moveBackward();
             Delay.msDelay(2000);
             // Record error
             sampleProvider.fetchSample(sample, 0);
@@ -45,10 +45,10 @@ public class ForwardMotion {
     }
 
     /*
-    * Make robot move forward for 2 cm
+    * Make robot move backward on 2 cm
      */
-    private static void moveForward() {
-        int distance = DEGREES_PER_METER / 50;
+    private static void moveBackward() {
+        int distance = - (DEGREES_PER_METER / 50);
         motorL.rotate(distance, true);
         motorR.rotate(distance);
     }
