@@ -27,9 +27,13 @@ public class PathNavigationErrorAnalysis {
         Button.waitForAnyPress();
         
         moveForward(DEGREES_PER_METER * 80 / 100);
+        Delay.msDelay(1000);
         turn(90);
+        Delay.msDelay(1000);
         moveForward(DEGREES_PER_METER * 50 / 100);
+        Delay.msDelay(1000);
         turn(-45);
+        Delay.msDelay(1000);
         moveForward(DEGREES_PER_METER * 50 / 100);
     }
 
@@ -37,7 +41,6 @@ public class PathNavigationErrorAnalysis {
     * Make robot move forward for given distance
      */
     private static void moveForward(int distance) {
-        int distance = DEGREES_PER_METER / 50;
         motorL.rotate(distance, true);
         motorR.rotate(distance);
     }
