@@ -54,12 +54,16 @@ public class ForwardMotion {
         int distance = DEGREES_PER_METER / 50;
         motorL.rotate(distance, true);
         motorR.rotate(distance);
+        
+        
+        // TODO: Needs to change the speed of motors when robot is still
 
-        while(!motorL.isStalled() && !motorR.isStalled()) {
+        while(motorL.isMoving() && motorR.isMoving()) {
+        	System.out.println("entered loop");
             float kp = 0.7f;
             float ki = 0f;
             float kd = 0f;
-            int tp = 10;
+            int tp = 120;
             float integral = 0f;
             float derivative = 0f;
 
