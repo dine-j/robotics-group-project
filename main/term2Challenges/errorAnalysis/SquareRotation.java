@@ -99,7 +99,7 @@ public class SquareRotation {
             motorL.backward();
 
             sampleProvider.fetchSample(sample, 0);
-//            Delay.msDelay(2);
+            Delay.msDelay(2);
         }
 
         // Debugging

@@ -21,9 +21,9 @@ public class RotationMotion {
         gyro = new EV3GyroSensor((Port) SensorPort.S1);
 
         Button.waitForAnyPress();
-
+        gyro.reset();
         for(int i = 0; i < 20; ++i) {
-            gyro.reset();
+            
             SampleProvider sampleProvider = gyro.getAngleMode();
             float[] sample = new float[sampleProvider.sampleSize()];
             sampleProvider.fetchSample(sample, 0);
