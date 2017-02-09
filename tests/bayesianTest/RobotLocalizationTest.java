@@ -20,10 +20,10 @@ public class RobotLocalizationTest {
 
     public static void test1() {
         robot = new RobotMockUp(14, 0.95);
-        localizationStrip.reinitalizeProbabilities();
+        localizationStrip.reinitializeProbabilities();
 
         for(int i = 0; i < 9; ++i) {
-            localizationStrip.updateProbs(true, robot.getColorIsBlue());
+            localizationStrip.updateProbs(true, robot.getColorIsBlue(), 0.95);
             robot.moveForward();
         }
 

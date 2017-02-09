@@ -68,7 +68,7 @@ public class LocalizationStrip {
     public void printBayesianResults() {
         System.out.print("|");
         for(int index = 0; index < stripIsBlue.length; ++index) {
-            System.out.print("   " + stripIsBlue[index] + "   ");
+            System.out.print(" " + stripIsBlue[index] + " ");
             System.out.print("|");
         }
         System.out.println();
@@ -79,7 +79,7 @@ public class LocalizationStrip {
         }
     }
 
-    public void reinitalizeProbabilities() {
+    public void reinitializeProbabilities() {
 		for( int i = 0; i < bayesianProbs.length; ++i){
 			bayesianProbs[i] = 1 / stripIsBlue.length;
 		}
