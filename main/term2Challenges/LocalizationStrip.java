@@ -25,7 +25,7 @@ public class LocalizationStrip {
 	 */
 	public void updateProbs(boolean movedFoward, boolean readBlue, double sensorProba) {
 		// sensing update
-		float normalization = 0;
+		double normalization = 0.0;
 		for(int i = 0; i < bayesianProbs.length; ++i) {
 			if((stripIsBlue[i] && readBlue) || (!stripIsBlue[i] && !readBlue)) { // sensor is right
 				bayesianProbs[i] *= sensorProba;
@@ -42,14 +42,17 @@ public class LocalizationStrip {
 
 		// move update
 		double lastProba = bayesianProbs[bayesianProbs.length - 1];
+		double previous = bayesianProbs[0];
 		for(int i = 1; i < bayesianProbs.length; ++i) {
-			bayesianProbs[i] = bayesianProbs[i - 1];
+			double swap = bayesianProbs[i];
+			bayesianProbs[i] = previous;
+			previous = swap;
 		}
 		bayesianProbs[0] = lastProba;
 	}
 
 	/*
-	 * Return highest probability
+	 * Return index of highest probability
 	 */
 	public int getLocation() {
 		double max = bayesianProbs[0];
@@ -77,7 +80,8 @@ public class LocalizationStrip {
             System.out.print(" " + bayesianProbs[index] + " ");
             System.out.print("|");
         }
-        System.out.println("Highest proba: " + getLocation());
+		System.out.println();
+        System.out.println("Highest proba: " + bayesianProbs[getLocation()] + " at " + getLocation());
     }
 
     public void reinitializeProbabilities() {
