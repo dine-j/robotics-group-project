@@ -28,7 +28,23 @@ public class LocalizationStrip {
 		
 	}
 
-	
+	/*
+	 * Return highest probability
+	 */
+	public int getLocation() {
+		float max = bayesianProbs[0];
+		int index = 0;
+
+		for(int i = 1; i < bayesianProbs.length; ++i) {
+			if(bayesianProbs[i] > max) {
+				max = bayesianProbs[i];
+				index = i;
+			}
+		}
+
+		return index;
+	}
+
     public void printBayesianResults() {
         System.out.print("|");
         for(int index = 0; index < stripIsBlue.length; ++index) {
@@ -42,4 +58,10 @@ public class LocalizationStrip {
             System.out.print("|");
         }
     }
+
+    public void reinitalizeProbabilities() {
+		for( int i = 0; i < bayesianProbs.length; ++i){
+			bayesianProbs[i] = 1 / stripIsBlue.length;
+		}
+	}
 }
