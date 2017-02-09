@@ -1,10 +1,9 @@
 package main.term2Challenges;
 
-
 public class LocalizationStrip {
 	
-	final boolean[] stripIsBlue;
-	float[] bayesianProbs;
+	private final boolean[] stripIsBlue;
+	private float[] bayesianProbs;
 
 	public LocalizationStrip() {
 		stripIsBlue = new boolean[] { true, false, true, false, false, true, true, false, true, true, 
@@ -15,7 +14,7 @@ public class LocalizationStrip {
 		bayesianProbs = new float[stripIsBlue.length];
 		
 		
-		float initialProb = 1 / bayesianProbs.length;
+		float initialProb = 1 / stripIsBlue.length;
 		for( int i = 0; i < bayesianProbs.length; ++i){
 			bayesianProbs[i] = initialProb;
 		}
@@ -28,9 +27,7 @@ public class LocalizationStrip {
 		
 		
 	}
-	
-	
-	
+
 	
     public void printBayesianResults() {
         System.out.print("|");
@@ -45,7 +42,4 @@ public class LocalizationStrip {
             System.out.print("|");
         }
     }
-	
-	
-	
 }
