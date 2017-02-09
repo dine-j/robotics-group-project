@@ -69,19 +69,13 @@ public class LocalizationStrip {
 	}
 
     public void printBayesianResults() {
-        System.out.print("|");
         for(int index = 0; index < stripIsBlue.length; ++index) {
-            System.out.print(" " + stripIsBlue[index] + " ");
-            System.out.print("|");
+			if(stripIsBlue[index])
+            	System.out.println(index + " (B) " + Math.floor(bayesianProbs[index] * 100) / 100 + " ");
+			else
+				System.out.println(index + " (W) " + Math.floor(bayesianProbs[index] * 100) / 100 + " ");
         }
-        System.out.println();
-        System.out.print("|");
-        for(int index = 0; index < stripIsBlue.length; ++index) {
-            System.out.print(" " + bayesianProbs[index] + " ");
-            System.out.print("|");
-        }
-		System.out.println();
-        System.out.println("Highest proba: " + bayesianProbs[getLocation()] + " at " + getLocation());
+        System.out.println("Highest proba: " + Math.floor(bayesianProbs[getLocation()] * 100) / 100 + " at " + getLocation());
     }
 
     public void reinitializeProbabilities() {
