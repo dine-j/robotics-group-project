@@ -3,7 +3,7 @@ package main.term2Challenges;
 public class LocalizationStrip {
 	
 	private final boolean[] stripIsBlue;
-	private float[] bayesianProbs;
+	private double[] bayesianProbs;
 
 	public LocalizationStrip() {
 		stripIsBlue = new boolean[] { true, false, true, false, false, true, true, false, true, true, 
@@ -11,10 +11,10 @@ public class LocalizationStrip {
 				true, true, true, false, false, true, true, true, false, false, false, false,
 				true, true, true, true, false, false, false};
 		
-		bayesianProbs = new float[stripIsBlue.length];
+		bayesianProbs = new double[stripIsBlue.length];
 
 		for( int i = 0; i < bayesianProbs.length; ++i){
-			bayesianProbs[i] = 1 / stripIsBlue.length;
+			bayesianProbs[i] = 1.0 / stripIsBlue.length;
 		}
 
 	}
@@ -41,7 +41,7 @@ public class LocalizationStrip {
 		}
 
 		// move update
-		float lastProba = bayesianProbs[bayesianProbs.length - 1];
+		double lastProba = bayesianProbs[bayesianProbs.length - 1];
 		for(int i = 1; i < bayesianProbs.length; ++i) {
 			bayesianProbs[i] = bayesianProbs[i - 1];
 		}
@@ -52,7 +52,7 @@ public class LocalizationStrip {
 	 * Return highest probability
 	 */
 	public int getLocation() {
-		float max = bayesianProbs[0];
+		double max = bayesianProbs[0];
 		int index = 0;
 
 		for(int i = 1; i < bayesianProbs.length; ++i) {
@@ -77,11 +77,12 @@ public class LocalizationStrip {
             System.out.print(" " + bayesianProbs[index] + " ");
             System.out.print("|");
         }
+        System.out.println("Highest proba: " + getLocation());
     }
 
     public void reinitializeProbabilities() {
 		for( int i = 0; i < bayesianProbs.length; ++i){
-			bayesianProbs[i] = 1 / stripIsBlue.length;
+			bayesianProbs[i] = 1.0 / stripIsBlue.length;
 		}
 	}
 }

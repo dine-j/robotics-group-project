@@ -10,7 +10,6 @@ public class RobotLocalizationTest {
 
     public static void main(String[] args) {
         localizationStrip = new LocalizationStrip();
-
         try {
             test1();
         } catch (AssertionError error) {
