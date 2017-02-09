@@ -12,20 +12,40 @@ public class LocalizationStrip {
 				true, true, true, true, false, false, false};
 		
 		bayesianProbs = new float[stripIsBlue.length];
-		
-		
-		float initialProb = 1 / stripIsBlue.length;
+
 		for( int i = 0; i < bayesianProbs.length; ++i){
-			bayesianProbs[i] = initialProb;
+			bayesianProbs[i] = 1 / stripIsBlue.length;
 		}
 
 	}
-	
-	
-	public void updateProbs(boolean movedFoward, boolean readBlue) { 
-		
-		
-		
+
+	/*
+	 * Only considers the fact that the robot is moving forward
+	 * TODO: implement also for moving backwards
+	 */
+	public void updateProbs(boolean movedFoward, boolean readBlue, double sensorProba) {
+		// sensing update
+		float normalization = 0;
+		for(int i = 0; i < bayesianProbs.length; ++i) {
+			if((stripIsBlue[i] && readBlue) || (!stripIsBlue[i] && !readBlue)) { // sensor is right
+				bayesianProbs[i] *= sensorProba;
+			} else { // sensor is wrong
+				bayesianProbs[i] *= 1 - sensorProba;
+			}
+			normalization += bayesianProbs[i];
+		}
+
+		// normalization
+		for(int i = 0; i < bayesianProbs.length; ++i) {
+			bayesianProbs[i] /= normalization;
+		}
+
+		// move update
+		float lastProba = bayesianProbs[bayesianProbs.length - 1];
+		for(int i = 1; i < bayesianProbs.length; ++i) {
+			bayesianProbs[i] = bayesianProbs[i - 1];
+		}
+		bayesianProbs[0] = lastProba;
 	}
 
 	/*
