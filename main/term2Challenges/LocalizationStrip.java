@@ -27,7 +27,7 @@ public class LocalizationStrip {
 		// sensing update
 		double normalization = 0.0;
 		for(int i = 0; i < bayesianProbs.length; ++i) {
-			if((stripIsBlue[i] && readBlue) || (!stripIsBlue[i] && !readBlue)) { // sensor is right
+			if(stripIsBlue[i] == readBlue) { // sensor is right
 				bayesianProbs[i] *= sensorProba;
 			} else { // sensor is wrong
 				bayesianProbs[i] *= 1 - sensorProba;
