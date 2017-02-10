@@ -20,8 +20,10 @@ public class LocalizationStrip {
 	}
 
 	/*
-	 * Only considers the fact that the robot is moving forward
-	 * TODO: implement also for moving backwards
+	 * Update probabilities after:
+	 * First, sensing the color at current location
+	 * Second, moving in a given direction (forward or backward)
+	 * TODO: see if really need to use probabilities for motion
 	 */
 	public void updateProbs(boolean movedFoward, boolean readBlue, double sensorProba) {
 		// sensing update
@@ -41,14 +43,25 @@ public class LocalizationStrip {
 		}
 
 		// move update
-		double lastProba = bayesianProbs[bayesianProbs.length - 1];
-		double previous = bayesianProbs[0];
-		for(int i = 1; i < bayesianProbs.length; ++i) {
-			double swap = bayesianProbs[i];
-			bayesianProbs[i] = previous;
-			previous = swap;
+		if(movedFoward) {
+			double lastProba = bayesianProbs[bayesianProbs.length - 1];
+			double previous = bayesianProbs[0];
+			for (int i = 1; i < bayesianProbs.length; ++i) {
+				double swap = bayesianProbs[i];
+				bayesianProbs[i] = previous;
+				previous = swap;
+			}
+			bayesianProbs[0] = lastProba;
+		} else {
+			double lastProba = bayesianProbs[0];
+			double previous = bayesianProbs[bayesianProbs.length - 1];
+			for (int i = bayesianProbs.length - 2; i > 0; --i) {
+				double swap = bayesianProbs[i];
+				bayesianProbs[i] = previous;
+				previous = swap;
+			}
+			bayesianProbs[bayesianProbs.length - 1] = lastProba;
 		}
-		bayesianProbs[0] = lastProba;
 	}
 
 	/*
@@ -68,6 +81,9 @@ public class LocalizationStrip {
 		return index;
 	}
 
+	/*
+	 * For testing
+	 */
     public void printBayesianResults() {
         for(int index = 0; index < stripIsBlue.length; ++index) {
 			if(stripIsBlue[index])
@@ -78,6 +94,9 @@ public class LocalizationStrip {
         System.out.println("Highest proba: " + Math.floor(bayesianProbs[getLocation()] * 100) / 100 + " at " + getLocation());
     }
 
+    /*
+     * Useful for testing
+     */
     public void reinitializeProbabilities() {
 		for( int i = 0; i < bayesianProbs.length; ++i){
 			bayesianProbs[i] = 1.0 / stripIsBlue.length;

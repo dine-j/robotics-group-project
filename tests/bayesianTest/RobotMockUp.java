@@ -1,7 +1,5 @@
 package tests.bayesianTest;
 
-import java.util.Random;
-
 public class RobotMockUp {
 
     private int currentLocation;
