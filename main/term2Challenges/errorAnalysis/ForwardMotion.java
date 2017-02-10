@@ -11,10 +11,16 @@ import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
 public class ForwardMotion {
+	
+	
+	private static boolean leftFirst = true ;
 
-    private static RegulatedMotor motorL;
-    private static RegulatedMotor motorR;
+    private static EV3LargeRegulatedMotor motorL;
+    private static EV3LargeRegulatedMotor motorR;
     private static EV3GyroSensor gyro;
+
+    private static SampleProvider sampleProvider;
+    private static float[] sample;
 
     private static final int DEGREES_PER_METER = 2100;
 
@@ -30,8 +36,8 @@ public class ForwardMotion {
         Button.waitForAnyPress();
         
         gyro.reset();
-        SampleProvider sampleProvider = gyro.getAngleMode();
-        float[] sample = new float[sampleProvider.sampleSize()];
+        sampleProvider = gyro.getAngleMode();
+        sample = new float[sampleProvider.sampleSize()];
         sampleProvider.fetchSample(sample, 0);
 
         for(int i = 0; i < 10; ++i) {
@@ -49,7 +55,42 @@ public class ForwardMotion {
      */
     private static void moveForward() {
         int distance = DEGREES_PER_METER / 50;
-        motorL.rotate(distance, true);
-        motorR.rotate(distance);
+        
+        if (leftFirst){
+        	 motorL.rotate(distance, true);
+             motorR.rotate(distance);
+        }else {
+        	 motorR.rotate(distance, true);
+             motorL.rotate(distance);
+        }
+       
+        
+        
+        // TODO: Needs to change the speed of motors when robot is still
+
+//        while(motorL.isMoving() && motorR.isMoving()) {
+//        	System.out.println("entered loop");
+//            float kp = 0.7f;
+//            float ki = 0f;
+//            float kd = 0f;
+//            int tp = 120;
+//            float integral = 0f;
+//            float derivative = 0f;
+//
+//            while(sample[0] != 0) {
+//                float angle = sample[0];
+//                float error = angle - 00;
+//
+//                float turn = kp * error + ki * integral + kd * derivative;
+//                float powerL = tp + turn;
+//                float powerR = tp - turn;
+//
+//                motorL.setSpeed(powerL);
+//                motorR.setSpeed(powerR);
+//
+//                sampleProvider.fetchSample(sample, 0);
+//                Delay.msDelay(2);
+//            }
+//        }
     }
 }
