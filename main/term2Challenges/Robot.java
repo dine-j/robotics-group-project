@@ -10,8 +10,9 @@ import lejos.hardware.sensor.SensorMode;
 import lejos.utility.Delay;
 
 /*
- * Port D: MotorL
- * Port A: MotorR
+ * Port A: MotorL (works best this configuration - week 4)
+ * Port D: MotorR
+ * 
  * Port B: HeadRotatingMotor
  * 
  * Port 1: Gyro
