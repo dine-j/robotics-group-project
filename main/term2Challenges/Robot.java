@@ -46,8 +46,31 @@ public class Robot  {
 	
 	
 	
+	/**
+	 * 
+	 * @return  A distance of how far along the 'Strip the robot is'
+	 */
+	public int localize(){
+		return 0;
+		
+	}
 	
 	
+	/**
+	 *  TODO: decide on some parameters
+	 */
+	public void rotateToDirection(){
+		
+		
+	}
+	
+	/**
+	 * TODO:
+	 * @param distance
+	 */
+	public void moveDistance(int distance){
+		
+	}
 	
 	
 	
