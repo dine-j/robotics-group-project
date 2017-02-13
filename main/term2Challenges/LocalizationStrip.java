@@ -23,7 +23,7 @@ public class LocalizationStrip {
 	 * Update probabilities after:
 	 * First, sensing the color at current location
 	 * Second, moving in a given direction (forward or backward)
-	 * TODO: see if really need to use probabilities for motion
+	 * TODO: probabilities for motion are needed because if beginning of strip, might not be able to move backwards
 	 */
 	public void updateProbs(boolean movedFoward, boolean readBlue, double sensorProba) {
 		// sensing update

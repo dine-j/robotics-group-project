@@ -31,6 +31,8 @@ public class Robot  {
 	private SensorMode colorMode;
 	
 	private float[] colourSample;
+
+	private static final int DEGREES_PER_METER = 2100;
 	
 	public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor) {
 		this.motorL = motorL;
@@ -41,20 +43,43 @@ public class Robot  {
 		this.ultrasonicSensor.getDistanceMode();
 		this.visionMotor.rotateTo(0);
 	}
-	
-	
-	
-	
-	
+
 	/**
 	 * 
 	 * @return  A distance of how far along the 'Strip the robot is'
 	 */
-	public int localize(){
-		return 0;
-		
+	public int localize() {
+		LocalizationStrip localizationStrip = new LocalizationStrip();
+
+		int nbOfSamplesNeeded = 25;
+		int nbOfSamplesLeft = 25;
+		double sensorProbability = 0.9;
+		boolean endOfStrip = false;
+
+		SensorMode colorMode = colorSensor.getColorIDMode();
+		float[] sample = new float[colorMode.sampleSize()];
+
+		for(int i = 0; i < nbOfSamplesNeeded; ++i) {
+			colorMode.fetchSample(sample, 0);
+
+			if(sample[0] == 2) // if robot senses blue TODO: check if 2 is the correct value
+				localizationStrip.updateProbs(true, true, sensorProbability);
+			else if(sample[0] == 1) // if robot senses black, it's the end of the strip TODO: check if 1 is the correct value
+				endOfStrip = true;
+			else
+				localizationStrip.updateProbs(true, false, sensorProbability);
+
+			if(nbOfSamplesLeft < 10 && !endOfStrip) {
+				moveDistance(2);
+			} else {
+				moveDistance(-2);
+			}
+
+			--nbOfSamplesLeft;
+		}
+
+		return localizationStrip.getLocation();
 	}
-	
 	
 	/**
 	 *  TODO: decide on some parameters
@@ -68,8 +93,10 @@ public class Robot  {
 	 * TODO:
 	 * @param distance
 	 */
-	public void moveDistance(int distance){
-		
+	public void moveDistance(int distance) {
+		int angle = distance * DEGREES_PER_METER / 100;
+		motorL.rotate(angle, true);
+		motorR.rotate(angle);
 	}
 	
 	
