@@ -23,9 +23,9 @@ public class LocalizationStrip {
 	 * Update probabilities after:
 	 * First, sensing the color at current location
 	 * Second, moving in a given direction (forward or backward)
-	 * TODO: probabilities for motion are needed because if beginning of strip, might not be able to move backwards
+	 * TODO: remove duplicated code
 	 */
-	public void updateProbs(boolean movedFoward, boolean readBlue, double sensorProba) {
+	public void updateProbs(boolean movedFoward, boolean readBlue, double sensorProba, double moveProba) {
 		// sensing update
 		double normalization = 0.0;
 		for(int i = 0; i < bayesianProbs.length; ++i) {
@@ -48,7 +48,7 @@ public class LocalizationStrip {
 			double previous = bayesianProbs[0];
 			for (int i = 1; i < bayesianProbs.length; ++i) {
 				double swap = bayesianProbs[i];
-				bayesianProbs[i] = previous;
+				bayesianProbs[i] = previous * moveProba + bayesianProbs[i] * (1 - moveProba);
 				previous = swap;
 			}
 			bayesianProbs[0] = lastProba;
@@ -57,7 +57,7 @@ public class LocalizationStrip {
 			double previous = bayesianProbs[bayesianProbs.length - 1];
 			for (int i = bayesianProbs.length - 2; i > 0; --i) {
 				double swap = bayesianProbs[i];
-				bayesianProbs[i] = previous;
+				bayesianProbs[i] = previous * moveProba + bayesianProbs[i] * (1 - moveProba);
 				previous = swap;
 			}
 			bayesianProbs[bayesianProbs.length - 1] = lastProba;
@@ -101,5 +101,9 @@ public class LocalizationStrip {
 		for( int i = 0; i < bayesianProbs.length; ++i){
 			bayesianProbs[i] = 1.0 / stripIsBlue.length;
 		}
+	}
+
+	public int getLength() {
+		return bayesianProbs.length;
 	}
 }

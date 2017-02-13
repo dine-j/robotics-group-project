@@ -51,31 +51,31 @@ public class Robot  {
 	public int localize() {
 		LocalizationStrip localizationStrip = new LocalizationStrip();
 
-		int nbOfSamplesNeeded = 25;
-		int nbOfSamplesLeft = 25;
+		int samples = 25;
 		double sensorProbability = 0.9;
-		boolean endOfStrip = false;
+		double moveProbability = 0.8; // TODO: check what's the proba of not being able to move backward
 
 		SensorMode colorMode = colorSensor.getColorIDMode();
 		float[] sample = new float[colorMode.sampleSize()];
 
-		for(int i = 0; i < nbOfSamplesNeeded; ++i) {
+		for(int i = 0; i < samples; ++i) {
 			colorMode.fetchSample(sample, 0);
+			boolean isBlue = false;
 
 			if(sample[0] == 2) // if robot senses blue TODO: check if 2 is the correct value
-				localizationStrip.updateProbs(true, true, sensorProbability);
-			else if(sample[0] == 1) // if robot senses black, it's the end of the strip TODO: check if 1 is the correct value
-				endOfStrip = true;
-			else
-				localizationStrip.updateProbs(true, false, sensorProbability);
-
-			if(nbOfSamplesLeft < 10 && !endOfStrip) {
-				moveDistance(2);
-			} else {
+				isBlue = true;
+			else if(sample[0] == 1) {// if robot senses black, it's the end of the strip TODO: check if 1 is the correct value
 				moveDistance(-2);
+				return localizationStrip.getLength();
 			}
 
-			--nbOfSamplesLeft;
+			if(i < 10) {
+				moveDistance(2);
+				localizationStrip.updateProbs(true, isBlue, sensorProbability, 1);
+			} else {
+				moveDistance(-2);
+				localizationStrip.updateProbs(false, isBlue, sensorProbability, moveProbability);
+			}
 		}
 
 		return localizationStrip.getLocation();
@@ -90,8 +90,8 @@ public class Robot  {
 	}
 	
 	/**
-	 * TODO:
-	 * @param distance
+	 * Move the robot forward or backward given a certain distance
+	 * @param distance	Distance for movement, can be positive or negative
 	 */
 	public void moveDistance(int distance) {
 		int angle = distance * DEGREES_PER_METER / 100;
