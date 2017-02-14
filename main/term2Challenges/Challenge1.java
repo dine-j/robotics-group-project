@@ -1,5 +1,6 @@
 package main.term2Challenges;
 
+import lejos.hardware.Button;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.MotorPort;
@@ -8,13 +9,10 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
-import main.term1Challenges.Robot;
 
 public class Challenge1 {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
 		EV3LargeRegulatedMotor motorL = new EV3LargeRegulatedMotor(MotorPort.A);
 		EV3LargeRegulatedMotor motorR = new EV3LargeRegulatedMotor(MotorPort.D);
 		EV3MediumRegulatedMotor visionMotor = new EV3MediumRegulatedMotor(MotorPort.B);
@@ -27,14 +25,15 @@ public class Challenge1 {
 		
 
 		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor, gyroSensor);
-		
-		
+		Button.waitForAnyPress();
+
 		// Measure drift 
 		
 		// Localize with Bayesian 'strip'
-		
-		
-		
+		System.out.println(r.localize());
+
+		// Make a sound
+
 		// Goal using A * (doesn't have to go inside)
 		
 		// Update A* plan if it see obstacle in the way.
