@@ -13,10 +13,13 @@ public class LocalizationStrip {
 		
 		bayesianProbs = new double[stripIsBlue.length];
 
-		for( int i = 0; i < bayesianProbs.length; ++i){
-			bayesianProbs[i] = 1.0 / stripIsBlue.length;
+		for(int i = 0; i < 8; ++i){
+			bayesianProbs[i] = 0; // Because the robot can only start to read the 8th square
 		}
 
+		for(int i = 8; i < bayesianProbs.length; ++i){
+			bayesianProbs[i] = 1.0 / (stripIsBlue.length - 8);
+		}
 	}
 
 	/*
@@ -65,23 +68,6 @@ public class LocalizationStrip {
 	}
 
 	/*
-	 * Return index of highest probability
-	 */
-	public int getLocation() {
-		double max = bayesianProbs[0];
-		int index = 0;
-
-		for(int i = 1; i < bayesianProbs.length; ++i) {
-			if(bayesianProbs[i] > max) {
-				max = bayesianProbs[i];
-				index = i;
-			}
-		}
-
-		return index;
-	}
-
-	/*
 	 * For testing
 	 */
     public void printBayesianResults() {
@@ -103,7 +89,28 @@ public class LocalizationStrip {
 		}
 	}
 
+	/*
+	 * Return index of highest probability
+	 */
+	public int getLocation() {
+		double max = bayesianProbs[0];
+		int index = 0;
+
+		for(int i = 1; i < bayesianProbs.length; ++i) {
+			if(bayesianProbs[i] > max) {
+				max = bayesianProbs[i];
+				index = i;
+			}
+		}
+
+		return index;
+	}
+
 	public int getLength() {
 		return bayesianProbs.length;
+	}
+
+	public double getHighestProbability() {
+		return bayesianProbs[getLocation()];
 	}
 }

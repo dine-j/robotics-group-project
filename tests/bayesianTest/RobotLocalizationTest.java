@@ -26,14 +26,14 @@ public class RobotLocalizationTest {
      */
     @Test
     public static void test1() {
-        robot = new RobotMockUp(14, 0.9);
+        robot = new RobotMockUp(10, 0.95);
         localizationStrip.reinitializeProbabilities();
 
-        for(int i = 0; i < 18; ++i) {
-            localizationStrip.updateProbs(true, robot.getColorIsBlue(), 0.9, 1);
+        for(int i = 0; i < 10; ++i) {
+            localizationStrip.updateProbs(true, robot.getColorIsBlue(), 0.95, 1);
             robot.moveForward();
         }
-
+        localizationStrip.printBayesianResults();
         assertEquals(robot.getCurrentLocation(), localizationStrip.getLocation());
     }
 

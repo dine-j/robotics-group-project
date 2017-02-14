@@ -1,13 +1,10 @@
 package main.term2Challenges;
 
-import lejos.hardware.BrickFinder;
-import lejos.hardware.lcd.GraphicsLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorMode;
-import lejos.utility.Delay;
 
 /*
  * Port A: MotorL (works best this configuration - week 4)
@@ -28,9 +25,6 @@ public class Robot  {
 	
 	private EV3ColorSensor colorSensor;
 	private EV3UltrasonicSensor ultrasonicSensor;
-	private SensorMode colorMode;
-	
-	private float[] colourSample;
 
 	private static final int DEGREES_PER_METER = 2100;
 	
@@ -51,33 +45,32 @@ public class Robot  {
 	public int localize() {
 		LocalizationStrip localizationStrip = new LocalizationStrip();
 
-		int samples = 25;
-		double sensorProbability = 0.9;
-		double moveProbability = 0.8; // TODO: check what's the proba of not being able to move backward
+		double sensorProbability = 0.95;
 
-		SensorMode colorMode = colorSensor.getColorIDMode();
+		SensorMode colorMode = colorSensor.getRGBMode();
 		float[] sample = new float[colorMode.sampleSize()];
 
-		for(int i = 0; i < samples; ++i) {
+		for(int i = 0; i < 10; ++i) {
 			colorMode.fetchSample(sample, 0);
 			boolean isBlue = false;
 
-			if(sample[0] == 2) // if robot senses blue TODO: check if 2 is the correct value
+			if(sample[2] < 0.1) // if robot senses blue
 				isBlue = true;
-			else if(sample[0] == 1) {// if robot senses black, it's the end of the strip TODO: check if 1 is the correct value
-				moveDistance(-2);
-				return localizationStrip.getLength();
-			}
 
-			if(i < 10) {
-				moveDistance(2);
-				localizationStrip.updateProbs(true, isBlue, sensorProbability, 1);
-			} else {
-				moveDistance(-2);
-				localizationStrip.updateProbs(false, isBlue, sensorProbability, moveProbability);
-			}
+			moveDistance(2);
+			localizationStrip.updateProbs(true, isBlue, sensorProbability, 1);
 		}
 
+		if(localizationStrip.getHighestProbability() < 0.5) { // if by any chance the probabilities are too low, take one more step to correct it
+			colorMode.fetchSample(sample, 0);
+			boolean isBlue = false;
+
+			if(sample[0] == 2) // if robot senses blue
+				isBlue = true;
+
+			moveDistance(2);
+			localizationStrip.updateProbs(true, isBlue, sensorProbability, 1);
+		}
 		return localizationStrip.getLocation();
 	}
 	
@@ -97,253 +90,5 @@ public class Robot  {
 		int angle = distance * DEGREES_PER_METER / 100;
 		motorL.rotate(angle, true);
 		motorR.rotate(angle);
-	}
-	
-	
-	
-	
-	
-	//// OLD METHODS below
-	
-	
-	public void start() {
-		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
-		float[] ultrasonicSample = new float[1];
-
-		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-
-		while (ultrasonicSample[0] < 0.15) {
-			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-			g.drawString(Float.toString(ultrasonicSample[0]), 0, 0, GraphicsLCD.HCENTER);
-			Delay.msDelay(200);
-			g.clear();
-		}
-	}
-
-
-	public void followLineScan() {
-		int counter = 0;
-
-		colorMode = colorSensor.getRedMode();
-		colourSample = new float[colorMode.sampleSize()];
-
-		float[] ultrasonicSample = new float[1];
-		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-
-		float kp = 500f;
-		float ki = 0f;
-		float kd = 10f;
-		float offset = 0.3f;
-		int tp = 180;
-		float integral = 0f;
-		float derivative = 0f;
-		float lastError = 0f;
-
-		final int HEAD_MS_DELAY = 60;
-		final int HEAD_ROTATE_ANGLE = 35;
-		while (ultrasonicSample[0] > 0.20) {
-			counter++;
-			if(counter == 0) visionMotor.rotateTo(HEAD_ROTATE_ANGLE, true);
-			else if(counter == HEAD_MS_DELAY) visionMotor.rotateTo(0, true);
-			else if(counter == 2*HEAD_MS_DELAY) visionMotor.rotateTo(-HEAD_ROTATE_ANGLE, true);
-			else if (counter > 3*HEAD_MS_DELAY) counter = -1;
-
-			// takes sample
-			colorMode.fetchSample(colourSample, 0);
-
-			float lightVal = colourSample[0];
-			float error = lightVal - offset;
-			integral += error;
-			derivative = error - lastError;
-
-			adjustSpeed(kp, ki, kd, tp, integral, derivative, error);
-
-			lastError = error;
-
-			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-			Delay.msDelay(5);
-		}
-
-		//experiment
-		visionMotor.rotateTo(0, true);
-	}
-
-	public void positionToTurnAround(int delay) {
-		visionMotor.rotate(-90);
-		setSpeed(120, 120);
-		motorR.backward();
-		motorL.forward();
-		Delay.msDelay(delay);
-	}
-
-	public void avoidObstacle(float offset) {
-		int counter = 0;
-
-		GraphicsLCD g = BrickFinder.getDefault().getGraphicsLCD();
-
-		colorMode = colorSensor.getRedMode();
-		colourSample = new float[colorMode.sampleSize()];
-		colourSample[0] = 1.0f;
-
-		// Start avoiding obstacle
-		float[] ultrasonicSample = new float[1];
-
-		float kp = 500f;
-		float ki = 0f;
-		float kd = 10f;
-		int tp = 130;
-		float integral = 0f;
-		float derivative = 0f;
-		float lastError = 0f;
-
-		int seconds = 2;
-
-		while(seconds > 0) {
-			++counter;
-			if(counter % 200 == 0)
-				--seconds;
-
-			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-
-			float distance = ultrasonicSample[0];
-			if(distance > 0.3f)
-				distance = 0.3f;
-			float error = distance - offset;
-			integral += error;
-			derivative = error - lastError;
-
-			float turn = kp * error + ki * integral + kd * derivative;
-			float powerR = tp + turn;
-			float powerL = tp - turn;
-
-			setSpeed(powerL, powerR);
-
-			if(powerL > 0)
-				motorL.forward();
-			else
-				motorL.backward();
-			if(powerR > 0)
-				motorR.forward();
-			else
-				motorR.backward();
-
-			lastError = error;
-
-			colorMode.fetchSample(colourSample, 0);
-			g.drawString(Float.toString(colourSample[0]), 0, 0, GraphicsLCD.HCENTER);
-			Delay.msDelay(5);
-			g.clear();
-		}
-
-		kp = 850f;
-		ki = 0f;
-		kd = 10f;
-		tp = 250;
-
-		while(colourSample[0] > 0.4) {
-			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-
-			float distance = ultrasonicSample[0];
-			if(distance > 0.3f)
-				distance = 0.3f;
-			float error = distance - offset;
-			integral += error;
-			derivative = error - lastError;
-
-			float turn = kp * error + ki * integral + kd * derivative;
-			float powerR = tp + turn;
-			float powerL = tp - turn;
-
-			setSpeed(powerL, powerR);
-
-			if(powerL > 0)
-				motorL.forward();
-			else
-				motorL.backward();
-			if(powerR > 0)
-				motorR.forward();
-			else
-				motorR.backward();
-
-			lastError = error;
-
-			colorMode.fetchSample(colourSample, 0);
-			g.drawString(Float.toString(colourSample[0]), 0, 0, GraphicsLCD.HCENTER);
-			Delay.msDelay(5);
-			g.clear();
-		}
-	}
-
-	public void goForward(){
-
-		float[] ultrasonicSample = new float[1];
-		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-
-		motorL.forward();
-		motorR.forward();
-		setSpeed(120, 120);
-
-		while (ultrasonicSample[0] > 0.09){
-			ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-		}
-	}
-	
-	public void adjustToMinimumDistance(){
-		float[] ultrasonicSample = new float[1];
-		ultrasonicSensor.getDistanceMode().fetchSample(ultrasonicSample, 0);
-
-		if(ultrasonicSample[0] < 0.05) {
-			motorL.backward();
-			motorR.backward();
-			setSpeed(120, 120);
-			Delay.msDelay(1000);
-		}
-		
-	}
-
-	public void turnAngle(int angle) {
-		setSpeed(120,120);
-		if (angle > 0) {
-			motorR.backward();
-			motorL.forward();
-		} else {
-			motorR.forward();
-			motorL.backward();
-		}
-
-		if (angle < 0) angle = - angle;
-
-		final int NINETY = 1100;
-		Delay.msDelay((int)(angle/90.0 * NINETY));
-		stop();
-	}
-
-	private void adjustSpeed(float kp, float ki, float kd, int tp, float integral, float derivative, float error) {
-		float turn = kp * error + ki * integral + kd * derivative;
-		float powerL = tp + turn;
-		float powerR = tp - turn;
-
-		setSpeed(powerR, powerL);
-
-		motorL.forward();
-		motorR.forward();
-	}
-
-	public void stop() {
-		motorL.stop();
-		motorR.stop();
-	}
-	
-	public void shutdown() {
-		motorL.close();
-		motorR.close();
-		visionMotor.close();
-		colorSensor.close();
-		ultrasonicSensor.close();
-	}
-	
-	private void setSpeed(float powerL, float powerR) {
-		motorL.setSpeed(powerL);
-		motorR.setSpeed(powerR);
 	}
 }
