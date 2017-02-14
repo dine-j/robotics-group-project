@@ -13,8 +13,6 @@ import main.term1Challenges.Robot;
 public class Challenge1 {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
 		EV3LargeRegulatedMotor motorL = new EV3LargeRegulatedMotor(MotorPort.A);
 		EV3LargeRegulatedMotor motorR = new EV3LargeRegulatedMotor(MotorPort.D);
 		EV3MediumRegulatedMotor visionMotor = new EV3MediumRegulatedMotor(MotorPort.B);
