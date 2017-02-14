@@ -26,7 +26,7 @@ public class Challenge1 {
 		EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S4);
 		
 
-		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor, null);
+		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor, gyroSensor);
 		
 		
 		// Measure drift 

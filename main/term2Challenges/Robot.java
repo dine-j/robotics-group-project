@@ -2,9 +2,7 @@ package main.term2Challenges;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
-import lejos.hardware.sensor.EV3ColorSensor;
-import lejos.hardware.sensor.EV3UltrasonicSensor;
-import lejos.hardware.sensor.SensorMode;
+import lejos.hardware.sensor.*;
 
 /*
  * Port A: MotorL (works best this configuration - week 4)
@@ -25,15 +23,18 @@ public class Robot  {
 	
 	private EV3ColorSensor colorSensor;
 	private EV3UltrasonicSensor ultrasonicSensor;
+	private EV3GyroSensor gyroSensor;
 
 	private static final int DEGREES_PER_METER = 2100;
 	
-	public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor) {
+	public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor, EV3GyroSensor gyroSensor) {
 		this.motorL = motorL;
 		this.motorR	= motorR;
 		this.visionMotor = visionMotor;
 		this.colorSensor = colorSensor;
 		this.ultrasonicSensor = ultrasonicSensor;
+		this.gyroSensor = gyroSensor;
+
 		this.ultrasonicSensor.getDistanceMode();
 		this.visionMotor.rotateTo(0);
 	}
