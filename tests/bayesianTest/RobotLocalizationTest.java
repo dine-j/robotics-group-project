@@ -30,7 +30,7 @@ public class RobotLocalizationTest {
         localizationStrip.reinitializeProbabilities();
 
         for(int i = 0; i < 18; ++i) {
-            localizationStrip.updateProbs(true, robot.getColorIsBlue(), 0.9);
+            localizationStrip.updateProbs(true, robot.getColorIsBlue(), 0.9, 1);
             robot.moveForward();
         }
 
@@ -46,7 +46,7 @@ public class RobotLocalizationTest {
         localizationStrip.reinitializeProbabilities();
 
         for(int i = 0; i < 9; ++i) {
-            localizationStrip.updateProbs(false, robot.getColorIsBlue(), 0.9);
+            localizationStrip.updateProbs(false, robot.getColorIsBlue(), 0.9, 1);
             robot.moveBackward();
         }
 
