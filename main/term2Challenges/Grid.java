@@ -26,7 +26,8 @@ public class Grid {
 	// width of wheels 15cm..
 	
 	final private float OFFSET; // in cm
-	
+	private int size;
+
 	private TreeSet<Point> closedList;
 	private ArrayList<Point> frontier;
 	
@@ -41,9 +42,8 @@ public class Grid {
 		// get rid of unreachable nodes
 		int tmp =  (int) ROBOT_RADIUS / ROBOT_RADIUS;
 		OFFSET = tmp * DISTANCE_BETWEEN_NODES;
-				
-		boolean[][] tmpGrid = new boolean[NUMBER_OF_NODES_PER_EDGE - 2 * tmp][NUMBER_OF_NODES_PER_EDGE - 2 * tmp];
-		
+		size = NUMBER_OF_NODES_PER_EDGE - 2 * tmp;
+		boolean[][] tmpGrid = new boolean[size][size];
 	}
 	
 	/**
@@ -102,5 +102,7 @@ public class Grid {
 		
 	}
 	
-
+	public int getSize() {
+		return size;
+	}
 }
