@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class Grid {
 	
 	
+	
 	// course is 122 cm x 122cm 
 	final private int COURSE_WIDTH = 122;  // in cm
 	final private int ROBOT_WIDTH = 10 ;   // Robot is 30x20cm 
@@ -19,6 +20,11 @@ public class Grid {
 	final private int NUMBER_OF_NODES_PER_EDGE; 
 	final private double DISTANCE_BETWEEN_NODES; //in cm
 	final private int BORDER_NODE_WIDTH; // in # of nodes
+	
+	
+	//private enum GridState {EMPTY, OPEN, CLOSED};
+	
+	private AStarNode[][] grid;
 	
 	//final private int CYLINDER_RADIUS = 3;  // 5.5 cm diameter
 
@@ -39,6 +45,13 @@ public class Grid {
 		NUMBER_OF_NODES_PER_EDGE = numberOfNodesPerEdge;
 		DISTANCE_BETWEEN_NODES = (double) COURSE_WIDTH / (double) (NUMBER_OF_NODES_PER_EDGE - 1);
 		BORDER_NODE_WIDTH = (int) ((ROBOT_RADIUS + 1) / DISTANCE_BETWEEN_NODES);
+		
+		//initialise empty grid matrix
+//		grid = new GridState[NUMBER_OF_NODES_PER_EDGE][NUMBER_OF_NODES_PER_EDGE];
+//		for(int i = 0; i < grid.length; ++i){
+//			for(int j = 0; j< grid.length; ++j) grid[i][j] = GridState.EMPTY;
+//		}
+		grid = new AStarNode[numberOfNodesPerEdge][numberOfNodesPerEdge]; // pointers stored in grid for x,y access
 	}
 	
 	
@@ -58,11 +71,15 @@ public class Grid {
 		// 1b. Add goal node
 		int goalCoord[] = findClosestNode(goalTmp[0], goalTmp[1]);
 		AStarNode goal = new AStarNode(goalCoord[0], goalCoord[1]);
+		grid[goalCoord[0]][goalCoord[1]] = goal; //add to grid
 		
 		// 2. Add initial pos to open list
-		openList.add(new AStarNode(xStart, yStart, manhattanHeuristic(xStart, yStart, goal), 0, null));
+		AStarNode init = new AStarNode(xStart, yStart, manhattanHeuristic(xStart, yStart, goal), 0, null, true);
+		openList.add(init);
+		grid[xStart][yStart] = init; //add to grid
 		
-		//TODO: write a test to look at the closed list...
+		
+		//TODO: write a test to look at the closed list... // also grid
 		
 		// Array of 'actions'
 		final int[][] ACTION = new int[8][2];
@@ -77,7 +94,34 @@ public class Grid {
 		
 		while (!openList.isEmpty()){
 			//for  ...
-			
+			AStarNode toExpand = openList.first(); //find node with minimum value
+			for (int i = 0; i < ACTION.length; ++i){
+				int x = toExpand.getX() + ACTION[i][0];
+				int y = toExpand.getY()+ ACTION[i][1];
+				double actionCost = (i % 2 == 0) ? 1.0  : RobotMovement.SQRT2;
+				
+				//AStarNode tmpNodeExamining = new AStarNode(x, y);
+				
+				
+				
+				if (isInsideBorder(x , y ) && (grid[x][y] == null || grid[x][y].isOpen()) ){
+						//!closedList.contains(tmpNodeExamining) ){
+					
+					
+					// check first if node is already in openlist.
+					//if(openList.contains(tmpNodeExamining)){
+					if (grid[x][y] != null && grid[x][y].isOpen() ){
+						
+						// TODO: not sure if contains use   'compareTo or equals'  ... 
+						
+						// find a way of looking at node in list   that is at position x,y
+						double newGn = toExpand.getGn() + actionCost; 
+						//if (newGn < /* actualNodeExaming.getGn() */)
+					}
+					
+					
+				}
+			}
 			// expand minimum value node ... in openList
 			
 			//expansion based on closed list & isInsideBorders() 

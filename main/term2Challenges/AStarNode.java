@@ -1,6 +1,10 @@
 package main.term2Challenges;
 
-public class AStarNode {
+/**
+ * Represents A* nodes, sorted by f(n) values.
+ *
+ */
+public class AStarNode implements Comparable{
 	private int x;
 	private int y;
 	private AStarNode parent;
@@ -9,14 +13,17 @@ public class AStarNode {
 	private Double gn; // may be recomputed
 	private Double fn;
 	
+	private boolean open;  //node may either be open or closed
 	
-	public AStarNode(int x, int y, double hn, double gn, AStarNode parent){
+	
+	public AStarNode(int x, int y, double hn, double gn, AStarNode parent, boolean open){
 		this.x = x;
 		this.y = y;
 		this.hn = hn;
 		this.gn = gn;
 		this.fn = gn + hn;
 		this.parent = parent;
+		this.open = open;
 	}
 	
 	/**
@@ -31,6 +38,15 @@ public class AStarNode {
 		this.gn = null;
 		this.fn = null;
 		this.parent = null;
+		open = false;
+	}
+	
+	public void setClosed(){
+		open = false;
+	}
+	
+	public boolean isOpen(){
+		return open;
 	}
 	
 	public void setGn(double gn){
@@ -50,12 +66,17 @@ public class AStarNode {
 		return hn == null || gn == null || fn == null;
 	}
 	
+	/*
+	 * DONE: x.compareTo(y)  == 0   iff x.equals(y)     is not true yet. Sort this out.
+	 */
+	
 	@Override
 	public boolean equals(Object other){
 		try{
 			if (other instanceof AStarNode){
 				AStarNode tmp = (AStarNode) other;
-				return x == tmp.x && y == tmp.y;
+				//return x == tmp.x && y == tmp.y;
+				return this.compareTo(tmp) == 0;
 			}
 			
 		} catch( Exception e){
@@ -63,6 +84,24 @@ public class AStarNode {
 		}
 		
 		return false;
+	}
+	
+	public int compareTo(Object other){
+		try{
+			if (other instanceof AStarNode){
+				AStarNode tmp = (AStarNode) other;
+				int result;
+				if ((this.fn - tmp.fn) > 0 )  result = 1;
+				else if ((this.fn - tmp.fn) > 0 ) result = -1;
+				else result = 0;
+				return result;
+			}
+			
+		} catch( Exception e){
+			e.printStackTrace();
+		}
+		
+		return 0;
 	}
 	
 	public int getX() {
