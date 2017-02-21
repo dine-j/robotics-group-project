@@ -1,6 +1,7 @@
 package main.term2Challenges;
 
 import java.util.TreeSet;
+import java.util.LinkedList;
 import java.util.ArrayList;
 /**
  * Represents the map of nodes, to use in the path finding algorithm
@@ -8,8 +9,6 @@ import java.util.ArrayList;
  * The bottom right hand corner of the grid layout, is the closest corner in line with the bayesian strip
  */
 public class Grid {
-	
-	
 	
 	// course is 122 cm x 122cm 
 	final private int COURSE_WIDTH = 122;  // in cm
@@ -22,11 +21,7 @@ public class Grid {
 	final private int BORDER_NODE_WIDTH; // in # of nodes
 	
 	
-	//private enum GridState {EMPTY, OPEN, CLOSED};
-	
 	private AStarNode[][] grid;
-	
-	//final private int CYLINDER_RADIUS = 3;  // 5.5 cm diameter
 
 	private TreeSet<AStarNode> closedList;
 	private TreeSet<AStarNode> openList;
@@ -46,11 +41,6 @@ public class Grid {
 		DISTANCE_BETWEEN_NODES = (double) COURSE_WIDTH / (double) (NUMBER_OF_NODES_PER_EDGE - 1);
 		BORDER_NODE_WIDTH = (int) ((ROBOT_RADIUS + 1) / DISTANCE_BETWEEN_NODES);
 		
-		//initialise empty grid matrix
-//		grid = new GridState[NUMBER_OF_NODES_PER_EDGE][NUMBER_OF_NODES_PER_EDGE];
-//		for(int i = 0; i < grid.length; ++i){
-//			for(int j = 0; j< grid.length; ++j) grid[i][j] = GridState.EMPTY;
-//		}
 		grid = new AStarNode[numberOfNodesPerEdge][numberOfNodesPerEdge]; // pointers stored in grid for x,y access
 	}
 	
@@ -78,7 +68,6 @@ public class Grid {
 		openList.add(init);
 		grid[xStart][yStart] = init; //add to grid
 		
-		
 		//TODO: write a test to look at the closed list... // also grid
 		
 		// Array of 'actions'
@@ -93,51 +82,69 @@ public class Grid {
 		ACTION[7] = new int[]{-1,1};
 		
 		while (!openList.isEmpty()){
-			//for  ...
 			AStarNode toExpand = openList.first(); //find node with minimum value
 			for (int i = 0; i < ACTION.length; ++i){
-				int x = toExpand.getX() + ACTION[i][0];
-				int y = toExpand.getY()+ ACTION[i][1];
+				final int x = toExpand.getX() + ACTION[i][0];
+				final int y = toExpand.getY()+ ACTION[i][1];
 				double actionCost = (i % 2 == 0) ? 1.0  : RobotMovement.SQRT2;
 				
-				//AStarNode tmpNodeExamining = new AStarNode(x, y);
 				
-				
-				
-				if (isInsideBorder(x , y ) && (grid[x][y] == null || grid[x][y].isOpen()) ){
-						//!closedList.contains(tmpNodeExamining) ){
-					
-					
-					// check first if node is already in openlist.
-					//if(openList.contains(tmpNodeExamining)){
-					if (grid[x][y] != null && grid[x][y].isOpen() ){
-						
-						// TODO: not sure if contains use   'compareTo or equals'  ... 
-						
-						// find a way of looking at node in list   that is at position x,y
-						double newGn = toExpand.getGn() + actionCost; 
-						//if (newGn < /* actualNodeExaming.getGn() */)
-					}
-					
-					
+				//exit out method if found goal
+				if (x == goal.getX() && y == goal.getY()){
+					goal.setParent(toExpand);
+					return goal;
 				}
-			}
-			// expand minimum value node ... in openList
-			
-			//expansion based on closed list & isInsideBorders() 
-			
-			// if expansion contains goal, add parent and quickly break;
+				// filter out so inside border and open/empty in grid
+				else if (isInsideBorder(x , y ) && (grid[x][y] == null || grid[x][y].isOpen()) ){
+					// check first if node is already in openlist.
+					if (grid[x][y] != null && grid[x][y].isOpen() ){
+						double newGn = toExpand.getGn() + actionCost; 
+						
+						if(grid[x][y].getGn() > newGn){
+							AStarNode rmNode = grid[x][y];
+							openList.remove(rmNode); //remove tempoarily so doesn't mess up tree-set structure
+							rmNode.setGn(newGn);
+							rmNode.setParent(toExpand);  //set the new parent with better costed path
+							openList.add(rmNode); 
+						}
+					} else if(grid[x][y] == null){
+						//add to openlist
+						double hn = manhattanHeuristic(xStart, yStart, goal);
+						AStarNode toAdd = new AStarNode(xStart, yStart, hn, 0, toExpand, true);
+						openList.add(toAdd);
+						grid[x][y] = toAdd; //add to grid
+					}
+					// otherwise if closed do nothing
+				}// end of for loop
+				AStarNode rmNode = grid[x][y];
+				openList.remove(rmNode);
+				closedList.add(rmNode);
+				rmNode.setClosed(); // add to closed list
+			}	
 		}
-		
-		
-		
-		
-		
-		return result;
+
+		return result; //only gets here if result is null
 	}
 	
 	
-	private int[] findClosestNode(double x, double y){
+	public LinkedList<AStarNode> getListPathFromGoalNode(AStarNode goal){
+		LinkedList<AStarNode> list = new LinkedList<AStarNode>();
+		list.add(goal);
+		AStarNode current = goal;
+		while(!current.isRoot()){
+			current = current.getParent();
+			list.addFirst(current);
+		}
+		return list;
+	}
+	
+	/**
+	 * 
+	 * @param x in cm
+	 * @param y in cm
+	 * @return the closest node in 'node coordinates'
+	 */
+	public int[] findClosestNode(double x, double y){
 		double tmpx = x / DISTANCE_BETWEEN_NODES;
 		double tmpy = y / DISTANCE_BETWEEN_NODES;
 		tmpx = Math.round(tmpx);
@@ -158,13 +165,10 @@ public class Grid {
 	 * @return A list of Actions for robot to follow
 	 */
 	public ArrayList<RobotMovement> calculatePath(int xStart, int yStart, int xEnd, int yEnd, float cylinderPos){
-		inputCylinderPosition(cylinderPos / (Math.sqrt(2)), cylinderPos / (Math.sqrt(2)) );
+		//inputCylinderPosition(cylinderPos / (Math.sqrt(2)), cylinderPos / (Math.sqrt(2)) );
 		
 		return null;
 	}
-	
-	
-	
 	
 	
 	private int manhattanHeuristic(int x, int y, AStarNode goalNode){
@@ -271,7 +275,9 @@ public class Grid {
 			// for each node within radiusOfCover on y-axis, add node to closed list.
 			double y = gradient * i + C; 
 			for (int j = (int) Math.ceil(y - radiusOfCoverInNodes); j < (int) Math.ceil(y + radiusOfCoverInNodes); ++j){
-				closedList.add(new AStarNode(i, j));
+				AStarNode toAdd = new AStarNode(i, j);
+				closedList.add(toAdd);
+				grid[i][j] = toAdd;
 			}
 		}
 		
@@ -279,7 +285,9 @@ public class Grid {
 			// for each node within radiusOfCover on x-axis, add node to closed list.
 			double x = (i - C) / gradient; 
 			for (int j = (int) Math.ceil(x - radiusOfCoverInNodes); j < (int) Math.ceil(x + radiusOfCoverInNodes); ++j){
-				closedList.add(new AStarNode(j, i));
+				AStarNode toAdd = new AStarNode(j, i);
+				closedList.add(toAdd);
+				grid[j][i] = toAdd;
 			}
 		}
 		
