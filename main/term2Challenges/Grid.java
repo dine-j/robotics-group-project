@@ -34,7 +34,7 @@ public class Grid {
 
 	public Grid(int numberOfNodesPerEdge){
 		
-		closedList = new TreeSet<AStarNode>();
+		closedList = new TreeSet<AStarNode>(new AStarNode.positionComparator());   //DONE: closedList has comparator
 		openList = new TreeSet<AStarNode>();
 		
 		NUMBER_OF_NODES_PER_EDGE = numberOfNodesPerEdge;
@@ -42,8 +42,15 @@ public class Grid {
 		BORDER_NODE_WIDTH = (int) ((ROBOT_RADIUS + 1) / DISTANCE_BETWEEN_NODES);
 		
 		grid = new AStarNode[numberOfNodesPerEdge][numberOfNodesPerEdge]; // pointers stored in grid for x,y access
+	} //TODO: grid may not be initialised fully...
+	
+	public int getSize(){
+		return NUMBER_OF_NODES_PER_EDGE;
 	}
 	
+	public AStarNode[][] getGrid(){
+		return grid;
+	}
 	
 	/**
 	 *  Does A* search after initializing closed list
@@ -81,7 +88,12 @@ public class Grid {
 		ACTION[6] = new int[]{-1,0};
 		ACTION[7] = new int[]{-1,1};
 		
+		int counter = 0;
 		while (!openList.isEmpty()){
+			++counter;
+			if (counter % 50 == 0){
+				System.out.println(counter);
+			}
 			AStarNode toExpand = openList.first(); //find node with minimum value
 			for (int i = 0; i < ACTION.length; ++i){
 				final int x = toExpand.getX() + ACTION[i][0];
@@ -194,8 +206,8 @@ public class Grid {
 	 */
 	public void inputCylinderPosition(double x, double y){ 
 		final double cr = 2.25; // the cylinderRadius
-		addWallToClosedList(x - cr, y, x + cr, y);
-		addWallToClosedList(x, y + cr, x, y - cr);
+		addWallToClosedList(x - cr, y, x + cr, y, ROBOT_RADIUS);
+		addWallToClosedList(x, y + cr, x, y - cr, ROBOT_RADIUS);
 	}
 	
 	/**
@@ -225,7 +237,7 @@ public class Grid {
 		tmpxend = tmpx;
 		tmpyend = y + 11; // extra cm to go to middle line of back wall
 		addWallToClosedList( cos * tmpx - sin * tmpy, sin * tmpx + cos * tmpy,
-				cos * tmpxend - sin * tmpyend, sin * tmpxend + cos * tmpyend  );
+				cos * tmpxend - sin * tmpyend, sin * tmpxend + cos * tmpyend, ROBOT_WIDTH);
 		
 		// add back wall
 		tmpx = tmpxend;
@@ -233,7 +245,7 @@ public class Grid {
 		tmpxend = x + 13;
 		tmpyend = y + 11;
 		addWallToClosedList( cos * tmpx - sin * tmpy, sin * tmpx + cos * tmpy,
-				cos * tmpxend - sin * tmpyend, sin * tmpxend + cos * tmpyend  );
+				cos * tmpxend - sin * tmpyend, sin * tmpxend + cos * tmpyend ,ROBOT_WIDTH );
 		
 		// add right wall
 		tmpx = tmpxend;
@@ -241,7 +253,7 @@ public class Grid {
 		tmpxend = x + 13;
 		tmpyend = y - 10;
 		addWallToClosedList( cos * tmpx - sin * tmpy, sin * tmpx + cos * tmpy,
-				cos * tmpxend - sin * tmpyend, sin * tmpxend + cos * tmpyend  );
+				cos * tmpxend - sin * tmpyend, sin * tmpxend + cos * tmpyend ,ROBOT_WIDTH);
 		
 		// compute a sensible ideal goal to plan to..
 		final int DIST_FROM_ENTRANCE_OPENING = 10;
@@ -256,8 +268,7 @@ public class Grid {
 	}
 
 	
-	private void addWallToClosedList(double xStart, double yStart, double xEnd, double yEnd){
-		//double angle = Math.atan( (yEnd - yStart) / (xEnd - xStart));
+	/*private*/ public void addWallToClosedList(double xStart, double yStart, double xEnd, double yEnd, double radius){
 		
 		// work on the 'nodes' scale
 		double scale = DISTANCE_BETWEEN_NODES;
@@ -266,14 +277,14 @@ public class Grid {
 		xEnd = xEnd / scale;
 		yEnd = yEnd / scale;
 		
-		double gradient = (yEnd - yStart) / (xEnd - xStart);
-		double C = yStart - gradient * xStart; //c = y' - mx'
+		double m = (yEnd - yStart) / (xEnd - xStart); //calculate the gradient
+		double C = yStart - m * xStart; //c = y' - mx'
 		
-		double radiusOfCoverInNodes = (ROBOT_RADIUS + 1) / scale; 
+		double radiusOfCoverInNodes = radius / scale; 
 		
 		for (int i = (int) Math.ceil(xStart); i < (int) Math.ceil(xEnd); ++i){
 			// for each node within radiusOfCover on y-axis, add node to closed list.
-			double y = gradient * i + C; 
+			double y = m * i + C; 
 			for (int j = (int) Math.ceil(y - radiusOfCoverInNodes); j < (int) Math.ceil(y + radiusOfCoverInNodes); ++j){
 				AStarNode toAdd = new AStarNode(i, j);
 				closedList.add(toAdd);
@@ -283,7 +294,7 @@ public class Grid {
 		
 		for (int i = (int) Math.ceil(yStart); i < (int) Math.ceil(yEnd); ++i){
 			// for each node within radiusOfCover on x-axis, add node to closed list.
-			double x = (i - C) / gradient; 
+			double x = (i - C) / m; //could cause errors?
 			for (int j = (int) Math.ceil(x - radiusOfCoverInNodes); j < (int) Math.ceil(x + radiusOfCoverInNodes); ++j){
 				AStarNode toAdd = new AStarNode(j, i);
 				closedList.add(toAdd);
@@ -291,6 +302,23 @@ public class Grid {
 			}
 		}
 		
+	}
+	
+	public String toString(){
+		String rep = "";
+		String nextChar = "";
+		for (int i = 0; i < grid.length; ++i)
+		{
+			for (int j = 0; j < grid.length; ++j) 
+			{
+				nextChar = "";
+				if (grid[i][j] == null) nextChar = "_";
+				else if (!grid[i][j].isOpen()) nextChar = "x";
+				rep += nextChar;
+			}
+			rep += "\n";
+		}
+		return rep;
 	}
 	
 }

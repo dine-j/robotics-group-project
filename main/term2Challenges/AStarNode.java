@@ -1,10 +1,12 @@
 package main.term2Challenges;
 
+import java.util.Comparator;
+
 /**
  * Represents A* nodes, sorted by f(n) values.
  *
  */
-public class AStarNode implements Comparable{
+public class AStarNode implements Comparable<AStarNode>{
 	private int x;
 	private int y;
 	private AStarNode parent;
@@ -65,11 +67,7 @@ public class AStarNode implements Comparable{
 	public boolean hasValues(){
 		return hn == null || gn == null || fn == null;
 	}
-	
-	/*
-	 * DONE: x.compareTo(y)  == 0   iff x.equals(y)     is not true yet. Sort this out.
-	 */
-	
+
 	@Override
 	public boolean equals(Object other){
 		try{
@@ -86,16 +84,12 @@ public class AStarNode implements Comparable{
 		return false;
 	}
 	
-	public int compareTo(Object other){
+	public int compareTo(AStarNode other){
 		try{
-			if (other instanceof AStarNode){
-				AStarNode tmp = (AStarNode) other;
-				int result;
-				if ((this.fn - tmp.fn) > 0 )  result = 1;
-				else if ((this.fn - tmp.fn) > 0 ) result = -1;
-				else result = 0;
-				return result;
-			}
+			int result = 0;
+			if ((this.fn - other.fn) > 0 )  result = 1;
+			else if ((this.fn - other.fn) > 0 ) result = -1;
+			return result;
 			
 		} catch( Exception e){
 			e.printStackTrace();
@@ -128,4 +122,12 @@ public class AStarNode implements Comparable{
 		return fn;
 	}
 	
+	
+	public static class positionComparator implements Comparator<AStarNode>{
+		@Override
+		public int compare(AStarNode o1, AStarNode o2) {
+			return o1.x * 500 + o1.y - o2.x * 500 - o2.y; //works for grid size of up to 500
+		}
+		
+	}
 }

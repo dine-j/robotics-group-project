@@ -1,6 +1,6 @@
 package tests.aStarTest;
 
-import main.term2Challenges.Grid;
+import main.term2Challenges.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,5 +43,21 @@ public class GridFrame extends JFrame {
         if(x >= nodes.length || y >= nodes.length)
             throw new IndexOutOfBoundsException("Max = " + (nodes.length - 1));
         nodes[x][y].setState(Color.red);
+    }
+    
+    public void readGrid(Grid grid){
+    	AStarNode[][] matrix = grid.getGrid();
+    	for(int i = 0; i < nodes.length; ++i){
+    		for( int j = 0; j < nodes.length; ++ j) {
+    			if(matrix[i][j] == null){
+    				//pass
+    			}else if (matrix[i][j].isRoot()){  
+    				placeRobot(i,j);
+    			}
+    			else if (!matrix[i][j].isOpen()){
+    				nodes[i][j].setState(Color.black);
+    			}
+    		}
+    	}
     }
 }
