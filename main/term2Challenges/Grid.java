@@ -39,7 +39,7 @@ public class Grid {
 		
 		NUMBER_OF_NODES_PER_EDGE = numberOfNodesPerEdge;
 		DISTANCE_BETWEEN_NODES = (double) COURSE_WIDTH / (double) (NUMBER_OF_NODES_PER_EDGE - 1);
-		BORDER_NODE_WIDTH = (int) ((ROBOT_RADIUS + 1) / DISTANCE_BETWEEN_NODES);
+		BORDER_NODE_WIDTH = (int) ((ROBOT_LENGTH) / DISTANCE_BETWEEN_NODES);
 		
 		grid = new AStarNode[numberOfNodesPerEdge][numberOfNodesPerEdge]; // pointers stored in grid for x,y access
 	} //TODO: grid may not be initialised fully...
@@ -187,7 +187,8 @@ public class Grid {
 		return Math.abs(x - goalNode.getX()) + Math.abs(y - goalNode.getY());	
 	}
 	
-	private boolean isInsideBorder(int x, int y){
+	
+	public boolean isInsideBorder(int x, int y){
 		int tmp1 = NUMBER_OF_NODES_PER_EDGE - BORDER_NODE_WIDTH;
 		// TODO: get rid of 'triangle corners'
 		// 29.3 cm width of a 'right-angle' triangle
@@ -277,31 +278,85 @@ public class Grid {
 		xEnd = xEnd / scale;
 		yEnd = yEnd / scale;
 		
-		double m = (yEnd - yStart) / (xEnd - xStart); //calculate the gradient
-		double C = yStart - m * xStart; //c = y' - mx'
-		
+		// QUICK-fix: division by zero error   :(
+		double m = Double.MAX_VALUE;
+		if(xStart != xEnd) m = Math.abs((yEnd - yStart)) / Math.abs((xEnd - xStart)); //calculate the gradient
+		double angle = Math.atan(m);
+		double c = yStart - m * xStart; //c = y' - mx'
+
+		// find perpendicular line equations at start and end
+		double m1, m2;
+		m1 = m2 = -m;
+		double c1 = yStart - m1 * xStart; //c = y' - mx'
+		double c2 = yEnd - m1 * xEnd; //c = y' - mx'
+
 		double radiusOfCoverInNodes = radius / scale; 
 		
-		for (int i = (int) Math.ceil(xStart); i < (int) Math.ceil(xEnd); ++i){
-			// for each node within radiusOfCover on y-axis, add node to closed list.
-			double y = m * i + C; 
-			for (int j = (int) Math.ceil(y - radiusOfCoverInNodes); j < (int) Math.ceil(y + radiusOfCoverInNodes); ++j){
-				AStarNode toAdd = new AStarNode(i, j);
-				closedList.add(toAdd);
-				grid[i][j] = toAdd;
+		/*
+		 * Implementation details are as follows,
+		 * 
+		 * 1. find height of highest row with a node in rectangular cover
+		 * 2. find height of lowest row with a node in rectangular cover
+		 * 3. Iterate row by row adding covered nodes
+		 * 4. add two circle-covers at ends
+		 */
+		double yDelta = radiusOfCoverInNodes * Math.sin(angle);
+		
+		double yMax = Math.max(yStart, yEnd);
+		double yMin = Math.min(yStart, yEnd);
+		int highest = (int)Math.floor( yMax + yDelta);
+		int lowest = (int)Math.ceil(yMin - yDelta);
+		
+//		for(int y = highest; y >= lowest; --y){
+//			double x1 = (y - (c + yDelta))/ m;   //small m means x1 could be huge
+//			double x2 = (y - (c - yDelta))/ m;
+//			int xLocalMin = (int) Math.ceil(Math.min(x1,x2));
+//			int xLocalMax = (int) Math.floor(Math.max(x1,x2));
+//			if (y < yMax - yDelta){
+//				if (m>0){ //l1 is higher
+//					//xLocalMax = ()
+//				}else{
+//					// xLocalMin =
+//				}
+//			}else if (y > yMin + yDelta){
+//				if (m>0){ // l1 is higher
+//					// xLocalMin =
+//				}else{
+//					// xLocalMax
+//				}
+//			}
+//			
+//			for (int x = xLocalMin; x <= xLocalMax; ++x){
+//				addClosedListNode(x, y);
+//			}
+//		}
+		
+		addCircleToClosedList(xStart, yStart, radiusOfCoverInNodes);
+		addCircleToClosedList(xEnd, yEnd, radiusOfCoverInNodes);
+	}
+	
+	
+	// y * y + x * x = r * r
+	private void addCircleToClosedList(double xCoord, double yCoord, double r){
+		int highest = (int)Math.floor( yCoord + r);
+		int lowest = (int)Math.ceil( yCoord - r);
+		
+		for(int i = highest; i >= lowest; --i){
+			double y = yCoord - i;
+			double change = Math.sqrt(r * r - y * y);
+			
+			int xmin = (int) Math.ceil(xCoord - change);
+			int xmax = (int) Math.floor(xCoord + change);
+			for(int j = xmin; j <= xmax; ++j){
+				addClosedListNode(i,j);
 			}
 		}
-		
-		for (int i = (int) Math.ceil(yStart); i < (int) Math.ceil(yEnd); ++i){
-			// for each node within radiusOfCover on x-axis, add node to closed list.
-			double x = (i - C) / m; //could cause errors?
-			for (int j = (int) Math.ceil(x - radiusOfCoverInNodes); j < (int) Math.ceil(x + radiusOfCoverInNodes); ++j){
-				AStarNode toAdd = new AStarNode(j, i);
-				closedList.add(toAdd);
-				grid[j][i] = toAdd;
-			}
-		}
-		
+	}
+	
+	private void addClosedListNode(int i, int j){
+		AStarNode toAdd = new AStarNode(i, j);
+		closedList.add(toAdd);
+		grid[i][j] = toAdd;
 	}
 	
 	public String toString(){
