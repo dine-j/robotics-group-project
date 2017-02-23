@@ -357,12 +357,14 @@ public class Grid {
 	}
 
 	
-	private void addAngledRectangleToClosedList(double xStart, double yStart, double xEnd, double yEnd, double radius){
-		if (xStart == yStart || xEnd == yEnd) throw new IllegalArgumentException("Wall is straight");
+	//TODO: debug this method
+	/*private*/public void addAngledRectangleToClosedList(double xStart, double yStart, double xEnd, double yEnd, double radius){
+		if (xStart == xEnd ||  yStart== yEnd) throw new IllegalArgumentException("Wall is straight");
 
 		double m = Math.abs((yEnd - yStart)) / Math.abs((xEnd - xStart)); //calculate the gradient
 		double angle = Math.atan(m);
-		double yDelta = radius * Math.sin(angle);
+		double yDelta = Math.abs(radius * Math.sin(angle));
+		double xDelta = Math.abs(radius * Math.cos(angle));
 		double c = yStart - m * xStart; //c = y - mx
 		double c1 = c + yDelta;
 		double c2 = c - yDelta;
@@ -374,10 +376,10 @@ public class Grid {
 		
 		double[][] lineEqs = new double[][]{{m,c1}, {m,c2}, {m_,c3}, {m_,c4}};
 		//bottom left of box
-		double x = Math.min(xStart,xEnd);
-		double y = Math.min(yStart,yEnd);
-		double h = Math.max(yStart,yEnd) - y;
-		double w = Math.max(xStart,xEnd) - x;
+		double x = Math.min(xStart,xEnd) - xDelta;
+		double y = Math.min(yStart,yEnd) - yDelta;
+		double h = yDelta + Math.max(yStart,yEnd) - y;
+		double w = xDelta + Math.max(xStart,xEnd) - x;
 		
 		addToClosedInsideLineEqs(x,y,h,w, lineEqs);
 	}
@@ -387,7 +389,48 @@ public class Grid {
 	 * lineEqs expected to be {{m1, c1}, {m2,c2} ... {mk,ck}}
 	 */
 	private void addToClosedInsideLineEqs(double boxXCoord, double boxYCoord, double boxHeight, double boxWidth, double[][] lineEqs ){
-		//TODO: finish this helper method for 'angledRectangle()' thingy
+		int start = (int) Math.ceil(boxYCoord);
+		int end = (int) Math.floor(boxHeight) + start;
+		
+		//debugging
+		for(int maks = 0; maks < lineEqs.length; ++maks){
+			System.out.println("line" + maks + ": y = " + lineEqs[maks][0] + " + " + lineEqs[maks][1]);
+		}
+		System.out.println("x0: " + boxXCoord + " y0: " + boxYCoord + " width:" + boxWidth + " height: " + boxHeight);
+				
+		for(int k = start; k < end; ++k){
+			//attempt to collect 2 values a1 to a2
+			Integer a1 = null;
+			Integer a2 = null;
+			
+			for(int yi = 0; yi < lineEqs.length; ++yi){
+				// y = mx + c => x = (y-c)/m
+				double x =  (k - lineEqs[yi][1])/lineEqs[yi][0];
+
+				if(x >= boxXCoord && x<= boxXCoord + boxWidth){
+					if(a1 == null){
+						a1 = (int) Math.ceil(x);
+					}else if(a1 != null && a2 == null){
+						a2 = (int) Math.floor(x);
+					}else if(a1 > a2){ 
+						int tmp = a2; 
+						a2 = a1;
+						a1 = tmp;
+						break; //break from for loop when have two values in order
+					} else{
+						break; //break from for loop when have two values in order
+					}
+				}
+				
+			}
+			if (a1 == null) a1 = (int)Math.ceil(boxXCoord);
+			if (a2 == null) a2 = (int) Math.floor(boxXCoord + boxWidth);
+			for(int i = a1; i<= a2; ++i){
+				//if(isInsideBorder(i, k)) addClosedListNode(i,k);
+				if(isInsideBorder(k,i)) addClosedListNode(k,i);
+			}
+		}// end of row iteration
+		
 	}
 	
 	// x^2 + y^2 = r^2

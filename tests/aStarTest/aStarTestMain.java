@@ -14,8 +14,8 @@ public class aStarTestMain {
 
         
         //model.addWallToClosedList(20, 20, 60, 20, /*in cm*/ 10);
-        int[] goalPos = model.inputTunnelPosition(90, 90, 0);
-        
+        //int[] goalPos = model.inputTunnelPosition(90, 90, 2);
+//        grid.placeGoal(goalPos[0], goalPos[1]);
         
         
         for(int i = 0; i < size; ++i){
@@ -26,7 +26,9 @@ public class aStarTestMain {
         	 }
         }
         
-        grid.placeGoal(goalPos[0], goalPos[1]);
+        model.addAngledRectangleToClosedList( 20, 20, 40, 25, 10);
+        
+        
         grid.readGrid(model);
         
         grid.setVisible(true);
