@@ -42,7 +42,7 @@ public class GridFrame extends JFrame {
     public void placeGoal(int x, int y) {
         if(x >= nodes.length || y >= nodes.length)
             throw new IndexOutOfBoundsException("Max = " + (nodes.length - 1));
-        nodes[x][y].setState(Color.red);
+        nodes[nodes.length - 1 - x][y].setState(Color.red);
     }
     
     public void readGrid(Grid grid){
@@ -51,11 +51,11 @@ public class GridFrame extends JFrame {
     		for( int j = 0; j < nodes.length; ++ j) {
     			if(matrix[i][j] == null){
     				//pass
+    			
+    			}else if (!matrix[i][j].isOpen()){
+    				nodes[nodes.length - i][j].setState(Color.black);// display (0,0 at bottom left)
     			}else if (matrix[i][j].isRoot()){  
-    				placeRobot(i,j);
-    			}
-    			else if (!matrix[i][j].isOpen()){
-    				nodes[i][j].setState(Color.black);
+    				placeRobot(nodes.length - i,j);  // display (0,0 at bottom left)
     			}
     		}
     	}
