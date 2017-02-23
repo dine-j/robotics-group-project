@@ -6,6 +6,7 @@ import java.util.ArrayList;
 /**
  * Represents the map of nodes, to use in the path finding algorithm
  *
+ * MAY HAVE FORGOTTON ORIENTATION
  * The bottom right hand corner of the grid layout, is the closest corner in line with the bayesian strip
  */
 public class Grid {
@@ -19,11 +20,9 @@ public class Grid {
 	// Array of 'actions'
 	final int[][] ACTION = new int[][]{{0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}, {-1,0}, {-1,1}};
 	
-	
 	final private int NUMBER_OF_NODES_PER_EDGE; 
 	final private double DISTANCE_BETWEEN_NODES; //in cm
 	final private int BORDER_NODE_WIDTH; // in # of nodes
-	
 	
 	private AStarNode[][] grid;
 
@@ -35,7 +34,6 @@ public class Grid {
 		this(62); //calculated to be 2cm between each node
 	}
 	
-
 	public Grid(int numberOfNodesPerEdge){
 		
 		closedList = new TreeSet<AStarNode>(new AStarNode.positionComparator());   //DONE: closedList has comparator
@@ -46,7 +44,7 @@ public class Grid {
 		BORDER_NODE_WIDTH = (int) ((ROBOT_LENGTH) / DISTANCE_BETWEEN_NODES);
 		
 		grid = new AStarNode[numberOfNodesPerEdge][numberOfNodesPerEdge]; // pointers stored in grid for x,y access
-	} //TODO: grid may not be initialised fully...
+	} //UNSURE: grid may not be initialised fully...
 	
 	public int getSize(){
 		return NUMBER_OF_NODES_PER_EDGE;
@@ -54,6 +52,34 @@ public class Grid {
 	
 	public AStarNode[][] getGrid(){
 		return grid;
+	}
+	
+	/**
+	 * @param x in cm
+	 * @param y in cm
+	 * @return the closest node in 'node coordinates'
+	 */
+	public int[] findClosestNode(double x, double y){
+		double tmpx = x / DISTANCE_BETWEEN_NODES;
+		double tmpy = y / DISTANCE_BETWEEN_NODES;
+		tmpx = Math.round(tmpx);
+		tmpy = Math.round(tmpy);
+		return new int[]{(int) tmpx, (int) tmpy};
+	}
+	
+	/**
+	 * @param x in cm
+	 * @param y in cm
+	 * @param diagonal if set to true, attempt to find closest 'forward' node on leading diagonal
+	 * @return the closest node in 'node coordinates',  also in 3rd array index the distance needed to travel on diagonal in mm
+	 */
+	public int[] findClosestNode(double x, double y, boolean diagonal){
+		if(diagonal){
+			double tmpx = Math.ceil(x/DISTANCE_BETWEEN_NODES);
+			double tmpy = Math.ceil(y/DISTANCE_BETWEEN_NODES);
+			double remainder = (x - tmpx * DISTANCE_BETWEEN_NODES) * 10 * RobotMovement.SQRT2;
+			return new int[]{(int) tmpx, (int) tmpy, (int) remainder};
+		}else return findClosestNode(x, y);
 	}
 	
 	/**
@@ -67,6 +93,7 @@ public class Grid {
 		
 		// 1. Add closed list stuff
 		inputCylinderPosition(50, 50); // we don't know yet
+		//addCornersToClosedList(); //not tested
 		int[] goalTmp = inputTunnelPosition(40, 122 - 40, 0); // not sure yet
 		
 		// 1b. Add goal node
@@ -79,20 +106,12 @@ public class Grid {
 		openList.add(init);
 		grid[xStart][yStart] = init; //add to grid
 		
-		//TODO: write a test to look at the closed list... // also grid
-		
-//		int counter = 0;
 		while (!openList.isEmpty()){
-//			++counter;
-//			if (counter % 50 == 0){
-//				System.out.println(counter);
-//			}
 			AStarNode toExpand = openList.first(); //find node with minimum value
 			for (int i = 0; i < ACTION.length; ++i){
 				final int x = toExpand.getX() + ACTION[i][0];
 				final int y = toExpand.getY()+ ACTION[i][1];
 				double actionCost = (i % 2 == 0) ? 1.0  : RobotMovement.SQRT2;
-				
 				
 				//exit out method if found goal
 				if (x == goal.getX() && y == goal.getY()){
@@ -131,8 +150,8 @@ public class Grid {
 		return result; //only gets here if result is null
 	}
 	
-	
-	public LinkedList<AStarNode> getListPathFromGoalNode(AStarNode goal){
+	/* helper method for calculatePath() */
+	private LinkedList<AStarNode> getListPathFromGoalNode(AStarNode goal){
 		LinkedList<AStarNode> list = new LinkedList<AStarNode>();
 		list.add(goal);
 		AStarNode current = goal;
@@ -142,22 +161,7 @@ public class Grid {
 		}
 		return list;
 	}
-	
-	/**
-	 * 
-	 * @param x in cm
-	 * @param y in cm
-	 * @return the closest node in 'node coordinates'
-	 */
-	public int[] findClosestNode(double x, double y){
-		double tmpx = x / DISTANCE_BETWEEN_NODES;
-		double tmpy = y / DISTANCE_BETWEEN_NODES;
-		tmpx = Math.round(tmpx);
-		tmpy = Math.round(tmpy);
-		return new int[]{(int) tmpx, (int) tmpy};
-	}
-	
-	
+		
 	/**
 	 * After doing A* search, parses the path to a list of actions to follow
 	 * @param xStart
@@ -183,15 +187,20 @@ public class Grid {
 			}
 			
 			int directionChange = (newDirection - direction) % 8 - 3;
-			while (directionChange != 0){
-				if (directionChange < 0) {
-					list.add(RobotMovement.RIGHT45); 
-					directionChange++;
-				}
-				else{
-					list.add(RobotMovement.LEFT45);
-					directionChange--;
-				}
+			switch (directionChange){
+			case -3: list.add(RobotMovement.LEFT135);
+				break;
+			case -2: list.add(RobotMovement.LEFT90);
+				break;
+			case -1: list.add(RobotMovement.LEFT45);
+				break;
+			case 1: list.add(RobotMovement.RIGHT45);
+				break;
+			case 2: list.add(RobotMovement.RIGHT90);
+				break;
+			case 3: list.add(RobotMovement.RIGHT135);
+				break;
+			case 4: list.add(RobotMovement.RIGHT180);
 			}
 			
 			if (newDirection % 2 == 0){
@@ -199,8 +208,7 @@ public class Grid {
 			}else{
 				list.add(RobotMovement.FORWARD_ON_DIAGONAL);
 			}
-		}
-				
+		}	
 		return list;
 	}
 	
@@ -210,7 +218,7 @@ public class Grid {
 	}
 	
 	
-	public boolean isInsideBorder2(int x, int y){
+	public boolean isInsideBorder(int x, int y){
 		int tmp1 = NUMBER_OF_NODES_PER_EDGE - BORDER_NODE_WIDTH;
 		// 29.3 cm width of a 'right-angle' triangle
 		if ( x > BORDER_NODE_WIDTH && y > BORDER_NODE_WIDTH && x < tmp1 && y < tmp1  ){
@@ -219,40 +227,9 @@ public class Grid {
 		return false;
 	}
 	
-	
-	// TODO: supposed to be better method that gets rid of 'triangle corners'
-	public boolean isInsideBorder(int x, int y){
-		int tmp1 = NUMBER_OF_NODES_PER_EDGE - BORDER_NODE_WIDTH;
-		// 29.3 cm width of a 'right-angle' triangle
-		final double TRIANGLE_WIDTH = 29.3/1.5; /// (double)DISTANCE_BETWEEN_NODES;
-		if ( x > BORDER_NODE_WIDTH && y > BORDER_NODE_WIDTH + TRIANGLE_WIDTH 
-				&& x < tmp1 && y < tmp1 - TRIANGLE_WIDTH  ){
-			return true;
-		}else if ( x > BORDER_NODE_WIDTH + TRIANGLE_WIDTH && y > BORDER_NODE_WIDTH  
-				&& x < tmp1 - TRIANGLE_WIDTH&& y < tmp1   ){
-			return true;
-		}else if (isInsideBorder2(x,y)){
-			int a = x + y;
-			// TODO: finish stub
-			boolean condition2 = true; //stub :(
-			//int b = x - y;
-			if ( a > TRIANGLE_WIDTH && a < (2 * NUMBER_OF_NODES_PER_EDGE - TRIANGLE_WIDTH)
-					&& condition2 ) return true;
-		}
-		return false;
-	}
-	
-	
-	
-	/*
-	 * All of the code below this line just automates adding the tunnel/object for closedList & goal
-	 * 
-	 * Probably a bit dumb writing this much
-	 * ----------------------------------------------------------------------
-	 * 
-	 * 
-	 */
-	
+/////////////////////////////////////////////////////////////////////////////
+// below are the object placing methods, for map/grid
+/////////////////////////////////////////////////////////////////////////////
 	
 	/**
 	 * Updates the map so that it won't navigate though a CYLINDER OBJECT
@@ -266,6 +243,17 @@ public class Grid {
 		addWallToClosedList(x, y + cr, x, y - cr, ROBOT_RADIUS);
 	}
 	
+	
+	public void addCornersToClosedList(){
+		double dist = 29.3/DISTANCE_BETWEEN_NODES; // in nodes
+		double r = ROBOT_LENGTH/DISTANCE_BETWEEN_NODES;
+		double w = COURSE_WIDTH/DISTANCE_BETWEEN_NODES;
+		addAngledRectangleToClosedList(dist,0,0,dist, r);
+		addAngledRectangleToClosedList(w-dist,0,0,w-dist, r);
+		addAngledRectangleToClosedList(w-dist,0,0,dist, r);
+		addAngledRectangleToClosedList(dist,0,0,w-dist, r);
+	}
+	
 	/**
 	 *  Updates the map so that it won't navigate though a TUNNEL OBJECT
 	 * TUNNEL is hardcoded to be 24cm width by 20cm depth   2cm walls
@@ -274,6 +262,7 @@ public class Grid {
 	 * @param degreesFromSouth  degrees clockwise from south
 	 * @return A two element array, containing x & y, of ideal goal position
 	 */
+	//TODO: correct/debug this method ::: MATRIX ROTATION NOT WORKING
 	public int[] inputTunnelPosition(double x, double y, double degreesFromSouth){
 		double[] result = new double[2];
 		/*
@@ -368,61 +357,40 @@ public class Grid {
 	}
 
 	
-	//TODO: finish this method
 	private void addAngledRectangleToClosedList(double xStart, double yStart, double xEnd, double yEnd, double radius){
 		if (xStart == yStart || xEnd == yEnd) throw new IllegalArgumentException("Wall is straight");
 
 		double m = Math.abs((yEnd - yStart)) / Math.abs((xEnd - xStart)); //calculate the gradient
 		double angle = Math.atan(m);
 		double yDelta = radius * Math.sin(angle);
-
-		double c = yStart - m * xStart; //c = y' - mx'    //lines pl1, pl2   can be the parrelel lines..
-		double cp1 = c + yDelta;
-		double cp2 = c - yDelta;
-
-		boolean isPl1Left = xStart < xEnd;
-
+		double c = yStart - m * xStart; //c = y - mx
+		double c1 = c + yDelta;
+		double c2 = c - yDelta;
+		
 		// find perpendicular line equations at start and end
-		double m1, m2;
-		m1 = m2 = -1/m;   //m cannot be zero :(
-		double c1 = yStart - m1 * xStart; //c = y' - mx'
-		double c2 = yEnd - m1 * xEnd; //c = y' - mx'
-
-		// start adding nodes row by row.
-
-
-		double yMax = Math.max(yStart, yEnd);
-		double yMin = Math.min(yStart, yEnd);
-		int highest = (int)Math.floor( yMax + yDelta);
-		int lowest = (int)Math.ceil(yMin - yDelta);
-
-		for(int y = highest; y >= lowest; --y){
-			double x1 = (y - (c + yDelta))/ m;   //small m means x1 could be huge
-			double x2 = (y - (c - yDelta))/ m;
-			int xLocalMin = (int) Math.ceil(Math.min(x1,x2));
-			int xLocalMax = (int) Math.floor(Math.max(x1,x2));
-			if (y < yMax - yDelta){
-				if (m>0){ //l1 is higher
-					//xLocalMax = ()
-				}else{
-					// xLocalMin =
-				}
-			}else if (y > yMin + yDelta){
-				if (m>0){ // l1 is higher
-					// xLocalMin =
-				}else{
-					// xLocalMax
-				}
-			}
-
-			for (int x = xLocalMin; x <= xLocalMax; ++x){
-				addClosedListNode(x, y);
-			}
-		}
-
+		double m_ = -1/m;   //m cannot be zero :(
+		double c3 = yStart - m_ * xStart; //c = y - mx
+		double c4 = yEnd - m_ * xEnd; //c = y - mx
+		
+		double[][] lineEqs = new double[][]{{m,c1}, {m,c2}, {m_,c3}, {m_,c4}};
+		//bottom left of box
+		double x = Math.min(xStart,xEnd);
+		double y = Math.min(yStart,yEnd);
+		double h = Math.max(yStart,yEnd) - y;
+		double w = Math.max(xStart,xEnd) - x;
+		
+		addToClosedInsideLineEqs(x,y,h,w, lineEqs);
 	}
 	
-	// y * y + x * x = r * r
+	/*
+	 * row by row, adds(nodes to closed list) from first intersect to second intersect, within containing box
+	 * lineEqs expected to be {{m1, c1}, {m2,c2} ... {mk,ck}}
+	 */
+	private void addToClosedInsideLineEqs(double boxXCoord, double boxYCoord, double boxHeight, double boxWidth, double[][] lineEqs ){
+		//TODO: finish this helper method for 'angledRectangle()' thingy
+	}
+	
+	// x^2 + y^2 = r^2
 	private void addCircleToClosedList(double xCoord, double yCoord, double r){
 		int highest = (int)Math.floor( yCoord + r);
 		int lowest = (int)Math.ceil( yCoord - r);
@@ -445,23 +413,6 @@ public class Grid {
 			closedList.add(toAdd);
 			grid[i][j] = toAdd;
 		}
-	}
-	
-	public String toString(){
-		String rep = "";
-		String nextChar = "";
-		for (int i = 0; i < grid.length; ++i)
-		{
-			for (int j = 0; j < grid.length; ++j) 
-			{
-				nextChar = "";
-				if (grid[i][j] == null) nextChar = "_";
-				else if (!grid[i][j].isOpen()) nextChar = "x";
-				rep += nextChar;
-			}
-			rep += "\n";
-		}
-		return rep;
 	}
 	
 }

@@ -3,10 +3,11 @@ package main.term2Challenges;
 import java.util.Comparator;
 
 /**
- * Represents A* nodes, sorted by f(n) values.
+ * Represents A* nodes, sorted by f(n) values or a comparator
  *
  */
 public class AStarNode implements Comparable<AStarNode>{
+	private static enum NodeState{OPEN, CLOSED, GOAL, ROOT};
 	private int x;
 	private int y;
 	private AStarNode parent;
@@ -15,7 +16,7 @@ public class AStarNode implements Comparable<AStarNode>{
 	private Double gn; // may be recomputed
 	private Double fn;
 	
-	private boolean open;  //node may either be open or closed
+	private NodeState state;  //node may either be open or closed
 	
 	
 	public AStarNode(int x, int y, double hn, double gn, AStarNode parent, boolean open){
@@ -25,7 +26,7 @@ public class AStarNode implements Comparable<AStarNode>{
 		this.gn = gn;
 		this.fn = gn + hn;
 		this.parent = parent;
-		this.open = open;
+		this.state = NodeState.OPEN;
 	}
 	
 	/**
@@ -40,15 +41,25 @@ public class AStarNode implements Comparable<AStarNode>{
 		this.gn = null;
 		this.fn = null;
 		this.parent = null;
-		open = false;
+		this.state = NodeState.CLOSED;
+	}
+	
+	/**
+	 * Can create a valueless goal node
+	 * @param x
+	 * @param y
+	 */
+	public AStarNode (int x, int y, boolean isGoal){
+		this(x,y);
+		if(isGoal) state = NodeState.GOAL;
 	}
 	
 	public void setClosed(){
-		open = false;
+		this.state = NodeState.CLOSED;
 	}
 	
 	public boolean isOpen(){
-		return open;
+		return state == NodeState.OPEN || state == NodeState.GOAL;
 	}
 	
 	public void setGn(double gn){
@@ -72,15 +83,11 @@ public class AStarNode implements Comparable<AStarNode>{
 	public boolean equals(Object other){
 		try{
 			if (other instanceof AStarNode){
-				AStarNode tmp = (AStarNode) other;
-				//return x == tmp.x && y == tmp.y;
-				return this.compareTo(tmp) == 0;
+				return this.compareTo((AStarNode) other) == 0;
 			}
-			
 		} catch( Exception e){
 			e.printStackTrace();
 		}
-		
 		return false;
 	}
 	
@@ -122,12 +129,10 @@ public class AStarNode implements Comparable<AStarNode>{
 		return fn;
 	}
 	
-	
 	public static class positionComparator implements Comparator<AStarNode>{
 		@Override
 		public int compare(AStarNode o1, AStarNode o2) {
 			return o1.x * 500 + o1.y - o2.x * 500 - o2.y; //works for grid size of up to 500
 		}
-		
 	}
 }
