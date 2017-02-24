@@ -239,19 +239,24 @@ public class Grid {
 	 */
 	public void inputCylinderPosition(double x, double y){ 
 		final double cr = 2.25; // the cylinderRadius
-		addWallToClosedList(x - cr, y, x + cr, y, ROBOT_RADIUS);
-		addWallToClosedList(x, y + cr, x, y - cr, ROBOT_RADIUS);
+		inputCirclePos(x/ DISTANCE_BETWEEN_NODES, y/ DISTANCE_BETWEEN_NODES, cr +ROBOT_LENGTH);
 	}
 	
 	
-	public void addCornersToClosedList(){
+	public void inputCorners(){
 		double dist = 29.3/DISTANCE_BETWEEN_NODES; // in nodes
 		double r = ROBOT_LENGTH/DISTANCE_BETWEEN_NODES;
 		double w = COURSE_WIDTH/DISTANCE_BETWEEN_NODES;
-		addAngledRectangleToClosedList(dist,0,0,dist, r);
-		addAngledRectangleToClosedList(w-dist,0,0,w-dist, r);
-		addAngledRectangleToClosedList(w-dist,0,0,dist, r);
-		addAngledRectangleToClosedList(dist,0,0,w-dist, r);
+		inputSlantRectangle(dist, 0, 0, dist, r);
+		inputSlantRectangle(w - dist, w, w, w - dist, r);
+		inputSlantRectangle(0, w - dist, dist, w, r);
+		inputSlantRectangle(w - dist,0 , w, dist, r);
+		
+//		double dist = 29.3; // in nodes
+//		inputWallPosition(dist, 0, 0, dist, ROBOT_LENGTH);
+//		inputWallPosition(COURSE_WIDTH - dist, COURSE_WIDTH, COURSE_WIDTH, COURSE_WIDTH - dist, ROBOT_LENGTH);
+//		inputWallPosition(0, COURSE_WIDTH - dist, dist, COURSE_WIDTH, ROBOT_LENGTH);
+//		inputWallPosition(COURSE_WIDTH - dist,0 , COURSE_WIDTH, dist, ROBOT_LENGTH);
 	}
 	
 	/**
@@ -281,7 +286,7 @@ public class Grid {
 		tmpy = y - 10;
 		tmpxend = tmpx;
 		tmpyend = y + 11; // extra cm to go to middle line of back wall
-		addWallToClosedList( cos * tmpx - sin * tmpy, sin * tmpx + cos * tmpy,
+		inputWallPosition( cos * tmpx - sin * tmpy, sin * tmpx + cos * tmpy,
 				cos * tmpxend - sin * tmpyend, sin * tmpxend + cos * tmpyend, ROBOT_WIDTH);
 		
 		// add back wall
@@ -289,7 +294,7 @@ public class Grid {
 		tmpy = tmpyend;
 		tmpxend = x + 13;
 		tmpyend = y + 11;
-		addWallToClosedList( cos * tmpx - sin * tmpy, sin * tmpx + cos * tmpy,
+		inputWallPosition( cos * tmpx - sin * tmpy, sin * tmpx + cos * tmpy,
 				cos * tmpxend - sin * tmpyend, sin * tmpxend + cos * tmpyend ,ROBOT_WIDTH );
 		
 		// add right wall
@@ -297,7 +302,7 @@ public class Grid {
 		tmpy = tmpyend;
 		tmpxend = x + 13;
 		tmpyend = y - 10;
-		addWallToClosedList( cos * tmpx - sin * tmpy, sin * tmpx + cos * tmpy,
+		inputWallPosition( cos * tmpx - sin * tmpy, sin * tmpx + cos * tmpy,
 				cos * tmpxend - sin * tmpyend, sin * tmpxend + cos * tmpyend ,ROBOT_WIDTH);
 		
 		// compute a sensible ideal goal to plan to..
@@ -315,8 +320,15 @@ public class Grid {
 
 	}
 
-	
-	public void addWallToClosedList(double xStart, double yStart, double xEnd, double yEnd, double radius){
+	/**
+	 * Updates the map so that it won't navigate though a WALL OBJECT
+	 * @param xStart in cm
+	 * @param yStart in cm
+	 * @param xEnd in cm
+	 * @param yEnd in cm
+	 * @param radius
+	 */
+	public void inputWallPosition(double xStart, double yStart, double xEnd, double yEnd, double radius){
 		// work on the 'nodes' scale
 		double scale = DISTANCE_BETWEEN_NODES;
 		xStart = xStart / scale;
@@ -324,6 +336,21 @@ public class Grid {
 		xEnd = xEnd / scale;
 		yEnd = yEnd / scale;
 		radius = radius / scale; 
+		inputSlantRectangle(xStart, yStart, xEnd, yEnd, radius);
+		inputCirclePos(xStart, yStart, radius);
+		inputCirclePos(xEnd, yEnd, radius);
+	}
+
+	//TODO: debug (fix trig, or write, rotate((centerx,centery), angle) & lineEq((x1,y1),(x2,y2)) method
+	/**
+	 * Works on 'NodeScale'
+	 * @param xStart
+	 * @param yStart
+	 * @param xEnd
+	 * @param yEnd
+	 * @param radius
+	 */
+	/*private*/public void inputSlantRectangle(double xStart, double yStart, double xEnd, double yEnd, double radius){
 		if (xStart == xEnd ||  yStart== yEnd){
 			if(xStart == xEnd &&  yStart== yEnd){} //don't do anything
 			else if (yStart == yEnd) {
@@ -347,115 +374,113 @@ public class Grid {
 					}
 				} //end of for loop
 			}// end of grid-aligned condition
-
-		} else {
-			addAngledRectangleToClosedList(xStart, yStart, xEnd, yEnd, radius);
 		}
-		
-		addCircleToClosedList(xStart, yStart, radius);
-		addCircleToClosedList(xEnd, yEnd, radius);
-	}
-
-	
-	//TODO: debug this method
-	/*private*/public void addAngledRectangleToClosedList(double xStart, double yStart, double xEnd, double yEnd, double radius){
-		if (xStart == xEnd ||  yStart== yEnd) throw new IllegalArgumentException("Wall is straight");
-
-		double m = Math.abs((yEnd - yStart)) / Math.abs((xEnd - xStart)); //calculate the gradient
-		double angle = Math.atan(m);
-		double yDelta = Math.abs(radius * Math.sin(angle));
-		double xDelta = Math.abs(radius * Math.cos(angle));
-		double c = yStart - m * xStart; //c = y - mx
-		double c1 = c + yDelta;
-		double c2 = c - yDelta;
-		
-		// find perpendicular line equations at start and end
-		double m_ = -1/m;   //m cannot be zero :(
-		double c3 = yStart - m_ * xStart; //c = y - mx
-		double c4 = yEnd - m_ * xEnd; //c = y - mx
-		
-		double[][] lineEqs = new double[][]{{m,c1}, {m,c2}, {m_,c3}, {m_,c4}};
-		//bottom left of box
-		double x = Math.min(xStart,xEnd) - xDelta;
-		double y = Math.min(yStart,yEnd) - yDelta;
-		double h = yDelta + Math.max(yStart,yEnd) - y;
-		double w = xDelta + Math.max(xStart,xEnd) - x;
-		
-		addToClosedInsideLineEqs(x,y,h,w, lineEqs);
-	}
-	
-	/*
-	 * row by row, adds(nodes to closed list) from first intersect to second intersect, within containing box
-	 * lineEqs expected to be {{m1, c1}, {m2,c2} ... {mk,ck}}
-	 */
-	private void addToClosedInsideLineEqs(double boxXCoord, double boxYCoord, double boxHeight, double boxWidth, double[][] lineEqs ){
-		int start = (int) Math.ceil(boxYCoord);
-		int end = (int) Math.floor(boxHeight) + start;
-		
-		//debugging
-		for(int maks = 0; maks < lineEqs.length; ++maks){
-			System.out.println("line" + maks + ": y = " + lineEqs[maks][0] + " + " + lineEqs[maks][1]);
-		}
-		System.out.println("x0: " + boxXCoord + " y0: " + boxYCoord + " width:" + boxWidth + " height: " + boxHeight);
-				
-		for(int k = start; k < end; ++k){
-			//attempt to collect 2 values a1 to a2
-			Integer a1 = null;
-			Integer a2 = null;
+		else{
+			if(yEnd < yStart){
+				double tmp=yStart; yStart=yEnd; yEnd=tmp; 
+				tmp=xStart; xStart=xEnd; xEnd=tmp;
+			}
+			double m = (yEnd - yStart) / (xEnd - xStart); //calculate the gradient
+			double angle = Math.atan(m);
+			double xDelta = Math.abs(radius * Math.sin( angle));
+			double yDelta = Math.abs(radius * Math.cos( angle));
+			double c = yStart - m * xStart; //c = y - mx
+			double c1 = c + yDelta;
+			double c2 = c - yDelta;
 			
-			for(int yi = 0; yi < lineEqs.length; ++yi){
-				// y = mx + c => x = (y-c)/m
-				double x =  (k - lineEqs[yi][1])/lineEqs[yi][0];
-
-				if(x >= boxXCoord && x<= boxXCoord + boxWidth){
-					if(a1 == null){
-						a1 = (int) Math.ceil(x);
-					}else if(a1 != null && a2 == null){
-						a2 = (int) Math.floor(x);
-					}else if(a1 > a2){ 
-						int tmp = a2; 
-						a2 = a1;
-						a1 = tmp;
-						break; //break from for loop when have two values in order
-					} else{
-						break; //break from for loop when have two values in order
+			// find perpendicular line equations at start and end
+			double m_ = -1/m;   //m cannot be zero :(
+			double c3 = yStart - m_ * xStart; //c = y - mx
+			double c4 = yEnd - m_ * xEnd; //c = y - mx
+			double[][] lineEqs = new double[][]{{m,c1}, {m_,c4},{m_,c3}, {m,c2}};
+			//bottom left of box
+			double x = Math.min(xStart,xEnd) - xDelta;
+			double y = Math.min(yStart,yEnd) - yDelta;
+			double h = yDelta + Math.max(yStart,yEnd) - y;
+			double w = xDelta + Math.max(xStart,xEnd) - x;
+			
+			inputBy4LineBounds(x,y,h,w, lineEqs);
+		}
+	}
+	
+	//need to input NNSS,  +ve grad, draw rect =end,left,start,right
+	//-ve grad drawrect = end,right,start,left .. I.e highest,highest,lowest,lowest
+	public void inputBy4LineBounds(double boxXCoord, double boxYCoord, double boxHeight, double boxWidth, double[][] lineEqs ){
+		boolean[] north = new boolean[]{true,true,false,false};
+		if(lineEqs.length > 4) throw new IllegalArgumentException("upto four line equations!");
+		for(int i = (int) Math.ceil(boxYCoord); i < boxYCoord + boxHeight; ++i ){
+			for(int j = (int) Math.ceil(boxXCoord); j < boxXCoord + boxWidth; ++j ){
+				boolean yesAddPlease = true;
+				for(int k = 0; k < lineEqs.length; ++k){
+					//check line equ
+					if(north[k]){
+						if(i > lineEqs[k][0] * j + lineEqs[k][1]) yesAddPlease = false;
+					}else{
+						if(i < lineEqs[k][0] * j + lineEqs[k][1]) yesAddPlease = false;
 					}
 				}
-				
+				if(yesAddPlease) addClosedListNode(i, j);
 			}
-			if (a1 == null) a1 = (int)Math.ceil(boxXCoord);
-			if (a2 == null) a2 = (int) Math.floor(boxXCoord + boxWidth);
-			for(int i = a1; i<= a2; ++i){
-				//if(isInsideBorder(i, k)) addClosedListNode(i,k);
-				if(isInsideBorder(k,i)) addClosedListNode(k,i);
-			}
-		}// end of row iteration
-		
+		}
 	}
 	
+	
 	// x^2 + y^2 = r^2
-	private void addCircleToClosedList(double xCoord, double yCoord, double r){
-		int highest = (int)Math.floor( yCoord + r);
-		int lowest = (int)Math.ceil( yCoord - r);
+	/**
+	 * Works on the 'NodeScale'
+	 * @param xNodeCoord
+	 * @param yNodeCoord
+	 * @param r
+	 */
+	private void inputCirclePos(double xNodeCoord, double yNodeCoord, double r){
+		int highest = (int)Math.floor( yNodeCoord + r);
+		int lowest = (int)Math.ceil( yNodeCoord - r);
 		
 		for(int i = highest; i >= lowest; --i){
-			double y = yCoord - i;
+			double y = yNodeCoord - i;
 			double change = Math.sqrt(r * r - y * y);
 			
-			int xmin = (int) Math.ceil(xCoord - change);
-			int xmax = (int) Math.floor(xCoord + change);
+			int xmin = (int) Math.ceil(xNodeCoord - change);
+			int xmax = (int) Math.floor(xNodeCoord + change);
 			for(int j = xmin; j <= xmax; ++j){
 				addClosedListNode(i,j);
 			}
 		}
 	}
 	
-	private void addClosedListNode(int i, int j){
+	/*
+	 * inputed into the ith row and jth column
+	 */
+	private void addClosedListNode(int i, int j){ //debugging, tmp disable bordercheck
 		if (isInsideBorder(i, j)){
 			AStarNode toAdd = new AStarNode(i, j);
 			closedList.add(toAdd);
 			grid[i][j] = toAdd;
 		}
+	}
+	
+	public static double[] rotateVector(double[] vector, double centerX, double centerY, double degrees){
+		if (vector.length != 2) throw new IllegalArgumentException();
+		
+		System.out.println("degrees:" + degrees);
+		
+		double radians = degrees * Math.PI/180;
+		System.out.println("radians:" + radians);
+		//line center to vector // cv
+		double[] toRotate =  new double[]{centerX - vector[0], centerY - vector[1]};
+		
+		double cos = Math.cos(radians);
+		double sin = Math.sin(radians);
+		
+		
+		double[] toAdd = new double[]{cos * toRotate[0] - sin * toRotate[1] ,
+				sin * toRotate[0] + cos * toRotate[1]};
+		double[] result = new double[]{centerX + toAdd[0], centerY + toAdd[1]};
+		
+		System.out.println("x " + result[0] + "   y " + result[1]);
+		
+		
+		return result;
 	}
 	
 }

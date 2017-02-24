@@ -26,7 +26,7 @@ public class aStarTestMain {
         	 }
         }
         
-        model.addAngledRectangleToClosedList( 20, 20, 40, 25, 10);
+        model.inputSlantRectangle( 30, 20, 40, 25, 10);
         
         
         grid.readGrid(model);
