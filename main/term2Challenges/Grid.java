@@ -151,11 +151,11 @@ public class Grid {
 						//add to openlist
 						double hn = manhattanHeuristic(xStart, yStart, goal);
 						AStarNode toAdd = new AStarNode(xStart, yStart, hn, 0, toExpand, true);
-						openList.add(toAdd);
+						openList.add(toAdd); // TODO: is failing to add due to same FN!!!!
 						grid[x][y] = toAdd; //add to grid
 					}
 					// otherwise if closed do nothing
-				}// end of for loop
+				}// end of for loop   (((TODO: it's one more down!!)
 				AStarNode rmNode = grid[x][y];
 				openList.remove(rmNode);
 				closedList.add(rmNode);
