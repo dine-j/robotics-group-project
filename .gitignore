@@ -15,3 +15,10 @@ META-INF/
 *.jar
 *.class
 /bin/
+
+# Build files
+build.properties
+build.xml
+*/build
+*/builds
+*/out
