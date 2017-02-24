@@ -15,31 +15,24 @@ public class RotationMotion {
     private static EV3GyroSensor gyro;
 
     public static void main(String[] args) {
-        motorL = new EV3LargeRegulatedMotor(MotorPort.D);
-        motorR = new EV3LargeRegulatedMotor(MotorPort.A);
+        motorL = new EV3LargeRegulatedMotor(MotorPort.A);
+        motorR = new EV3LargeRegulatedMotor(MotorPort.D);
 
         gyro = new EV3GyroSensor((Port) SensorPort.S1);
 
-        Button.waitForAnyPress();
+        Delay.msDelay(2000);
+
         gyro.reset();
-        for(int i = 0; i < 20; ++i) {
-            
-            SampleProvider sampleProvider = gyro.getAngleMode();
-            float[] sample = new float[sampleProvider.sampleSize()];
-            sampleProvider.fetchSample(sample, 0);
 
-            float angle = sample[0];
-            System.out.println(angle);
+        Delay.msDelay(2000);
 
-            Delay.msDelay(1000);
-        }
+        rotatePID(90);
     }
 
     /*
     * Make robot rotate 90 degrees anticlockwise using PID
      */
     private static void rotatePID(int rotationValue) {
-        gyro.reset();
         SampleProvider sampleProvider = gyro.getAngleMode();
         float[] sample = new float[sampleProvider.sampleSize()];
         sampleProvider.fetchSample(sample, 0);
