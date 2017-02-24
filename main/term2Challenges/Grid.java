@@ -46,7 +46,7 @@ public class Grid {
 		BORDER_NODE_WIDTH = (int) ((ROBOT_LENGTH) / DISTANCE_BETWEEN_NODES);
 		
 		grid = new AStarNode[numberOfNodesPerEdge][numberOfNodesPerEdge]; // pointers stored in grid for x,y access
-	} //UNSURE: grid may not be initialised fully...
+	}
 	
 	public int getSize(){
 		return NUMBER_OF_NODES_PER_EDGE;
@@ -301,11 +301,6 @@ public class Grid {
 		final int DEPTH_TO_CENTER = 10; 
 		
 		result = rotateVector(new double[]{x,y- DEPTH_TO_CENTER-DIST_FROM_ENTRANCE_OPENING}, x, y , radians);
-		//result = rotateVector(new double[]{x,y + 20}, x, y , radians);
-		int tmp[] = findClosestNode(result[0], result[1]);
-		for(int i= 0; i < tmp.length; ++i){
-			System.out.println(tmp[i]);
-		}
 		
 		return result;
 
@@ -478,7 +473,6 @@ public class Grid {
 			result[i] = 1e-12*Math.rint(1e12*result[i]);  // discards small multiplication errors
 		}
 //		System.out.println("x " + result[0] + "   y " + result[1]);
-		
 		return result;
 	}
 	
