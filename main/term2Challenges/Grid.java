@@ -3,6 +3,8 @@ package main.term2Challenges;
 import java.util.TreeSet;
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 /**
  * Represents the map of nodes, to use in the path finding algorithm
  *
@@ -82,6 +84,8 @@ public class Grid {
 		}else return findClosestNode(x, y);
 	}
 	
+	
+	// TODO: test the A* search
 	/**
 	 *  Does A* search after initialising closed list
 	 * @param xStart 
@@ -93,8 +97,9 @@ public class Grid {
 		
 		// 1. Add closed list stuff
 		inputCylinderPosition(50, 50); // we don't know yet
-		//addCornersToClosedList(); //not tested
-		int[] goalTmp = inputTunnelPosition(40, 122 - 40, 0); // not sure yet
+		inputCorners();
+		double[] goalIdeal = inputTunnelPosition(40, 122 - 40, 0);
+		int[] goalTmp = findClosestNode(goalIdeal[0], goalIdeal[1]);
 		
 		// 1b. Add goal node
 		int goalCoord[] = findClosestNode(goalTmp[0], goalTmp[1]);
@@ -120,13 +125,13 @@ public class Grid {
 				}
 				// filter out so inside border and open/empty in grid
 				else if (isInsideBorder(x , y ) && (grid[x][y] == null || grid[x][y].isOpen()) ){
-					// check first if node is already in openlist.
+					// check first if node is already in openList.
 					if (grid[x][y] != null && grid[x][y].isOpen() ){
 						double newGn = toExpand.getGn() + actionCost; 
 						
 						if(grid[x][y].getGn() > newGn){
 							AStarNode rmNode = grid[x][y];
-							openList.remove(rmNode); //remove tempoarily so doesn't mess up tree-set structure
+							openList.remove(rmNode); //remove temporarily so doesn't mess up tree-set structure
 							rmNode.setGn(newGn);
 							rmNode.setParent(toExpand);  //set the new parent with better costed path
 							openList.add(rmNode); 
@@ -220,7 +225,6 @@ public class Grid {
 	
 	public boolean isInsideBorder(int x, int y){
 		int tmp1 = NUMBER_OF_NODES_PER_EDGE - BORDER_NODE_WIDTH;
-		// 29.3 cm width of a 'right-angle' triangle
 		if ( x > BORDER_NODE_WIDTH && y > BORDER_NODE_WIDTH && x < tmp1 && y < tmp1  ){
 			return true;
 		}
@@ -239,10 +243,12 @@ public class Grid {
 	 */
 	public void inputCylinderPosition(double x, double y){ 
 		final double cr = 2.25; // the cylinderRadius
-		inputCirclePos(x/ DISTANCE_BETWEEN_NODES, y/ DISTANCE_BETWEEN_NODES, cr +ROBOT_LENGTH);
+		inputCirclePos(x/ DISTANCE_BETWEEN_NODES, y/ DISTANCE_BETWEEN_NODES, (cr +ROBOT_WIDTH) /DISTANCE_BETWEEN_NODES);
 	}
 	
-	
+	/**
+	 * Adds corners into the closed list
+	 */
 	public void inputCorners(){
 		double dist = 29.3/DISTANCE_BETWEEN_NODES; // in nodes
 		double r = ROBOT_LENGTH/DISTANCE_BETWEEN_NODES;
@@ -251,12 +257,6 @@ public class Grid {
 		inputSlantRectangle(w - dist, w, w, w - dist, r);
 		inputSlantRectangle(0, w - dist, dist, w, r);
 		inputSlantRectangle(w - dist,0 , w, dist, r);
-		
-//		double dist = 29.3; // in nodes
-//		inputWallPosition(dist, 0, 0, dist, ROBOT_LENGTH);
-//		inputWallPosition(COURSE_WIDTH - dist, COURSE_WIDTH, COURSE_WIDTH, COURSE_WIDTH - dist, ROBOT_LENGTH);
-//		inputWallPosition(0, COURSE_WIDTH - dist, dist, COURSE_WIDTH, ROBOT_LENGTH);
-//		inputWallPosition(COURSE_WIDTH - dist,0 , COURSE_WIDTH, dist, ROBOT_LENGTH);
 	}
 	
 	/**
@@ -264,59 +264,50 @@ public class Grid {
 	 * TUNNEL is hardcoded to be 24cm width by 20cm depth   2cm walls
 	 * @param x x coordinate of centre of tunnel in cm
 	 * @param y x coordinate of centre of tunnel in cm
-	 * @param degreesFromSouth  degrees clockwise from south
+	 * @param degrees  degrees clockwise from south
 	 * @return A two element array, containing x & y, of ideal goal position
 	 */
-	//TODO: correct/debug this method ::: MATRIX ROTATION NOT WORKING
-	public int[] inputTunnelPosition(double x, double y, double degreesFromSouth){
+	public double[] inputTunnelPosition(double x, double y, double degrees){
 		double[] result = new double[2];
-		/*
-		 * use  rotation matrix as reference  : R(xold, yold) to R(xnew, ynew)
-		 * [ cos , -sin ]
-		 * [ sin , cos  ]
-		 */
 		//add left wall (centre calculated to be (24 + 2)/2 = 13 away from middle line of wall
 		double tmpx, tmpy;
 		double tmpxend, tmpyend;
 		
-		degreesFromSouth = degreesFromSouth * Math.PI / 180.0; // convert to radians to work with math functions.
-		double sin = Math.sin(degreesFromSouth);
-		double cos = Math.cos(degreesFromSouth);
+		double radians = degrees * (Math.PI / 180.0); // convert to radians to work with math functions.
 		tmpx = x - 13;
 		tmpy = y - 10;
+		double[] frontLeft = rotateVector(new double[]{tmpx,tmpy}, x, y, radians);
 		tmpxend = tmpx;
 		tmpyend = y + 11; // extra cm to go to middle line of back wall
-		inputWallPosition( cos * tmpx - sin * tmpy, sin * tmpx + cos * tmpy,
-				cos * tmpxend - sin * tmpyend, sin * tmpxend + cos * tmpyend, ROBOT_WIDTH);
-		
-		// add back wall
 		tmpx = tmpxend;
 		tmpy = tmpyend;
+		double[] backLeft = rotateVector(new double[]{tmpx,tmpy}, x, y,radians);
 		tmpxend = x + 13;
 		tmpyend = y + 11;
-		inputWallPosition( cos * tmpx - sin * tmpy, sin * tmpx + cos * tmpy,
-				cos * tmpxend - sin * tmpyend, sin * tmpxend + cos * tmpyend ,ROBOT_WIDTH );
-		
-		// add right wall
 		tmpx = tmpxend;
 		tmpy = tmpyend;
+		double[] backRight = rotateVector(new double[]{tmpx,tmpy}, x, y, radians);
 		tmpxend = x + 13;
 		tmpyend = y - 10;
-		inputWallPosition( cos * tmpx - sin * tmpy, sin * tmpx + cos * tmpy,
-				cos * tmpxend - sin * tmpyend, sin * tmpxend + cos * tmpyend ,ROBOT_WIDTH);
+		double[] frontRight = rotateVector(new double[]{tmpxend,tmpyend}, x, y, radians);
+		
+		//add the walls
+		inputWallPosition( frontLeft[0], frontLeft[1], backLeft[0], backLeft[1], ROBOT_WIDTH);
+		inputWallPosition(backLeft[0], backLeft[1], backRight[0], backRight[1], ROBOT_WIDTH);
+		inputWallPosition(backRight[0], backRight[1], frontRight[0], frontRight[1], ROBOT_WIDTH);
 		
 		// compute a sensible ideal goal to plan to..
-		final int DIST_FROM_ENTRANCE_OPENING = 15;
-		result[0] = x + sin * (10 + DIST_FROM_ENTRANCE_OPENING); // x coord 
-		result[1] = y - cos * (10 + DIST_FROM_ENTRANCE_OPENING); // y coord
+		final int DIST_FROM_ENTRANCE_OPENING = 5;
+		final int DEPTH_TO_CENTER = 10; 
 		
-		//return findClosestNode(x,y - 20);//findClosestNode(x - sin * (10 - DIST_FROM_ENTRANCE_OPENING), y + cos * (10 - DIST_FROM_ENTRANCE_OPENING));
+		result = rotateVector(new double[]{x,y- DEPTH_TO_CENTER-DIST_FROM_ENTRANCE_OPENING}, x, y , radians);
+		//result = rotateVector(new double[]{x,y + 20}, x, y , radians);
 		int tmp[] = findClosestNode(result[0], result[1]);
 		for(int i= 0; i < tmp.length; ++i){
 			System.out.println(tmp[i]);
 		}
 		
-		return findClosestNode(result[1], result[0]);
+		return result;
 
 	}
 
@@ -341,7 +332,6 @@ public class Grid {
 		inputCirclePos(xEnd, yEnd, radius);
 	}
 
-	//TODO: debug (fix trig, or write, rotate((centerx,centery), angle) & lineEq((x1,y1),(x2,y2)) method
 	/**
 	 * Works on 'NodeScale'
 	 * @param xStart
@@ -350,7 +340,7 @@ public class Grid {
 	 * @param yEnd
 	 * @param radius
 	 */
-	/*private*/public void inputSlantRectangle(double xStart, double yStart, double xEnd, double yEnd, double radius){
+	private void inputSlantRectangle(double xStart, double yStart, double xEnd, double yEnd, double radius){
 		if (xStart == xEnd ||  yStart== yEnd){
 			if(xStart == xEnd &&  yStart== yEnd){} //don't do anything
 			else if (yStart == yEnd) {
@@ -376,28 +366,43 @@ public class Grid {
 			}// end of grid-aligned condition
 		}
 		else{
-			if(yEnd < yStart){
-				double tmp=yStart; yStart=yEnd; yEnd=tmp; 
-				tmp=xStart; xStart=xEnd; xEnd=tmp;
+			LinkedList<double[]> pnts = new LinkedList<double[]>();
+			double centerX = (xStart+xEnd)/2;
+			double centerY = (yStart+yEnd)/2;
+			double len = Math.sqrt((xEnd-xStart)*(xEnd-xStart)+(yEnd-yStart)*(yEnd-yStart));
+			double m = (yEnd - yStart) / (xEnd - xStart);
+			double angle = Math.atan(m); //rotate anti-clockwise
+			pnts.add(new double[]{centerX-len/2,centerY+radius});
+			pnts.add(new double[]{centerX-len/2,centerY-radius});
+			pnts.add(new double[]{centerX+len/2,centerY+radius});
+			pnts.add(new double[]{centerX+len/2,centerY-radius});
+			for(double[] element: pnts){
+				double[] rotated = rotateVector(element, centerX, centerY, angle);
+				element[0] = rotated[0];
+				element[1] = rotated[1];
 			}
-			double m = (yEnd - yStart) / (xEnd - xStart); //calculate the gradient
-			double angle = Math.atan(m);
-			double xDelta = Math.abs(radius * Math.sin( angle));
-			double yDelta = Math.abs(radius * Math.cos( angle));
-			double c = yStart - m * xStart; //c = y - mx
-			double c1 = c + yDelta;
-			double c2 = c - yDelta;
 			
-			// find perpendicular line equations at start and end
-			double m_ = -1/m;   //m cannot be zero :(
-			double c3 = yStart - m_ * xStart; //c = y - mx
-			double c4 = yEnd - m_ * xEnd; //c = y - mx
-			double[][] lineEqs = new double[][]{{m,c1}, {m_,c4},{m_,c3}, {m,c2}};
-			//bottom left of box
-			double x = Math.min(xStart,xEnd) - xDelta;
-			double y = Math.min(yStart,yEnd) - yDelta;
-			double h = yDelta + Math.max(yStart,yEnd) - y;
-			double w = xDelta + Math.max(xStart,xEnd) - x;
+			Collections.sort(pnts, new Comparator<double[]>()  // sort by y values
+			{
+				@Override
+				public int compare(double[] o1, double[] o2) {
+					return new Double(o1[1]) .compareTo(new Double (o2[1]));
+				}
+			});
+			
+			double[] lowestPnt = pnts.removeFirst();
+			double[] highestPnt = pnts.removeLast();
+			double[] otherPnt1 = pnts.pop();
+			double[] otherPnt2 = pnts.pop();
+			
+			double[][] lineEqs = new double[][]{ findLineEq(highestPnt,otherPnt1), findLineEq(highestPnt, otherPnt2),
+				findLineEq(lowestPnt, otherPnt1), findLineEq(lowestPnt, otherPnt2)
+			};
+			
+			double y = lowestPnt[1];
+			double h = highestPnt[1] - y;
+			double x = Math.min(otherPnt1[0], otherPnt2[0]);
+			double w = Math.max(otherPnt1[0], otherPnt2[0]) - x;
 			
 			inputBy4LineBounds(x,y,h,w, lineEqs);
 		}
@@ -405,7 +410,7 @@ public class Grid {
 	
 	//need to input NNSS,  +ve grad, draw rect =end,left,start,right
 	//-ve grad drawrect = end,right,start,left .. I.e highest,highest,lowest,lowest
-	public void inputBy4LineBounds(double boxXCoord, double boxYCoord, double boxHeight, double boxWidth, double[][] lineEqs ){
+	private void inputBy4LineBounds(double boxXCoord, double boxYCoord, double boxHeight, double boxWidth, double[][] lineEqs ){
 		boolean[] north = new boolean[]{true,true,false,false};
 		if(lineEqs.length > 4) throw new IllegalArgumentException("upto four line equations!");
 		for(int i = (int) Math.ceil(boxYCoord); i < boxYCoord + boxHeight; ++i ){
@@ -459,28 +464,34 @@ public class Grid {
 		}
 	}
 	
-	public static double[] rotateVector(double[] vector, double centerX, double centerY, double degrees){
+	public static double[] rotateVector(double[] vector, double centerX, double centerY, double radians){
 		if (vector.length != 2) throw new IllegalArgumentException();
-		
-		System.out.println("degrees:" + degrees);
-		
-		double radians = degrees * Math.PI/180;
-		System.out.println("radians:" + radians);
 		//line center to vector // cv
 		double[] toRotate =  new double[]{centerX - vector[0], centerY - vector[1]};
-		
 		double cos = Math.cos(radians);
 		double sin = Math.sin(radians);
-		
-		
 		double[] toAdd = new double[]{cos * toRotate[0] - sin * toRotate[1] ,
 				sin * toRotate[0] + cos * toRotate[1]};
 		double[] result = new double[]{centerX + toAdd[0], centerY + toAdd[1]};
-		
-		System.out.println("x " + result[0] + "   y " + result[1]);
-		
+	
+		for(int i = 0; i <2 ; ++i){  
+			result[i] = 1e-12*Math.rint(1e12*result[i]);  // discards small multiplication errors
+		}
+//		System.out.println("x " + result[0] + "   y " + result[1]);
 		
 		return result;
 	}
 	
+	
+	public static double[] findLineEq(double x1, double y1, double x2, double y2){
+		double m = (y1 - y2)/ (x1 - x2);
+		double c = y1 - m * x1;
+		return new double[]{m,c};
+	}
+	
+	public static double[] findLineEq(double[]a, double[] b){
+		double m = (a[1] - b[1])/ (a[0] - b[0]);
+		double c = a[1] - m * a[0];
+		return new double[]{m,c};
+	}
 }

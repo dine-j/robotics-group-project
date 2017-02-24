@@ -9,27 +9,22 @@ public class aStarTestMain {
         
         int size = model.getSize();
         GridFrame grid = new GridFrame(model.getSize());
-//        grid.placeRobot(40, 30);
-//        grid.placeGoal(5, 20);
-
-        
-        //model.addWallToClosedList(20, 20, 60, 20, /*in cm*/ 10);
-        //int[] goalPos = model.inputTunnelPosition(90, 90, 2);
-//        grid.placeGoal(goalPos[0], goalPos[1]);
-        
         
         for(int i = 0; i < size; ++i){
         	 for(int j = 0; j < size; ++j){
         		 if (!model.isInsideBorder(i, j)){
-        			 grid.placeGoal(i, j);
+        			 grid.placeEmpty(i, j);
         		 }
         	 }
         }
         
-        model.inputSlantRectangle( 30, 20, 40, 25, 10);
-        
-        
+        double[] tmp = model.inputTunnelPosition(90, 90, 90);
+        model.inputCylinderPosition(40, 122-40);
+        model.inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
+        model.inputCorners();
         grid.readGrid(model);
+        grid.placeGoal(model.findClosestNode(tmp[1], tmp[0]));
+        grid.placeRobot(20,20);
         
         grid.setVisible(true);
       

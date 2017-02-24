@@ -26,8 +26,14 @@ public class GridFrame extends JFrame {
     public void placeRobot(int x, int y) {
         if(x >= nodes.length || y >= nodes.length)
             throw new IndexOutOfBoundsException("Max = " + (nodes.length - 1));
-        nodes[x][y].setState(Color.blue);
+        nodes[nodes.length - 1 - x][y].setState(Color.blue);
     }
+    public void placeEmpty(int x, int y) {
+        if(x >= nodes.length || y >= nodes.length)
+            throw new IndexOutOfBoundsException("Max = " + (nodes.length - 1));
+        nodes[nodes.length - 1 - x][y].setState(Color.gray);
+    }
+    
 
     public void placeObstacle(int startX, int endX, int startY, int endY) {
         if(endX >= nodes.length || endY >= nodes.length)
@@ -53,11 +59,16 @@ public class GridFrame extends JFrame {
     				//pass
     			
     			}else if (!matrix[i][j].isOpen()){
-    				nodes[nodes.length - i][j].setState(Color.black);// display (0,0 at bottom left)
+    				nodes[nodes.length - 1 - i][j].setState(Color.black);// display (0,0 at bottom left)
     			}else if (matrix[i][j].isRoot()){  
     				placeRobot(nodes.length - i,j);  // display (0,0 at bottom left)
     			}
     		}
     	}
     }
+
+	public void placeGoal(int[] pos) {
+		placeGoal(pos[0], pos[1]);
+		
+	}
 }

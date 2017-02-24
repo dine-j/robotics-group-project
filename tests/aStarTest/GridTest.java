@@ -7,9 +7,10 @@ public class GridTest {
 		System.out.println("started");
 		Grid model = new Grid();
 		
-		double[] vector = new double[] {0 ,1};
+		double[] vector = new double[] {1 ,0};
 		
-		Grid.rotateVector(vector, 0, 0, 90);
+		Grid.rotateVector(vector, 0, 0.5, 90);
+		
 		//System.out.println(model);
 	}
 }
