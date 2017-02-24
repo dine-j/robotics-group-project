@@ -16,22 +16,24 @@ public class aStarTestMain {
         	 }
         }
         
-        grid.placeRobot(20,20);
+        //grid.placeRobot(20,20);
         //model.inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
         
      // 1. Add closed list stuff
-        model.inputCylinderPosition(40, 122-40); // we don't know yet
-        model.inputCorners();
-        double[] goalIdeal = model.inputTunnelPosition(90, 90, 90);
-        int[] goalTmp = model.findClosestNode(goalIdeal[1], goalIdeal[0]);
+//        model.inputCylinderPosition(40, 122-40); // we don't know yet
+//        model.inputCorners();
+//        double[] goalIdeal = model.inputTunnelPosition(90, 90, 90);
+//        int[] goalTmp = model.findClosestNode(goalIdeal[1], goalIdeal[0]); // please check..
         
         // 2. Add initial pos to open list
         //AStarNode init = new AStarNode(xStart, yStart, manhattanHeuristic(xStart, yStart, goal), 0, null, true);
         //openList.add(init);
         //grid[xStart][yStart] = init; //add to grid
+        //..........
+        //grid.placeGoal(goalTmp[0], goalTmp[1]); 
         
-      
-        grid.placeGoal(goalTmp[0], goalTmp[1]); // not same as 'main program' yet...
+        model.findGoalNodeFromRoot(20,20);
+        
         grid.readGrid(model);
         grid.setVisible(true);
       

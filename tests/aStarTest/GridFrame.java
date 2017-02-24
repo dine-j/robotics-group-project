@@ -59,7 +59,9 @@ public class GridFrame extends JFrame {
     				//pass
     			
     			}else if (!matrix[i][j].isOpen()){
-    				nodes[nodes.length - 1 - i][j].setState(Color.black);// display (0,0 at bottom left)
+    				nodes[nodes.length - 1 - i][j].setState(Color.black);// display (0,0 at bottom left
+    			}else if (matrix[i][j].isGoal()){
+    				nodes[nodes.length - 1 - i][j].setState(Color.green);
     			}else if (matrix[i][j].isRoot()){  
     				//placeRobot(nodes.length - 1 - i,j);  // display (0,0 at bottom left)
     				nodes[nodes.length - 1 - i][j].setState(Color.PINK);

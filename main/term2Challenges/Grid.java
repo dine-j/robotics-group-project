@@ -99,12 +99,18 @@ public class Grid {
 		inputCylinderPosition(40, 122-40); // we don't know yet
         inputCorners();
         double[] goalIdeal = inputTunnelPosition(90, 90, 90);
-        int[] goalTmp = findClosestNode(goalIdeal[1], goalIdeal[0]);
+
+        /*
+         * TODO:  why flipping works?
+         * //TODO:check coordinates of goal node
+         */
+        int[] goalTmp = new int[]{(int)goalIdeal[1],(int) goalIdeal[0]};
+        
         // Maybe good idea:
         inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
 		
 		// 1b. Add goal node
-		int goalCoord[] = findClosestNode(goalTmp[0], goalTmp[1]);  //TODO:check coordinates
+		int goalCoord[] = findClosestNode(goalTmp[0], goalTmp[1]);  
 		AStarNode goal = new AStarNode(goalCoord[0], goalCoord[1], true); //create goal node
 		grid[goalCoord[0]][goalCoord[1]] = goal; //add to grid
 		
@@ -113,7 +119,10 @@ public class Grid {
 		openList.add(init);
 		grid[xStart][yStart] = init; //add to grid
 		
+		//TODO: fix silly error
+		int counter = 1;
 		while (!openList.isEmpty()){
+			if (counter % 100 == 0) System.out.println(counter);
 			AStarNode toExpand = openList.first(); //find node with minimum value
 			for (int i = 0; i < ACTION.length; ++i){
 				final int x = toExpand.getX() + ACTION[i][0];

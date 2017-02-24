@@ -62,6 +62,10 @@ public class AStarNode implements Comparable<AStarNode>{
 		return state == NodeState.OPEN || state == NodeState.GOAL;
 	}
 	
+	public boolean isGoal(){
+		return state == NodeState.GOAL;
+	}
+	
 	public void setGn(double gn){
 		this.gn = gn;
 		fn = gn + hn; // recompute fn;
