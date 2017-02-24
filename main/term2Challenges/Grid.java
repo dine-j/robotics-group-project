@@ -96,14 +96,16 @@ public class Grid {
 		AStarNode result = null;
 		
 		// 1. Add closed list stuff
-		inputCylinderPosition(50, 50); // we don't know yet
-		inputCorners();
-		double[] goalIdeal = inputTunnelPosition(40, 122 - 40, 0);
-		int[] goalTmp = findClosestNode(goalIdeal[0], goalIdeal[1]);
+		inputCylinderPosition(40, 122-40); // we don't know yet
+        inputCorners();
+        double[] goalIdeal = inputTunnelPosition(90, 90, 90);
+        int[] goalTmp = findClosestNode(goalIdeal[1], goalIdeal[0]);
+        // Maybe good idea:
+        inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
 		
 		// 1b. Add goal node
-		int goalCoord[] = findClosestNode(goalTmp[0], goalTmp[1]);
-		AStarNode goal = new AStarNode(goalCoord[0], goalCoord[1]);
+		int goalCoord[] = findClosestNode(goalTmp[0], goalTmp[1]);  //TODO:check coordinates
+		AStarNode goal = new AStarNode(goalCoord[0], goalCoord[1], true); //create goal node
 		grid[goalCoord[0]][goalCoord[1]] = goal; //add to grid
 		
 		// 2. Add initial pos to open list
