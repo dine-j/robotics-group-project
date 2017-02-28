@@ -206,42 +206,6 @@ public class Grid {
                 list.add(RobotMovement.FORWARD);
             x = nextNode.getX();
             y = nextNode.getY();
-
-//            int newDirection = 0; // default
-//            for (int i = 0; i < ACTION.length; ++i) {
-//                if (changeInX - ACTION[i][0] == 0 && changeInY - ACTION[i][1] == 0)
-//                    newDirection = i;
-//            }
-//
-//            int directionChange = (newDirection - direction) % 8 - 3;
-//            switch (directionChange) {
-//                case -3:
-//                    list.add(RobotMovement.LEFT135);
-//                    break;
-//                case -2:
-//                    list.add(RobotMovement.LEFT90);
-//                    break;
-//                case -1:
-//                    list.add(RobotMovement.LEFT45);
-//                    break;
-//                case 1:
-//                    list.add(RobotMovement.RIGHT45);
-//                    break;
-//                case 2:
-//                    list.add(RobotMovement.RIGHT90);
-//                    break;
-//                case 3:
-//                    list.add(RobotMovement.RIGHT135);
-//                    break;
-//                case 4:
-//                    list.add(RobotMovement.RIGHT180);
-//            }
-//
-//            if (newDirection % 2 == 0) {
-//                list.add(RobotMovement.FORWARD);
-//            } else {
-//                list.add(RobotMovement.FORWARD_ON_DIAGONAL);
-//            }
         }
         return list;
     }
