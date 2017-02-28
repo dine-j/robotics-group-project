@@ -12,9 +12,9 @@ public class AStarNode implements Comparable<AStarNode>{
 	private int y;
 	private AStarNode parent;
 
-	private Double hn;
-	private Double gn; // may be recomputed
-	private Double fn;
+	private double hn;
+	private double gn; // may be recomputed
+	private double fn;
 	
 	private NodeState state;  //node may either be open or closed
 	
@@ -37,9 +37,9 @@ public class AStarNode implements Comparable<AStarNode>{
 	public AStarNode (int x, int y){
 		this.x = x;
 		this.y = y;
-		this.hn = null;
-		this.gn = null;
-		this.fn = null;
+		this.hn = 0;
+		this.gn = 0;
+		this.fn = 0;
 		this.parent = null;
 		this.state = NodeState.CLOSED;
 	}
@@ -79,9 +79,6 @@ public class AStarNode implements Comparable<AStarNode>{
 		return parent == null;
 	}
 	
-	public boolean hasValues(){
-		return hn == null || gn == null || fn == null;
-	}
 
 	@Override
 	public boolean equals(Object other){
@@ -96,17 +93,7 @@ public class AStarNode implements Comparable<AStarNode>{
 	}
 	
 	public int compareTo(AStarNode other){
-		try{
-			int result = 0;
-			if ((this.fn - other.fn) > 0 )  result = 1;
-			else if ((this.fn - other.fn) > 0 ) result = -1;
-			return result;
-			
-		} catch( Exception e){
-			e.printStackTrace();
-		}
-		
-		return 0;
+		return Double.compare(this.fn,other.fn);
 	}
 	
 	public int getX() {

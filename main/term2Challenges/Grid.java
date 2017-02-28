@@ -2,6 +2,7 @@ package main.term2Challenges;
 
 import java.util.TreeSet;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,7 +30,7 @@ public class Grid {
 	private AStarNode[][] grid;
 
 	private TreeSet<AStarNode> closedList;
-	private TreeSet<AStarNode> openList;
+	private PriorityQueue<AStarNode> openList;
 	
 	
 	public Grid(){
@@ -39,7 +40,7 @@ public class Grid {
 	public Grid(int numberOfNodesPerEdge){
 		
 		closedList = new TreeSet<AStarNode>(new AStarNode.positionComparator());   //DONE: closedList has comparator
-		openList = new TreeSet<AStarNode>();
+		openList = new PriorityQueue<AStarNode>();
 		
 		NUMBER_OF_NODES_PER_EDGE = numberOfNodesPerEdge;
 		DISTANCE_BETWEEN_NODES = (double) COURSE_WIDTH / (double) (NUMBER_OF_NODES_PER_EDGE - 1);
@@ -119,11 +120,8 @@ public class Grid {
 		openList.add(init);
 		grid[xStart][yStart] = init; //add to grid
 		
-		//TODO: fix silly error
-		int counter = 1;
 		while (!openList.isEmpty()){
-			if (counter % 100 == 0) System.out.println(counter);
-			AStarNode toExpand = openList.first(); //find node with minimum value
+			AStarNode toExpand = openList.poll(); //find node with minimum value
 			for (int i = 0; i < ACTION.length; ++i){
 				final int x = toExpand.getX() + ACTION[i][0];
 				final int y = toExpand.getY()+ ACTION[i][1];
@@ -149,25 +147,25 @@ public class Grid {
 						}
 					} else if(grid[x][y] == null){
 						//add to openlist
-						double hn = manhattanHeuristic(xStart, yStart, goal);
-						AStarNode toAdd = new AStarNode(xStart, yStart, hn, 0, toExpand, true);
-						openList.add(toAdd); // TODO: is failing to add due to same FN!!!!
+						double hn = manhattanHeuristic(x, y, goal);
+						AStarNode toAdd = new AStarNode(x, y, hn, 0, toExpand, true);
+						openList.add(toAdd);
 						grid[x][y] = toAdd; //add to grid
 					}
 					// otherwise if closed do nothing
-				}// end of for loop   (((TODO: it's one more down!!)
-				AStarNode rmNode = grid[x][y];
-				openList.remove(rmNode);
-				closedList.add(rmNode);
-				rmNode.setClosed(); // add to closed list
-			}	
+				}
+			}// end of for loop
+			AStarNode rmNode = grid[toExpand.getX()][toExpand.getY()]; //have finished expanding
+			openList.remove(rmNode);
+			closedList.add(rmNode);
+			rmNode.setClosed(); // add to closed list
 		}
 
 		return result; //only gets here if result is null
 	}
 	
 	/* helper method for calculatePath() */
-	private LinkedList<AStarNode> getListPathFromGoalNode(AStarNode goal){
+	public LinkedList<AStarNode> getListPathFromGoalNode(AStarNode goal){
 		LinkedList<AStarNode> list = new LinkedList<AStarNode>();
 		list.add(goal);
 		AStarNode current = goal;
@@ -184,8 +182,9 @@ public class Grid {
 	 * @param yStart
 	 * @return A list of Actions for robot to follow
 	 */
-	public ArrayList<RobotMovement> calculatePath(int xStart, int yStart){
-		LinkedList<AStarNode> path = getListPathFromGoalNode(findGoalNodeFromRoot(xStart,yStart));
+//	public ArrayList<RobotMovement> calculatePath(int xStart, int yStart){
+//		LinkedList<AStarNode> path = getListPathFromGoalNode(findGoalNodeFromRoot(xStart,yStart));
+	public ArrayList<RobotMovement> calculatePath(LinkedList<AStarNode> path){
 		int direction = RobotMovement.NE;
 		ArrayList<RobotMovement> list = new ArrayList<RobotMovement>();
 		AStarNode startNode = path.remove();
