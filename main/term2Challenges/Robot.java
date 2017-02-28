@@ -1,8 +1,11 @@
 package main.term2Challenges;
 
+import java.util.List;
+
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.*;
+import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
 /*
@@ -45,6 +48,101 @@ public class Robot  {
 		this.visionMotor.rotateTo(0);
 	}
 
+	public void followInstructions(List<RobotMovement> instructions){
+		for(RobotMovement instr: instructions){
+			switch(instr){
+			case LEFT45:
+				rotate(45);
+				break;
+			case LEFT90:
+				rotate(90);
+				break;
+			case LEFT135:
+				rotate(135);
+				break;
+			case RIGHT45:
+				rotate(-45);
+				break;
+			case RIGHT90:
+				rotate(-90);
+				break;
+			case RIGHT135:
+				rotate(-135);
+				break;
+			case RIGHT180:
+				rotate(-180);
+				break;
+			case FORWARD:
+				moveDistance(2); // TODO: change relative to scale
+				break;
+			case FORWARD_ON_DIAGONAL:
+				moveDistance(2.83); // TODO: change relative to scale
+				break;
+			}
+		}
+
+	}
+	
+//	public void rotate(int angle){
+//		
+//	}
+	
+    private void rotate(int rotationValue) {
+    	gyroSensor.reset();
+        SampleProvider sampleProvider = gyroSensor.getAngleMode();
+        float[] sample = new float[sampleProvider.sampleSize()];
+        sampleProvider.fetchSample(sample, 0);
+
+        float kp = 0.7f;
+        float ki = 0f;
+        float kd = 0f;
+        int tp = 10;
+        float integral = 0f;
+        float derivative = 0f;
+        
+
+        if ( rotationValue > 0){
+        	while(sample[0] < rotationValue) {
+        		float angle = sample[0];
+        		float error = angle - rotationValue;
+
+        		float turn = kp * error + ki * integral + kd * derivative;
+        		float powerL = tp + turn;
+        		float powerR = tp - turn;
+
+        		motorL.setSpeed(powerL);
+        		motorR.setSpeed(powerR);
+
+        		motorR.forward();
+        		motorL.backward();
+
+        		sampleProvider.fetchSample(sample, 0);
+        	}
+        }
+        else
+        {
+        	while(Math.abs(sample[0]) < -rotationValue) {
+        		float angle = Math.abs(sample[0]);
+        		float error = angle + rotationValue;
+
+        		float turn = kp * error + ki * integral + kd * derivative;
+        		float powerL = tp + turn;
+        		float powerR = tp - turn;
+
+        		motorL.setSpeed(powerL);
+        		motorR.setSpeed(powerR);
+
+        		motorL.forward();
+        		motorR.backward();
+
+        		sampleProvider.fetchSample(sample, 0);
+        	}
+        }
+       
+        //            Delay.msDelay(2);
+    }
+	
+	
 	/**
 	 * 
 	 * @return  A distance of how far along the 'Strip the robot is'
@@ -101,6 +199,8 @@ public class Robot  {
 	 * @param distance	Distance for movement, can be positive or negative
 	 */
 	public void moveDistance(double distance) {
+		motorL.setSpeed(120);
+		motorR.setSpeed(120);
         double angle = distance * 360 / DISTANCE_PER_REVOLUTION;
 		motorL.rotate((int) angle, true);
 		motorR.rotate((int) angle);

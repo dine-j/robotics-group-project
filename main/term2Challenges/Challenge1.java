@@ -1,5 +1,8 @@
 package main.term2Challenges;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import lejos.hardware.Button;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
@@ -30,11 +33,19 @@ public class Challenge1 {
 		// Measure drift 
 		
 		// Localize with Bayesian 'strip'
-		System.out.println(r.localize());
+//		System.out.println(r.localize());
 
 		// Make a sound
 
 		// Goal using A * (doesn't have to go inside)
+		Grid model = new Grid();
+		AStarNode goalNode = model.findGoalNodeFromRoot(20, 20);
+        LinkedList<AStarNode> list = model.getListPathFromGoalNode(goalNode);
+        List<RobotMovement> actionList = model.calculatePath(list);
+        
+        r.followInstructions(actionList);
+		
+		
 		
 		// Update A* plan if it see obstacle in the way.
 		
