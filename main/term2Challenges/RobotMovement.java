@@ -21,13 +21,9 @@ public enum RobotMovement {
 	final static double SQRT2 = Math.sqrt(2);
 	
 	// some others to use later (as directions...)
-	final static int N = 0;
-	final static int NE = 1;
-	final static int E = 2;
-	final static int SE = 3;
-	final static int S = 4;
-	final static int SW = 5;
-	final static int W = 6;
-	final static int NW = 7;
-	
+    final static int W = 0;
+    final static int NW = 1;
+	final static int N = 2;
+	final static int NE = 3;
+	final static int E = 4;
 }
