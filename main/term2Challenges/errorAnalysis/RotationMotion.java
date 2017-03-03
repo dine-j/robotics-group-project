@@ -22,17 +22,17 @@ public class RotationMotion {
 
         Delay.msDelay(2000);
 
-        gyro.reset();
-
-        Delay.msDelay(2000);
-
-        rotatePID(90);
+        for(int i = 0; i < 2; ++i) {
+            rotatePID(90);
+            Delay.msDelay(3000);
+        }
     }
 
     /*
     * Make robot rotate 90 degrees anticlockwise using PID
      */
     private static void rotatePID(int rotationValue) {
+        gyro.reset();
         SampleProvider sampleProvider = gyro.getAngleMode();
         float[] sample = new float[sampleProvider.sampleSize()];
         sampleProvider.fetchSample(sample, 0);
@@ -65,5 +65,8 @@ public class RotationMotion {
         // Debugging
         float angle = sample[0];
         System.out.println(angle);
+
+        motorR.stop();;
+        motorL.stop();
     }
 }
