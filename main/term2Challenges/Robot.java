@@ -29,7 +29,6 @@ public class Robot {
     private EV3UltrasonicSensor ultrasonicSensor;
     private EV3GyroSensor gyroSensor;
 
-    private static final int DEGREES_PER_METER = 2100;
     private static final double DISTANCE_PER_REVOLUTION = 17.27; // cm per 360° rotation
 
     public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor, EV3GyroSensor gyroSensor) {
@@ -49,6 +48,7 @@ public class Robot {
     }
 
     /**
+     * Localize position with Bayesian Filter
      * @return A distance of how far along the 'Strip the robot is'
      */
     public int localize() {
@@ -142,6 +142,10 @@ public class Robot {
         }
     }
 
+    /**
+     * Rotate robot by given angle, which can be positive (anticlockwise) or negative (clockwise)
+     * @param rotationValue Angle of rotation
+     */
     private void rotate(int rotationValue) {
         gyroSensor.reset();
         SampleProvider sampleProvider = gyroSensor.getAngleMode();
@@ -196,7 +200,6 @@ public class Robot {
 
     /**
      * Move the robot forward or backward given a certain distance
-     *
      * @param distance Distance for movement, can be positive or negative
      */
     private void moveDistance(double distance) {
