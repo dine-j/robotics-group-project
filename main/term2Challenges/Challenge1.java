@@ -39,15 +39,13 @@ public class Challenge1 {
 
 		// Goal using A * (doesn't have to go inside)
 		Grid model = new Grid();
-		AStarNode goalNode = model.findGoalNodeFromRoot(20, 20);
+		AStarNode goalNode = model.findGoalNodeFromRoot(32, 32);
         LinkedList<AStarNode> list = model.getListPathFromGoalNode(goalNode);
         List<RobotMovement> actionList = model.calculatePath(list);
-        
-        r.followInstructions(actionList);
-		
-		
-		
-		// Update A* plan if it see obstacle in the way.
+
+		double nodeSize = model.getNodeSize();
+		double nodeDiagonal = Math.sqrt(nodeSize * nodeSize + nodeSize * nodeSize);
+        r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
 		
 		// Going back to starting point
 

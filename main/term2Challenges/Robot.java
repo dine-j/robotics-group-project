@@ -90,7 +90,7 @@ public class Robot {
         return localizationStrip.getLocation();
     }
 
-    public void followInstructions(List<RobotMovement> instructions) {
+    public void followInstructions(List<RobotMovement> instructions, double straightDistance, double diagonalDistance) {
         for (int i = 0; i < instructions.size(); ++i) {
             switch (instructions.get(i)) {
                 case LEFT45:
@@ -124,7 +124,7 @@ public class Robot {
                             break;
                         }
                     }
-                    moveDistance(2 * forwardCount); // TODO: change relative to scale
+                    moveDistance(straightDistance * forwardCount);
                     break;
                 case FORWARD_ON_DIAGONAL:
                     int diagonalCount = 1;
@@ -136,7 +136,7 @@ public class Robot {
                             break;
                         }
                     }
-                    moveDistance(2.83 * diagonalCount); // TODO: change relative to scale
+                    moveDistance(diagonalDistance * diagonalCount);
                     break;
             }
         }
