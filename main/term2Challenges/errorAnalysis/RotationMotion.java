@@ -23,7 +23,7 @@ public class RotationMotion {
         Delay.msDelay(1000);
 
         for(int i = 0; i < 2; ++i) {
-            rotatePID(90);
+            rotatePID(-90);
             Delay.msDelay(3000);
         }
     }
@@ -44,22 +44,38 @@ public class RotationMotion {
         float integral = 0f;
         float derivative = 0f;
 
-        while(sample[0] < rotationValue) {
-            float angle = sample[0];
-            float error = angle - rotationValue;
+        if (rotationValue > 0) {
+            while (sample[0] < rotationValue) {
+                float angle = sample[0];
+                float error = angle - rotationValue;
 
-            float turn = kp * error + ki * integral + kd * derivative;
-            float powerL = tp - turn;
-            float powerR = tp - turn;
+                float turn = kp * error + ki * integral + kd * derivative;
+                float power = tp - turn;
 
-            motorL.setSpeed(powerL);
-            motorR.setSpeed(powerR);
+                motorL.setSpeed(power);
+                motorR.setSpeed(power);
 
-            motorR.forward();
-            motorL.backward();
+                motorR.forward();
+                motorL.backward();
 
-            sampleProvider.fetchSample(sample, 0);
-//            Delay.msDelay(2);
+                sampleProvider.fetchSample(sample, 0);
+            }
+        } else {
+            while (Math.abs(sample[0]) < -rotationValue) {
+                float angle = Math.abs(sample[0]);
+                float error = angle + rotationValue;
+
+                float turn = kp * error + ki * integral + kd * derivative;
+                float power = tp - turn;
+
+                motorL.setSpeed(power);
+                motorR.setSpeed(power);
+
+                motorL.forward();
+                motorR.backward();
+
+                sampleProvider.fetchSample(sample, 0);
+            }
         }
 
         // Debugging

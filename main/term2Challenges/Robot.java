@@ -162,11 +162,10 @@ public class Robot {
                 float error = angle - rotationValue;
 
                 float turn = kp * error + ki * integral + kd * derivative;
-                float powerL = tp + turn;
-                float powerR = tp - turn;
+                float power = tp - turn;
 
-                motorL.setSpeed(powerL);
-                motorR.setSpeed(powerR);
+                motorL.setSpeed(power);
+                motorR.setSpeed(power);
 
                 motorR.forward();
                 motorL.backward();
@@ -179,11 +178,10 @@ public class Robot {
                 float error = angle + rotationValue;
 
                 float turn = kp * error + ki * integral + kd * derivative;
-                float powerL = tp + turn;
-                float powerR = tp - turn;
+                float power = tp - turn;
 
-                motorL.setSpeed(powerL);
-                motorR.setSpeed(powerR);
+                motorL.setSpeed(power);
+                motorR.setSpeed(power);
 
                 motorL.forward();
                 motorR.backward();
@@ -191,6 +189,9 @@ public class Robot {
                 sampleProvider.fetchSample(sample, 0);
             }
         }
+
+        motorL.stop();
+        motorR.stop();
     }
 
     /**
