@@ -23,7 +23,7 @@ public class RotationMotion {
         Delay.msDelay(1000);
 
         for(int i = 0; i < 2; ++i) {
-            rotate(90);
+            rotatePID(90);
             Delay.msDelay(3000);
         }
     }
@@ -40,7 +40,7 @@ public class RotationMotion {
         float kp = 0.7f;
         float ki = 0f;
         float kd = 0f;
-        int tp = 30;
+        int tp = 10;
         float integral = 0f;
         float derivative = 0f;
 
@@ -49,7 +49,7 @@ public class RotationMotion {
             float error = angle - rotationValue;
 
             float turn = kp * error + ki * integral + kd * derivative;
-            float powerL = tp + turn;
+            float powerL = tp - turn;
             float powerR = tp - turn;
 
             motorL.setSpeed(powerL);
@@ -66,7 +66,7 @@ public class RotationMotion {
         float angle = sample[0];
         System.out.println(angle);
 
-        motorR.stop();;
+        motorR.stop();
         motorL.stop();
     }
 
