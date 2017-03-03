@@ -20,10 +20,10 @@ public class RotationMotion {
 
         gyro = new EV3GyroSensor((Port) SensorPort.S1);
 
-        Delay.msDelay(2000);
+        Delay.msDelay(1000);
 
         for(int i = 0; i < 2; ++i) {
-            rotatePID(90);
+            rotate(90);
             Delay.msDelay(3000);
         }
     }
@@ -40,7 +40,7 @@ public class RotationMotion {
         float kp = 0.7f;
         float ki = 0f;
         float kd = 0f;
-        int tp = 10;
+        int tp = 30;
         float integral = 0f;
         float derivative = 0f;
 
@@ -68,5 +68,26 @@ public class RotationMotion {
 
         motorR.stop();;
         motorL.stop();
+    }
+
+    private static void rotate(int value) {
+        gyro.reset();
+        SampleProvider sampleProvider = gyro.getAngleMode();
+        float[] sample = new float[sampleProvider.sampleSize()];
+        sampleProvider.fetchSample(sample, 0);
+
+        motorL.setSpeed(120);
+        motorR.setSpeed(120);
+
+        while(sample[0] < value) {
+            motorR.rotate(10, true);
+            motorL.rotate(-10);
+            sampleProvider.fetchSample(sample, 0);
+//            Delay.msDelay(2);
+        }
+
+        // Debugging
+//        float angle = sample[0];
+//        System.out.println(angle);
     }
 }
