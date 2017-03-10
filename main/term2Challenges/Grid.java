@@ -15,8 +15,8 @@ public class Grid {
     // Array of 'actions'
     final int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
 
-    final private int NUMBER_OF_NODES_PER_EDGE;
     final private double DISTANCE_BETWEEN_NODES; //in cm
+    final private int NODES_PER_EDGE; // in # of nodes
     final private int BORDER_NODE_WIDTH; // in # of nodes
     
     
@@ -44,34 +44,32 @@ public class Grid {
 
     public Grid(int numberOfNodesPerEdge) {
 
-        closedList = new TreeSet<AStarNode>(new AStarNode.positionComparator());   //DONE: closedList has comparator
+        closedList = new TreeSet<AStarNode>(new AStarNode.positionComparator());
         openList = new PriorityQueue<AStarNode>();
 
-        NUMBER_OF_NODES_PER_EDGE = numberOfNodesPerEdge;
-        DISTANCE_BETWEEN_NODES = (double) COURSE_WIDTH / (double) (NUMBER_OF_NODES_PER_EDGE - 1);
+        NODES_PER_EDGE = numberOfNodesPerEdge;
+        DISTANCE_BETWEEN_NODES = (double) COURSE_WIDTH / (double) (NODES_PER_EDGE - 1);
         BORDER_NODE_WIDTH = (int) ((ROBOT_RADIUS) / DISTANCE_BETWEEN_NODES);
-
-        grid = new AStarNode[numberOfNodesPerEdge][numberOfNodesPerEdge]; // pointers stored in grid for x,y access
+        
+        // pointers stored in grid for easy x,y access
+        grid = new AStarNode[numberOfNodesPerEdge][numberOfNodesPerEdge]; 
     }
 
     public int getSize() {
-        return NUMBER_OF_NODES_PER_EDGE;
+        return NODES_PER_EDGE;
     }
 
     public AStarNode[][] getGrid() {
         return grid;
     }
 
-    /**
-     * @param x in cm
-     * @param y in cm
-     * @return the closest node in 'node coordinates'
-     */
     public int[] findClosestNode(double x, double y) {
         double tmpx = x / DISTANCE_BETWEEN_NODES;
         double tmpy = y / DISTANCE_BETWEEN_NODES;
         tmpx = Math.round(tmpx);
         tmpy = Math.round(tmpy);
+        //debugging println statement
+        System.out.println("closestNodeResults: x = " + tmpx + " , y = " + tmpy);
         return new int[]{(int) tmpx, (int) tmpy};
     }
 
@@ -258,7 +256,7 @@ public class Grid {
 
 
     public boolean isInsideBorder(int x, int y) {
-        int tmp1 = NUMBER_OF_NODES_PER_EDGE - BORDER_NODE_WIDTH;
+        int tmp1 = NODES_PER_EDGE - BORDER_NODE_WIDTH;
         if (x > BORDER_NODE_WIDTH && y > BORDER_NODE_WIDTH && x < tmp1 && y < tmp1) {
             return true;
         }
