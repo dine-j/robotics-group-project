@@ -31,7 +31,7 @@ public class Robot {
 
     private static final double DISTANCE_PER_REVOLUTION = 17.27; // cm per 360° rotation
 
-    public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor, EV3GyroSensor gyroSensor) {
+    public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor, EV3GyroSensor gyroSensor, EV3TouchSensor touchSensor) {
         this.motorL = motorL;
         this.motorR = motorR;
 
