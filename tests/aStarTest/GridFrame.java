@@ -28,6 +28,7 @@ public class GridFrame extends JFrame {
             throw new IndexOutOfBoundsException("Max = " + (nodes.length - 1));
         nodes[nodes.length - 1 - x][y].setState(Color.blue);
     }
+
     public void placeEmpty(int x, int y) {
         if(x >= nodes.length || y >= nodes.length)
             throw new IndexOutOfBoundsException("Max = " + (nodes.length - 1));
@@ -58,14 +59,13 @@ public class GridFrame extends JFrame {
     			if(matrix[i][j] == null){
     				//pass
     			
-    			}else if (!matrix[i][j].isOpen()){
+    			}else if (!matrix[i][j].isClosed()){
     				nodes[nodes.length - 1 - i][j].setState(Color.black);// display (0,0 at bottom left
-    			}else if (matrix[i][j].isGoal()){
-    				nodes[nodes.length - 1 - i][j].setState(Color.green);
-    			}else if (matrix[i][j].isRoot()){  
+    			}
+    			/*else(matrix[i][j].) {
     				//placeRobot(nodes.length - 1 - i,j);  // display (0,0 at bottom left)
     				nodes[nodes.length - 1 - i][j].setState(Color.PINK);
-    			}
+    			}*/
     		}
     	}
     }
@@ -77,14 +77,13 @@ public class GridFrame extends JFrame {
                 if(matrix[i][j] == null){
                     //pass
 
-                }else if (!matrix[i][j].isOpen()){
+                }else if (!matrix[i][j].isClosed()){
                     nodes[nodes.length - 1 - i][j].setState(Color.black);// display (0,0 at bottom left
-                }else if (matrix[i][j].isGoal()){
-                    nodes[nodes.length - 1 - i][j].setState(Color.green);
-                }else if (matrix[i][j].isRoot()){
-                    //placeRobot(nodes.length - 1 - i,j);  // display (0,0 at bottom left)
-                    nodes[nodes.length - 1 - i][j].setState(Color.PINK);
                 }
+    			/*else(matrix[i][j].) {
+    				//placeRobot(nodes.length - 1 - i,j);  // display (0,0 at bottom left)
+    				nodes[nodes.length - 1 - i][j].setState(Color.PINK);
+    			}*/
             }
         }
     }

@@ -135,7 +135,7 @@ public class Grid {
 
         // 1b. Add goal node
         int goalCoord[] = findClosestNode(xGoal, yGoal);
-        AStarNode goal = new AStarNode(goalCoord[0], goalCoord[1], true); //create goal node
+        AStarNode goal = new AStarNode(goalCoord[0], goalCoord[1]); //create goal node
         grid[goalCoord[0]][goalCoord[1]] = goal; //add to grid
 
         // 2. Add initial pos to open list
@@ -157,9 +157,9 @@ public class Grid {
                     return goal;
                 }
                 // filter out so inside border and open/empty in grid
-                else if (isInsideBorder(x, y) && (grid[x][y] == null || grid[x][y].isOpen())) {
+                else if (isInsideBorder(x, y) && (grid[x][y] == null || !grid[x][y].isClosed())) {
                     // check first if node is already in openList.
-                    if (grid[x][y] != null && grid[x][y].isOpen()) {
+                    if (grid[x][y] != null && !grid[x][y].isClosed()) {
                         double newGn = toExpand.getGn() + actionCost;
 
                         if (grid[x][y].getGn() > newGn) {

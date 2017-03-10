@@ -7,7 +7,8 @@ import java.util.Comparator;
  *
  */
 public class AStarNode implements Comparable<AStarNode>{
-	private static enum NodeState{OPEN, CLOSED, GOAL, ROOT};
+	//private static enum NodeState{OPEN, CLOSED, GOAL, ROOT};
+	private boolean isClosed;
 	private int x;
 	private int y;
 	private AStarNode parent;
@@ -16,9 +17,6 @@ public class AStarNode implements Comparable<AStarNode>{
 	private double gn; // may be recomputed
 	private double fn;
 	
-	private NodeState state;  //node may either be open or closed
-	
-	
 	public AStarNode(int x, int y, double hn, double gn, AStarNode parent){
 		this.x = x;
 		this.y = y;
@@ -26,7 +24,7 @@ public class AStarNode implements Comparable<AStarNode>{
 		this.gn = gn;
 		this.fn = gn + hn;
 		this.parent = parent;
-		this.state = NodeState.OPEN;
+		isClosed = false;
 	}
 
 	/**
@@ -41,29 +39,21 @@ public class AStarNode implements Comparable<AStarNode>{
 		this.gn = 0;
 		this.fn = 0;
 		this.parent = null;
-		this.state = NodeState.CLOSED;
+		isClosed = false;
 	}
 
-	public AStarNode (int x, int y, boolean isGoal){
+	/*public AStarNode (int x, int y, boolean isGoal){
 		this(x,y);
 		if(isGoal) state = NodeState.GOAL;
 		else state = NodeState.OPEN;
-	}
+	}*/
 	
 	public void setClosed(){
-		this.state = NodeState.CLOSED;
-	}
-	
-	public boolean isOpen(){
-		return state == NodeState.OPEN || state == NodeState.GOAL;
-	}
-	
-	public boolean isGoal(){
-		return state == NodeState.GOAL;
+		isClosed = true;
 	}
 
-	public void setRoot() {
-		this.state = NodeState.ROOT;
+	public boolean isClosed() {
+		return isClosed;
 	}
 
 	public void setGn(double gn){
@@ -133,12 +123,7 @@ public class AStarNode implements Comparable<AStarNode>{
 	}
 
 	public String toString() {
-		switch (state) {
-			case OPEN : return "O";
-			case CLOSED : return "C";
-			case GOAL : return "G";
-			case ROOT: return "R";
-		}
-		return null;
+		if (isClosed) return "C";
+		else return "O";
 	}
 }

@@ -7,12 +7,14 @@ public class AlternativeGrid {
     final private int COURSE_WIDTH = 122;  // in cm
     final private int ROBOT_WIDTH = 10;
     final private int ROBOT_LENGTH = 15;
+    final private int ROBOT_RADIUS = 8; // in cm
+
     //final private int ROBOT_RADIUS = (int) Math.sqrt(ROBOT_WIDTH * ROBOT_WIDTH + ROBOT_LENGTH * ROBOT_LENGTH) + 1;
 
     // Array of 'actions'
     private final int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
 
-    final private int NODES_PER_EDGE;
+    final private int NODE_GAP_DIST;
     final private double DISTANCE_BETWEEN_NODES; //in cm
     final private int BORDER_NODE_WIDTH; // in # of nodes
 
@@ -26,22 +28,22 @@ public class AlternativeGrid {
         closedList = new TreeSet<AStarNode>(new AStarNode.positionComparator());   //DONE: closedList has comparator
         openList = new PriorityQueue<AStarNode>();
 
-        NODES_PER_EDGE = nodesPerEdge;
-        DISTANCE_BETWEEN_NODES = (double) COURSE_WIDTH / (double) (NODES_PER_EDGE - 1);
+        NODE_GAP_DIST = nodesPerEdge;
+        DISTANCE_BETWEEN_NODES = (double) COURSE_WIDTH / (double) (NODE_GAP_DIST - 1);
         BORDER_NODE_WIDTH = (int) ((ROBOT_LENGTH) / DISTANCE_BETWEEN_NODES);
 
         grid = new AStarNode[nodesPerEdge][nodesPerEdge]; // pointers stored in grid for x,y access
 
         for (int i = 0; i < nodesPerEdge; i++) {
-            for (int x = 0; x < nodesPerEdge; x++) {
-                grid[i][x] = new AStarNode(i, x);
+            for (int j = 0; j < nodesPerEdge; j++) {
+                grid[i][j] = new AStarNode(i, j);
                 //Math.abs(i - goal.x) + Math.abs(x - goal.y)
             }
         }
     }
 
     public int getSize() {
-        return NODES_PER_EDGE;
+        return NODE_GAP_DIST;
     }
 
     public AStarNode[][] getGrid() {
@@ -53,9 +55,9 @@ public class AlternativeGrid {
     }
 
     public AStarNode aStarSearch(int xStart, int yStart, int xGoal, int yGoal) {
-        for (int i = 0; i < NODES_PER_EDGE; i++) {
-            for (int x = 0; x < NODES_PER_EDGE; x++) {
-                grid[i][x] = new AStarNode(i, x, Math.abs(i - xGoal) + Math.abs(x - yGoal), Integer.MAX_VALUE, null);
+        for (int i = 0; i < NODE_GAP_DIST; i++) {
+            for (int j = 0; j < NODE_GAP_DIST; j++) {
+                grid[i][j] = new AStarNode(i, j, Math.abs(i - xGoal) + Math.abs(j - yGoal), Integer.MAX_VALUE, null);
             }
         }
         //add obstacles to closedList
@@ -72,7 +74,6 @@ public class AlternativeGrid {
         //add initial position to open list
         int initCoord[] = findClosestNode(xStart, yStart);
         AStarNode init = grid[initCoord[0]][initCoord[1]];
-        init.setRoot();
         openList.add(init);
         System.out.println("Added initial point");
 
@@ -80,7 +81,7 @@ public class AlternativeGrid {
 
         while (!openList.isEmpty()) {
             AStarNode toExpand = findLowestCost(openList); //find node with minimum value
-            closedList.add(toExpand);
+            toExpand.setClosed();
             openList.remove(toExpand);
 
             for(AStarNode adjacent : getAdjacent(toExpand)) {
@@ -91,7 +92,7 @@ public class AlternativeGrid {
                     return adjacent;
                 }
 
-                if(closedList.contains(adjacent)) continue;
+                if(adjacent.isClosed()) continue;
 
                 if(!openList.contains(adjacent)) {
                     adjacent.setParent(toExpand);
@@ -101,6 +102,29 @@ public class AlternativeGrid {
                     if(adjacent.getGn() > manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1) {
                         adjacent.setParent(toExpand);
                         adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1);
+                    }
+                }
+            }
+
+            for (AStarNode adjacent : getAdjacentDiagonals(toExpand)) {
+                //exit out method if found goal
+                if (adjacent.getX() == goal.getX() && adjacent.getY() == goal.getY()) {
+                    adjacent.setParent(toExpand);
+                    System.out.println("Goal found");
+                    return adjacent;
+                }
+
+                if(adjacent.isClosed()) continue;
+
+                if(!openList.contains(adjacent)) {
+                    adjacent.setParent(toExpand);
+                    adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1.5);
+                    openList.add(adjacent);
+                }
+                else {
+                    if(adjacent.getGn() > manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1.5) {
+                        adjacent.setParent(toExpand);
+                        adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1.5);
                     }
                 }
             }
@@ -125,21 +149,47 @@ public class AlternativeGrid {
 
     private List<AStarNode> getAdjacent(AStarNode current) {
         List<AStarNode> list = new ArrayList<>();
+        int currX = current.getX();
+        int currY = current.getY();
 
-        if(current.getX() < grid.length - 1) {
-            list.add(grid[current.getX() + 1][current.getY()]);
+        if(currX < grid.length - 1) {
+            list.add(grid[currX + 1][currY]);
         }
 
-        if(current.getY() < grid.length - 1) {
-            list.add(grid[current.getX()][current.getY() + 1]);
+        if(currY < grid.length - 1) {
+            list.add(grid[currX][currY + 1]);
         }
 
-        if(current.getY() > 0) {
-            list.add(grid[current.getX()][current.getY() - 1]);
+        if(currY > 0) {
+            list.add(grid[currX][currY - 1]);
         }
 
-        if(current.getX() > 0) {
-            list.add(grid[current.getX() - 1][current.getY()]);
+        if(currX > 0) {
+            list.add(grid[currX - 1][currY]);
+        }
+
+        return list;
+    }
+
+    private List<AStarNode> getAdjacentDiagonals(AStarNode current) {
+        List<AStarNode> list = new ArrayList<>();
+        int currX = current.getX();
+        int currY = current.getY();
+
+        if (currX < grid.length - 1 && currY > 0) {
+            list.add(grid[currX + 1][currY - 1]);
+        }
+
+        if (currX < grid.length - 1 && currY < grid.length - 1) {
+            list.add(grid[currX + 1][currY + 1]);
+        }
+
+        if (currX > 0 && currY < grid.length - 1) {
+            list.add(grid[currX - 1][currY + 1]);
+        }
+
+        if (currX > 0 && currY > 0) {
+            list.add(grid[currX - 1][currY - 1]);
         }
 
         return list;
@@ -260,13 +310,11 @@ public class AlternativeGrid {
      * Adds corners into the closed list
      */
     public void inputCorners() {
-        double dist = 29.3 / DISTANCE_BETWEEN_NODES; // in nodes
-        double r = ROBOT_LENGTH / DISTANCE_BETWEEN_NODES;
-        double w = COURSE_WIDTH / DISTANCE_BETWEEN_NODES;
+        double dist = 29.3 / NODE_GAP_DIST; // in nodes
+        double r = ROBOT_RADIUS / NODE_GAP_DIST;
+        double w = COURSE_WIDTH / NODE_GAP_DIST;
         inputSlantRectangle(dist, 0, 0, dist, r);
         inputSlantRectangle(w - dist, w, w, w - dist, r);
-        inputSlantRectangle(0, w - dist, dist, w, r);
-        inputSlantRectangle(w - dist, 0, w, dist, r);
     }
 
     /**
@@ -505,7 +553,7 @@ public class AlternativeGrid {
     }
 
     public boolean isInsideBorder(int x, int y) {
-        int tmp1 = NODES_PER_EDGE - BORDER_NODE_WIDTH;
+        int tmp1 = NODE_GAP_DIST - BORDER_NODE_WIDTH;
         if (x > BORDER_NODE_WIDTH && y > BORDER_NODE_WIDTH && x < tmp1 && y < tmp1) {
             return true;
         }

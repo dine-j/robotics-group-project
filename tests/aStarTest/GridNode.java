@@ -15,5 +15,6 @@ public class GridNode extends JButton {
     public void setState(Color state) {
         this.state = state;
         setBackground(this.state);
+        setOpaque(true);
     }
 }

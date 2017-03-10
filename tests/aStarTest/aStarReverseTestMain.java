@@ -2,6 +2,7 @@ package tests.aStarTest;
 
 
 import main.term2Challenges.AStarNode;
+import main.term2Challenges.AlternativeGrid;
 import main.term2Challenges.Grid;
 
 import java.util.LinkedList;
@@ -9,7 +10,7 @@ import java.util.LinkedList;
 public class aStarReverseTestMain {
 
     public static void main(String[] args) throws InterruptedException {
-        Grid model = new Grid();
+        AlternativeGrid model = new AlternativeGrid(62);
         int size = model.getSize();
         GridFrame grid = new GridFrame(model.getSize());
         for (int i = 0; i < size; ++i) {
@@ -24,7 +25,7 @@ public class aStarReverseTestMain {
         double[] goal = model.inputTunnelPosition(90, 90, 90);
 
         //find reverse path
-        AStarNode startNode = model.findGoalNodeFromRoot((int) goal[1], (int) goal[0], 20, 20);
+        AStarNode startNode = model.aStarSearch((int) goal[1], (int) goal[0], 20, 20);
 
         //get list with reverse path
         LinkedList<AStarNode> reverseList = model.getListPathFromGoalNode(startNode);
