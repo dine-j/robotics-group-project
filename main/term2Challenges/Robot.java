@@ -178,6 +178,10 @@ public class Robot {
         return isGreen(sample[0]);
     }
 
+    public void exitTunnel() {
+        moveDistance(-15);
+    }
+
     /**
      * Rotate robot by given angle, which can be positive (anticlockwise) or negative (clockwise)
      * @param rotationValue Angle of rotation
@@ -236,7 +240,7 @@ public class Robot {
 
     /**
      * Move the robot forward or backward given a certain distance
-     * @param distance Distance for movement, can be positive or negative
+     * @param distance Distance for movement in cm, can be positive or negative
      */
     private void moveDistance(double distance) {
         motorL.setSpeed(120);

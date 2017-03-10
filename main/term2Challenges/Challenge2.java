@@ -47,6 +47,7 @@ public class Challenge2 {
             coloredObstacle = new AStarNode(redObstacle.x, redObstacle.y);
 
         // Moving back
+        r.exitTunnel();
 
         // Going to assigned obstacle then back starting point
 
