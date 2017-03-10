@@ -91,32 +91,38 @@ public class Grid {
      * @param yStart
      * @return Either goalNode, with parent chain to root,  or null in result of failure
      */
-    public AStarNode findGoalNodeFromRoot(int xStart, int yStart) {
+    public AStarNode findGoalNodeFromRoot(int xStart, int yStart, int xGoal, int yGoal) {
         AStarNode result = null;
 
         // 1. Add closed list stuff
+        //obstacle position
         inputCylinderPosition(40, 122 - 40); // we don't know yet
         inputCorners();
-        double[] goalIdeal = inputTunnelPosition(90, 90, 90);
+
+
+
+        //middle point of the tunnel
+        //double[] goalIdeal = inputTunnelPosition(90, 90, 90);
 
         /*
          * TODO:  why flipping works?
          * //TODO:check coordinates of goal node
          */
-        int[] goalTmp = new int[]{(int) goalIdeal[1], (int) goalIdeal[0]};
+        //int[] goalTmp = new int[]{(int) goalIdeal[1], (int) goalIdeal[0]};
 
         // Maybe good idea:
         inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
 
         // 1b. Add goal node
-        int goalCoord[] = findClosestNode(goalTmp[0], goalTmp[1]);
+        int goalCoord[] = findClosestNode(xGoal, yGoal);
         AStarNode goal = new AStarNode(goalCoord[0], goalCoord[1], true); //create goal node
         grid[goalCoord[0]][goalCoord[1]] = goal; //add to grid
 
         // 2. Add initial pos to open list
-        AStarNode init = new AStarNode(xStart, yStart, manhattanHeuristic(xStart, yStart, goal), 0, null, true);
+        int initCoord[] = findClosestNode(xStart, yStart);
+        AStarNode init = new AStarNode(initCoord[0], initCoord[1], manhattanHeuristic(xStart, yStart, goal), 0, null, true);
         openList.add(init);
-        grid[xStart][yStart] = init; //add to grid
+        grid[initCoord[0]][initCoord[1]] = init; //add to grid
 
         while (!openList.isEmpty()) {
             AStarNode toExpand = openList.poll(); //find node with minimum value
@@ -162,7 +168,7 @@ public class Grid {
         return result; //only gets here if result is null
     }
 
-    /* helper method for calculatePath() */
+    //gets path by backtracking through parents
     public LinkedList<AStarNode> getListPathFromGoalNode(AStarNode goal) {
         LinkedList<AStarNode> list = new LinkedList<AStarNode>();
         list.add(goal);

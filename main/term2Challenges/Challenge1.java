@@ -39,11 +39,33 @@ public class Challenge1 {
 
 		// Goal using A * (doesn't have to go inside)
 		Grid model = new Grid();
-		AStarNode goalNode = model.findGoalNodeFromRoot(20, 20);
+
+		//calculate tunnel position
+		double[] goal = model.inputTunnelPosition(90, 90, 90);
+
+		//find path
+		AStarNode goalNode = model.findGoalNodeFromRoot(20, 20, (int) goal[1], (int) goal[0]);
+
+		//get list containing path
         LinkedList<AStarNode> list = model.getListPathFromGoalNode(goalNode);
+
+        //get action list
         List<RobotMovement> actionList = model.calculatePath(list);
         
         r.followInstructions(actionList);
+
+        //reverse through path provided
+
+		//find reverse path
+		AStarNode startNode = model.findGoalNodeFromRoot((int) goal[1], (int) goal[0], 20, 20);
+
+		//get list with reverse path
+		LinkedList<AStarNode> reverseList = model.getListPathFromGoalNode(startNode);
+
+		//get reverse action list
+		List<RobotMovement> reverseActionList = model.calculatePath(reverseList);
+
+		r.followInstructions(reverseActionList);
 		
 		
 		

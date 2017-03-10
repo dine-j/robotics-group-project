@@ -1,13 +1,13 @@
 package tests.aStarTest;
 
-import java.util.LinkedList;
-import java.util.List;
 
 import main.term2Challenges.AStarNode;
 import main.term2Challenges.Grid;
-import main.term2Challenges.RobotMovement;
 
-public class aStarTestMain {
+import java.util.LinkedList;
+
+public class aStarReverseTestMain {
+
     public static void main(String[] args) throws InterruptedException {
         Grid model = new Grid();
         int size = model.getSize();
@@ -23,22 +23,19 @@ public class aStarTestMain {
         //calculate tunnel position
         double[] goal = model.inputTunnelPosition(90, 90, 90);
 
-        AStarNode goalNode = model.findGoalNodeFromRoot(20, 20, (int) goal[1], (int) goal[0]);
-        LinkedList<AStarNode> list = model.getListPathFromGoalNode(goalNode);
-        //List<RobotMovement> actionList = model.calculatePath(list);
+        //find reverse path
+        AStarNode startNode = model.findGoalNodeFromRoot((int) goal[1], (int) goal[0], 20, 20);
+
+        //get list with reverse path
+        LinkedList<AStarNode> reverseList = model.getListPathFromGoalNode(startNode);
 
         grid.readGrid(model);
         grid.setVisible(true);
 
         Thread.sleep(500);
-        for (AStarNode element : list) {
+        for (AStarNode element : reverseList) {
             grid.placeRobot(element.getX(), element.getY());
             Thread.sleep(200);
         }
-
-//        for(int i = 0; i < 10; ++i) {
-//            grid.placeRobot(40 - i, 30);
-//            Thread.sleep(500);
-//        }
     }
 }
