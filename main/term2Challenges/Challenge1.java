@@ -44,14 +44,23 @@ public class Challenge1 {
 		double[] goal = model.inputTunnelPosition(90, 90, 90);
 
 		//find path
-		AStarNode goalNode = model.findGoalNodeFromRoot(20, 20, (int) goal[1], (int) goal[0]);
+		//AStarNode goalNode = model.findGoalNodeFromRoot(32, 32, (int) goal[1], (int) goal[0]);
 
 		//get list containing path
+		//AStarNode goalNode = model.findGoalNodeFromRoot(32, 32);
+
+		int n = 16;
+		r.moveDistance(model.distanceToNextNodeOnStrip(n));
+		double[] startCoords = model.nextNodeCoordsOnStrip(n);
+		//TODO: betters input (+ not hardcoded)
+		AStarNode goalNode = model.findGoalNodeFromRoot((int) (startCoords[0]/2), (int) (startCoords[1]/2), (int) goal[1], (int) goal[0]);
+
+
         LinkedList<AStarNode> list = model.getListPathFromGoalNode(goalNode);
 
         //get action list
         List<RobotMovement> actionList = model.calculatePath(list);
-        
+
         //r.followInstructions(actionList);
 
         //reverse through path provided
@@ -67,10 +76,10 @@ public class Challenge1 {
 
 		//r.followInstructions(reverseActionList);
 		
-		
-		
+
+
 		// Update A* plan if it see obstacle in the way.
-		
+
 		// Going back to starting point
 
 	}
