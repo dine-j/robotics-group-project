@@ -37,6 +37,7 @@ public class Challenge2 {
         r.enterTunnel();
 
         // Sensing color
+        boolean green = r.getNextObstacle();
 
         // Moving back
 

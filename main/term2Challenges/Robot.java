@@ -5,6 +5,7 @@ import java.util.List;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.*;
+import lejos.robotics.Color;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
@@ -158,10 +159,23 @@ public class Robot {
         while(sample[0] == 0) { // button is not pressed
             motorL.forward();
             motorR.forward();
+            sampleProvider.fetchSample(sample, 0);
         }
 
         motorL.stop();
         motorR.stop();
+    }
+
+    /**
+     * Sense color and return true if the color is green, false otherwise
+     */
+    public boolean getNextObstacle() {
+        SensorMode colorMode = colorSensor.getRGBMode();
+        float[] sample = new float[colorMode.sampleSize()];
+
+        colorMode.fetchSample(sample, 0);
+
+        return isGreen(sample[0]);
     }
 
     /**
@@ -230,5 +244,14 @@ public class Robot {
         double angle = distance * 360 / DISTANCE_PER_REVOLUTION;
         motorL.rotate((int) angle, true);
         motorR.rotate((int) angle);
+    }
+
+    /**
+     * Check if a given value corresponds to green
+     * @param colorValue    Value given by sensor
+     * @return  True if the color is green, false otherwise
+     */
+    private boolean isGreen(float colorValue) {
+        return colorValue < Color.GREEN; // TODO: to be modified once we get the true colors
     }
 }
