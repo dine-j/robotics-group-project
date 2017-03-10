@@ -34,6 +34,7 @@ public class Challenge2 {
         // Goal using A * (doesn't have to go inside)
 
         // Going inside the tunnel
+        r.enterTunnel();
 
         // Sensing color
 

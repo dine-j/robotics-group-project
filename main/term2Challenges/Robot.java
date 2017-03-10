@@ -28,6 +28,7 @@ public class Robot {
     private EV3ColorSensor colorSensor;
     private EV3UltrasonicSensor ultrasonicSensor;
     private EV3GyroSensor gyroSensor;
+    private EV3TouchSensor touchSensor;
 
     private static final double DISTANCE_PER_REVOLUTION = 17.27; // cm per 360° rotation
 
@@ -39,6 +40,7 @@ public class Robot {
         this.colorSensor = colorSensor;
         this.ultrasonicSensor = ultrasonicSensor;
         this.gyroSensor = gyroSensor;
+        this.touchSensor = touchSensor;
 
         this.motorL.setSpeed(120);
         this.motorR.setSpeed(120);
@@ -140,6 +142,26 @@ public class Robot {
                     break;
             }
         }
+    }
+
+    /**
+     * Move forward until reaches the end of the tunnel
+     */
+    public void enterTunnel() {
+        SampleProvider sampleProvider = touchSensor.getTouchMode();
+        float[] sample = new float[sampleProvider.sampleSize()];
+        sampleProvider.fetchSample(sample, 0);
+
+        motorL.setSpeed(120);
+        motorR.setSpeed(120);
+
+        while(sample[0] == 0) { // button is not pressed
+            motorL.forward();
+            motorR.forward();
+        }
+
+        motorL.stop();
+        motorR.stop();
     }
 
     /**
