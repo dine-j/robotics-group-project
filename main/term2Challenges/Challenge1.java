@@ -29,7 +29,9 @@ public class Challenge1 {
 		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor, gyroSensor, touchSensor);
 		Button.waitForAnyPress();
 
-		// Measure drift 
+		// Measure drift
+		if(r.isSensorDrifting())
+			return;
 		
 		// Localize with Bayesian 'strip'
 //		System.out.println(r.localize());

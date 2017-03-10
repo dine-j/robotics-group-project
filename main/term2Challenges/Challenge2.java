@@ -33,6 +33,8 @@ public class Challenge2 {
 //		System.out.println(r.localize());
 
         // Make a sound
+        if(r.isSensorDrifting())
+            return;
 
         // Goal using A * (doesn't have to go inside)
 

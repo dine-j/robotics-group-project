@@ -2,6 +2,7 @@ package main.term2Challenges;
 
 import java.util.List;
 
+import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.*;
@@ -48,6 +49,23 @@ public class Robot {
 
         this.ultrasonicSensor.getDistanceMode();
         this.visionMotor.rotateTo(0);
+    }
+
+    public boolean isSensorDrifting() {
+        gyroSensor.reset();
+        SampleProvider sampleProvider = gyroSensor.getAngleMode();
+        float[] sample = new float[sampleProvider.sampleSize()];
+        sampleProvider.fetchSample(sample, 0);
+        float start = sample[0];
+        for(int i = 0; i < 100; ++i) {
+            sampleProvider.fetchSample(sample, 0);
+            Delay.msDelay(2);
+        }
+        if(Math.abs(start - sample[0]) > 2) {
+            Sound.twoBeeps();
+            return true;
+        }
+        return false;
     }
 
     /**
