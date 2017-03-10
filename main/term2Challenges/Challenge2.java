@@ -48,6 +48,7 @@ public class Challenge2 {
 
         // Moving back
         r.exitTunnel();
+        r.turnToGoAway();
 
         // Going to assigned obstacle then back starting point
 

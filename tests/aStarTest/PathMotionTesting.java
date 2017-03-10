@@ -1,6 +1,5 @@
-package main.term2Challenges.errorAnalysis;
+package tests.aStarTest;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import lejos.hardware.Button;
@@ -12,11 +11,9 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
-import main.term2Challenges.AStarNode;
 import main.term2Challenges.Grid;
 import main.term2Challenges.Robot;
 import main.term2Challenges.RobotMovement;
-import tests.aStarTest.HandMadeOptimalPaths;
 
 public class PathMotionTesting {
 
@@ -32,7 +29,7 @@ public class PathMotionTesting {
 		EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S4);
 		
 
-		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor, gyroSensor);
+		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor, gyroSensor, touchSensor);
 		Button.waitForAnyPress();
 
 		// Measure drift 

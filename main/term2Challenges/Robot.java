@@ -162,6 +162,9 @@ public class Robot {
             sampleProvider.fetchSample(sample, 0);
         }
 
+        // Debugging
+//        System.out.println("Button pressed");
+
         motorL.stop();
         motorR.stop();
     }
@@ -175,11 +178,18 @@ public class Robot {
 
         colorMode.fetchSample(sample, 0);
 
+        // Debugging
+//        System.out.println(sample[0]);
+
         return isGreen(sample[0]);
     }
 
     public void exitTunnel() {
-        moveDistance(-15);
+        moveDistance(-20);
+    }
+
+    public void turnToGoAway() {
+        rotate(-90);
     }
 
     /**
@@ -198,7 +208,6 @@ public class Robot {
         int tp = 10;
         float integral = 0f;
         float derivative = 0f;
-
 
         if (rotationValue > 0) {
             while (sample[0] < rotationValue) {
@@ -233,6 +242,9 @@ public class Robot {
                 sampleProvider.fetchSample(sample, 0);
             }
         }
+
+        // Debugging
+//        System.out.println(sample[0]);
 
         motorL.stop();
         motorR.stop();
