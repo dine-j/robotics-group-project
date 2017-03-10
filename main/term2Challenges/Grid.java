@@ -3,18 +3,14 @@ package main.term2Challenges;
 import java.util.*;
 
 /**
- * Represents the map of nodes, to use in the path finding algorithm
- * <p>
- * MAY HAVE FORGOTTON ORIENTATION
- * The bottom right hand corner of the grid layout, is the closest corner in line with the bayesian strip
+ * Represents the internal map of the course with path planning methods
  */
 public class Grid {
 
     // course is 122 cm x 122cm
     final private int COURSE_WIDTH = 122;  // in cm
-    final private int ROBOT_WIDTH = 10;   // Robot is 30x20cm
-    final private int ROBOT_LENGTH = 15;
-    final private int ROBOT_RADIUS = (int) Math.sqrt(ROBOT_WIDTH * ROBOT_WIDTH + ROBOT_LENGTH * ROBOT_LENGTH) + 1;
+    // robot dimensions are 15cm x 20cm,  with wheel-center point (7.5cm,12cm)
+    final private int ROBOT_RADIUS = 8; // in cm
 
     // Array of 'actions'
     final int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
@@ -22,7 +18,20 @@ public class Grid {
     final private int NUMBER_OF_NODES_PER_EDGE;
     final private double DISTANCE_BETWEEN_NODES; //in cm
     final private int BORDER_NODE_WIDTH; // in # of nodes
-
+    
+    
+    /*
+     * Nodes are stored as follows in the 'map' , where b's represent the bayesian strip.
+     *  -------------------
+     * |                   |
+     * |                   |
+     * |      b            |
+     * |   b               |
+     * |b                  |
+     * 	^------------------
+     *  |
+     *  Matrix coordinate (0,0)
+     */
     private AStarNode[][] grid;
 
     private TreeSet<AStarNode> closedList;
@@ -40,7 +49,7 @@ public class Grid {
 
         NUMBER_OF_NODES_PER_EDGE = numberOfNodesPerEdge;
         DISTANCE_BETWEEN_NODES = (double) COURSE_WIDTH / (double) (NUMBER_OF_NODES_PER_EDGE - 1);
-        BORDER_NODE_WIDTH = (int) ((ROBOT_LENGTH) / DISTANCE_BETWEEN_NODES);
+        BORDER_NODE_WIDTH = (int) ((ROBOT_RADIUS) / DISTANCE_BETWEEN_NODES);
 
         grid = new AStarNode[numberOfNodesPerEdge][numberOfNodesPerEdge]; // pointers stored in grid for x,y access
     }
@@ -273,7 +282,7 @@ public class Grid {
      */
     public void inputCylinderPosition(double x, double y) {
         final double cr = 2.25; // the cylinderRadius
-        inputCirclePos(x / DISTANCE_BETWEEN_NODES, y / DISTANCE_BETWEEN_NODES, (cr + ROBOT_WIDTH) / DISTANCE_BETWEEN_NODES);
+        inputCirclePos(x / DISTANCE_BETWEEN_NODES, y / DISTANCE_BETWEEN_NODES, (cr + ROBOT_RADIUS) / DISTANCE_BETWEEN_NODES);
     }
 
     /**
@@ -281,7 +290,7 @@ public class Grid {
      */
     public void inputCorners() {
         double dist = 29.3 / DISTANCE_BETWEEN_NODES; // in nodes
-        double r = ROBOT_LENGTH / DISTANCE_BETWEEN_NODES;
+        double r = ROBOT_RADIUS / DISTANCE_BETWEEN_NODES;
         double w = COURSE_WIDTH / DISTANCE_BETWEEN_NODES;
         inputSlantRectangle(dist, 0, 0, dist, r);
         inputSlantRectangle(w - dist, w, w, w - dist, r);
@@ -323,9 +332,9 @@ public class Grid {
         double[] frontRight = rotateVector(new double[]{tmpxend, tmpyend}, x, y, radians);
 
         //add the walls
-        inputWallPosition(frontLeft[0], frontLeft[1], backLeft[0], backLeft[1], ROBOT_WIDTH);
-        inputWallPosition(backLeft[0], backLeft[1], backRight[0], backRight[1], ROBOT_WIDTH);
-        inputWallPosition(backRight[0], backRight[1], frontRight[0], frontRight[1], ROBOT_WIDTH);
+        inputWallPosition(frontLeft[0], frontLeft[1], backLeft[0], backLeft[1], ROBOT_RADIUS);
+        inputWallPosition(backLeft[0], backLeft[1], backRight[0], backRight[1], ROBOT_RADIUS);
+        inputWallPosition(backRight[0], backRight[1], frontRight[0], frontRight[1], ROBOT_RADIUS);
 
         // compute a sensible ideal goal to plan to..
         final int DIST_FROM_ENTRANCE_OPENING = 5;
