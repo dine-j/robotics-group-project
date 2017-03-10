@@ -15,7 +15,7 @@ public class Grid {
     // Array of 'actions'
     final int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
 
-    final private double DISTANCE_BETWEEN_NODES; //in cm
+    final private double NODE_GAP_DIST; //in cm
     final private int NODES_PER_EDGE; // in # of nodes
     final private int BORDER_NODE_WIDTH; // in # of nodes
     
@@ -48,8 +48,8 @@ public class Grid {
         openList = new PriorityQueue<AStarNode>();
 
         NODES_PER_EDGE = numberOfNodesPerEdge;
-        DISTANCE_BETWEEN_NODES = (double) COURSE_WIDTH / (double) (NODES_PER_EDGE - 1);
-        BORDER_NODE_WIDTH = (int) ((ROBOT_RADIUS) / DISTANCE_BETWEEN_NODES);
+        NODE_GAP_DIST = (double) COURSE_WIDTH / (double) (NODES_PER_EDGE - 1);
+        BORDER_NODE_WIDTH = (int) ((ROBOT_RADIUS) / NODE_GAP_DIST);
         
         // pointers stored in grid for easy x,y access
         grid = new AStarNode[numberOfNodesPerEdge][numberOfNodesPerEdge]; 
@@ -63,31 +63,41 @@ public class Grid {
         return grid;
     }
 
-    public int[] findClosestNode(double x, double y) {
-        double tmpx = x / DISTANCE_BETWEEN_NODES;
-        double tmpy = y / DISTANCE_BETWEEN_NODES;
+    // method used to approximate goalNodePosition
+    private int[] findClosestNode(double x, double y) {
+        double tmpx = x / NODE_GAP_DIST;
+        double tmpy = y / NODE_GAP_DIST;
         tmpx = Math.round(tmpx);
         tmpy = Math.round(tmpy);
         //debugging println statement
-        System.out.println("closestNodeResults: x = " + tmpx + " , y = " + tmpy);
+        //System.out.println("closestNodeResults: x = " + tmpx + " , y = " + tmpy);
         return new int[]{(int) tmpx, (int) tmpy};
     }
 
     /**
-     * @param x        in cm
-     * @param y        in cm
-     * @param diagonal if set to true, attempt to find closest 'forward' node on leading diagonal
-     * @return the closest node in 'node coordinates',  also in 3rd array index the distance needed to travel on diagonal in mm
+     * @param n The index of the Bayesian strip the robot is sensing
+     * @return A distance in cm to travel to next node
      */
-    public int[] findClosestNode(double x, double y, boolean diagonal) {
-        if (diagonal) {
-            double tmpx = Math.ceil(x / DISTANCE_BETWEEN_NODES);
-            double tmpy = Math.ceil(y / DISTANCE_BETWEEN_NODES);
-            double remainder = (x - tmpx * DISTANCE_BETWEEN_NODES) * 10 * RobotMovement.SQRT2;
-            return new int[]{(int) tmpx, (int) tmpy, (int) remainder};
-        } else return findClosestNode(x, y);
+    public double distanceToNextNodeOnStrip(int n){
+    	//21 center till corner-wall, 2cm to center of zeroth cell, -4cm to robot-center
+    	double distanceOnDiagonal = 21 + 2 - 4 + n;
+    	double xCoord = distanceOnDiagonal / RobotMovement.SQRT2;
+    	double[] toReach = nextNodeCoordsOnStrip(n);
+    	return (toReach[0] - xCoord) * RobotMovement.SQRT2;
     }
-
+    
+    /**
+     * @param n The index of the Bayesian strip the robot is sensing
+     * @return Coordinates in cm of next node
+     */
+    public double[] nextNodeCoordsOnStrip(int n){
+    	//21 center till corner-wall, 2cm to center of zeroth cell, -4cm to robot-center
+    	double distanceOnDiagonal = 21 + 2 - 4 + n;
+    	double x, y;
+    	x = y = (distanceOnDiagonal / RobotMovement.SQRT2) / NODE_GAP_DIST;
+    	x = y = Math.ceil(x) * NODE_GAP_DIST;
+    	return new double[]{x, y};
+    }
 
     // TODO: test the A* search
 
@@ -104,7 +114,7 @@ public class Grid {
         // 1. Add closed list stuff
         inputCylinderPosition(40, 122 - 40); // we don't know yet
         inputCorners();
-        double[] goalIdeal = inputTunnelPosition(90, 90, 90);
+        double[] goalIdeal = inputTunnelPosition(82.5, 110, 90);
 
         /*
          * TODO:  why flipping works?
@@ -264,7 +274,7 @@ public class Grid {
     }
 
     public double getNodeSize() {
-        return DISTANCE_BETWEEN_NODES;
+        return NODE_GAP_DIST;
     }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -280,20 +290,18 @@ public class Grid {
      */
     public void inputCylinderPosition(double x, double y) {
         final double cr = 2.25; // the cylinderRadius
-        inputCirclePos(x / DISTANCE_BETWEEN_NODES, y / DISTANCE_BETWEEN_NODES, (cr + ROBOT_RADIUS) / DISTANCE_BETWEEN_NODES);
+        inputCirclePos(x / NODE_GAP_DIST, y / NODE_GAP_DIST, (cr + ROBOT_RADIUS) / NODE_GAP_DIST);
     }
 
     /**
      * Adds corners into the closed list
      */
     public void inputCorners() {
-        double dist = 29.3 / DISTANCE_BETWEEN_NODES; // in nodes
-        double r = ROBOT_RADIUS / DISTANCE_BETWEEN_NODES;
-        double w = COURSE_WIDTH / DISTANCE_BETWEEN_NODES;
+        double dist = 29.3 / NODE_GAP_DIST; // in nodes
+        double r = ROBOT_RADIUS / NODE_GAP_DIST;
+        double w = COURSE_WIDTH / NODE_GAP_DIST;
         inputSlantRectangle(dist, 0, 0, dist, r);
         inputSlantRectangle(w - dist, w, w, w - dist, r);
-        inputSlantRectangle(0, w - dist, dist, w, r);
-        inputSlantRectangle(w - dist, 0, w, dist, r);
     }
 
     /**
@@ -355,7 +363,7 @@ public class Grid {
      */
     public void inputWallPosition(double xStart, double yStart, double xEnd, double yEnd, double radius) {
         // work on the 'nodes' scale
-        double scale = DISTANCE_BETWEEN_NODES;
+        double scale = NODE_GAP_DIST;
         xStart = xStart / scale;
         yStart = yStart / scale;
         xEnd = xEnd / scale;

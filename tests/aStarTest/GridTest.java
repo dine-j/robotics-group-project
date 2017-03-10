@@ -28,7 +28,8 @@ public class GridTest {
         model.inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
         model.inputCorners();
         grid.readGrid(model);
-        grid.placeGoal(model.findClosestNode(tmp[1], tmp[0]));
+        //grid.placeGoal(model.findClosestNode(tmp[1], tmp[0]));
+        grid.placeGoal(55,34); //what above commented-out (private)method calculates
         grid.placeRobot(20,20);
         
         grid.setVisible(true);
