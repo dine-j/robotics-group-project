@@ -19,7 +19,7 @@ public class AStarNode implements Comparable<AStarNode>{
 	private NodeState state;  //node may either be open or closed
 	
 	
-	public AStarNode(int x, int y, double hn, double gn, AStarNode parent, boolean open){
+	public AStarNode(int x, int y, double hn, double gn, AStarNode parent){
 		this.x = x;
 		this.y = y;
 		this.hn = hn;
@@ -28,7 +28,7 @@ public class AStarNode implements Comparable<AStarNode>{
 		this.parent = parent;
 		this.state = NodeState.OPEN;
 	}
-	
+
 	/**
 	 * Creates a valueless, node mainly for closed list
 	 * @param x
@@ -43,15 +43,11 @@ public class AStarNode implements Comparable<AStarNode>{
 		this.parent = null;
 		this.state = NodeState.CLOSED;
 	}
-	
-	/**
-	 * Can create a valueless goal node
-	 * @param x
-	 * @param y
-	 */
+
 	public AStarNode (int x, int y, boolean isGoal){
 		this(x,y);
 		if(isGoal) state = NodeState.GOAL;
+		else state = NodeState.OPEN;
 	}
 	
 	public void setClosed(){
@@ -65,10 +61,19 @@ public class AStarNode implements Comparable<AStarNode>{
 	public boolean isGoal(){
 		return state == NodeState.GOAL;
 	}
-	
+
+	public void setRoot() {
+		this.state = NodeState.ROOT;
+	}
+
 	public void setGn(double gn){
 		this.gn = gn;
 		fn = gn + hn; // recompute fn;
+	}
+
+	public void setHn(double hn) {
+		this.hn = hn;
+		fn = gn + hn;
 	}
 	
 	public void setParent(AStarNode parent) {
@@ -93,7 +98,7 @@ public class AStarNode implements Comparable<AStarNode>{
 	}
 	
 	public int compareTo(AStarNode other){
-		return Double.compare(this.fn,other.fn);
+		return Double.compare(this.hn + this.gn, other.hn + other.gn);
 	}
 	
 	public int getX() {
@@ -108,9 +113,9 @@ public class AStarNode implements Comparable<AStarNode>{
 		return parent;
 	}
 
-	public double getHn() {
+	/*public double getHn() {
 		return hn;
-	}
+	}*/
 
 	public double getGn() {
 		return gn;
@@ -125,5 +130,15 @@ public class AStarNode implements Comparable<AStarNode>{
 		public int compare(AStarNode o1, AStarNode o2) {
 			return o1.x * 500 + o1.y - o2.x * 500 - o2.y; //works for grid size of up to 500
 		}
+	}
+
+	public String toString() {
+		switch (state) {
+			case OPEN : return "O";
+			case CLOSED : return "C";
+			case GOAL : return "G";
+			case ROOT: return "R";
+		}
+		return null;
 	}
 }

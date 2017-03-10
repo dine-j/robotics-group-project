@@ -2,24 +2,17 @@ package main.term2Challenges;
 
 import java.util.*;
 
-/**
- * Represents the map of nodes, to use in the path finding algorithm
- * <p>
- * MAY HAVE FORGOTTON ORIENTATION
- * The bottom right hand corner of the grid layout, is the closest corner in line with the bayesian strip
- */
-public class Grid {
-
+public class AlternativeGrid {
     // course is 122 cm x 122cm
     final private int COURSE_WIDTH = 122;  // in cm
-    final private int ROBOT_WIDTH = 10;   // Robot is 30x20cm
+    final private int ROBOT_WIDTH = 10;
     final private int ROBOT_LENGTH = 15;
     //final private int ROBOT_RADIUS = (int) Math.sqrt(ROBOT_WIDTH * ROBOT_WIDTH + ROBOT_LENGTH * ROBOT_LENGTH) + 1;
 
     // Array of 'actions'
-    final int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
+    private final int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
 
-    final private int NUMBER_OF_NODES_PER_EDGE;
+    final private int NODES_PER_EDGE;
     final private double DISTANCE_BETWEEN_NODES; //in cm
     final private int BORDER_NODE_WIDTH; // in # of nodes
 
@@ -28,145 +21,128 @@ public class Grid {
     private TreeSet<AStarNode> closedList;
     private PriorityQueue<AStarNode> openList;
 
-
-    public Grid() {
-        this(62); //calculated to be 2cm between each node
-    }
-
-    public Grid(int numberOfNodesPerEdge) {
+    public AlternativeGrid(int nodesPerEdge) {
 
         closedList = new TreeSet<AStarNode>(new AStarNode.positionComparator());   //DONE: closedList has comparator
         openList = new PriorityQueue<AStarNode>();
 
-        NUMBER_OF_NODES_PER_EDGE = numberOfNodesPerEdge;
-        DISTANCE_BETWEEN_NODES = (double) COURSE_WIDTH / (double) (NUMBER_OF_NODES_PER_EDGE - 1);
+        NODES_PER_EDGE = nodesPerEdge;
+        DISTANCE_BETWEEN_NODES = (double) COURSE_WIDTH / (double) (NODES_PER_EDGE - 1);
         BORDER_NODE_WIDTH = (int) ((ROBOT_LENGTH) / DISTANCE_BETWEEN_NODES);
 
-        grid = new AStarNode[numberOfNodesPerEdge][numberOfNodesPerEdge]; // pointers stored in grid for x,y access
+        grid = new AStarNode[nodesPerEdge][nodesPerEdge]; // pointers stored in grid for x,y access
+
+        for (int i = 0; i < nodesPerEdge; i++) {
+            for (int x = 0; x < nodesPerEdge; x++) {
+                grid[i][x] = new AStarNode(i, x);
+                //Math.abs(i - goal.x) + Math.abs(x - goal.y)
+            }
+        }
     }
 
     public int getSize() {
-        return NUMBER_OF_NODES_PER_EDGE;
+        return NODES_PER_EDGE;
     }
 
     public AStarNode[][] getGrid() {
         return grid;
     }
 
-    /**
-     * @param x in cm
-     * @param y in cm
-     * @return the closest node in 'node coordinates'
-     */
-    public int[] findClosestNode(double x, double y) {
-        double tmpx = x / DISTANCE_BETWEEN_NODES;
-        double tmpy = y / DISTANCE_BETWEEN_NODES;
-        tmpx = Math.round(tmpx);
-        tmpy = Math.round(tmpy);
-        return new int[]{(int) tmpx, (int) tmpy};
+    private int manhattanHeuristic(int x, int y, AStarNode goalNode) {
+        return Math.abs(x - goalNode.getX()) + Math.abs(y - goalNode.getY());
     }
 
-    /**
-     * @param x        in cm
-     * @param y        in cm
-     * @param diagonal if set to true, attempt to find closest 'forward' node on leading diagonal
-     * @return the closest node in 'node coordinates',  also in 3rd array index the distance needed to travel on diagonal in mm
-     */
-    public int[] findClosestNode(double x, double y, boolean diagonal) {
-        if (diagonal) {
-            double tmpx = Math.ceil(x / DISTANCE_BETWEEN_NODES);
-            double tmpy = Math.ceil(y / DISTANCE_BETWEEN_NODES);
-            double remainder = (x - tmpx * DISTANCE_BETWEEN_NODES) * 10 * RobotMovement.SQRT2;
-            return new int[]{(int) tmpx, (int) tmpy, (int) remainder};
-        } else return findClosestNode(x, y);
-    }
-
-
-    // TODO: test the A* search
-
-
-    /**
-     * Does A* search after initialising closed list
-     *
-     * @param xStart
-     * @param yStart
-     * @return Either goalNode, with parent chain to root,  or null in result of failure
-     */
-    public AStarNode findGoalNodeFromRoot(int xStart, int yStart, int xGoal, int yGoal) {
-        AStarNode result = null;
-
-        // 1. Add closed list stuff
-        //obstacle position
-        inputCylinderPosition(40, 122 - 40); // we don't know yet
+    public AStarNode aStarSearch(int xStart, int yStart, int xGoal, int yGoal) {
+        for (int i = 0; i < NODES_PER_EDGE; i++) {
+            for (int x = 0; x < NODES_PER_EDGE; x++) {
+                grid[i][x] = new AStarNode(i, x, Math.abs(i - xGoal) + Math.abs(x - yGoal), Integer.MAX_VALUE, null);
+            }
+        }
+        //add obstacles to closedList
+        inputCylinderPosition(40, 122 - 40);
         inputCorners();
 
-
-
-        //middle point of the tunnel
-        //double[] goalIdeal = inputTunnelPosition(90, 90, 90);
-
-        /*
-         * TODO:  why flipping works?
-         * //TODO:check coordinates of goal node
-         */
-        //int[] goalTmp = new int[]{(int) goalIdeal[1], (int) goalIdeal[0]};
-
-        // Maybe good idea:
         inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
 
-        // 1b. Add goal node
+        //add goal node
         int goalCoord[] = findClosestNode(xGoal, yGoal);
-        AStarNode goal = new AStarNode(goalCoord[0], goalCoord[1], true); //create goal node
-        grid[goalCoord[0]][goalCoord[1]] = goal; //add to grid
+        AStarNode goal = new AStarNode(goalCoord[0], goalCoord[1]); //create goal node
+        grid[goalCoord[0]][goalCoord[1]] = goal;
 
-        // 2. Add initial pos to open list
+        //add initial position to open list
         int initCoord[] = findClosestNode(xStart, yStart);
-        AStarNode init = new AStarNode(initCoord[0], initCoord[1], manhattanHeuristic(xStart, yStart, goal), 0, null);
+        AStarNode init = grid[initCoord[0]][initCoord[1]];
+        init.setRoot();
         openList.add(init);
-        grid[initCoord[0]][initCoord[1]] = init; //add to grid
+        System.out.println("Added initial point");
+
+        System.out.println(Arrays.deepToString(grid).replace("], ", "]\n"));
 
         while (!openList.isEmpty()) {
-            AStarNode toExpand = openList.poll(); //find node with minimum value
-            for (int i = 0; i < ACTION.length; ++i) {
-                final int x = toExpand.getX() + ACTION[i][0];
-                final int y = toExpand.getY() + ACTION[i][1];
-                double actionCost = (i % 2 == 0) ? 1.0 : RobotMovement.SQRT2;
+            AStarNode toExpand = findLowestCost(openList); //find node with minimum value
+            closedList.add(toExpand);
+            openList.remove(toExpand);
 
+            for(AStarNode adjacent : getAdjacent(toExpand)) {
                 //exit out method if found goal
-                if (x == goal.getX() && y == goal.getY()) {
-                    goal.setParent(toExpand);
-                    return goal;
+                if (adjacent.getX() == goal.getX() && adjacent.getY() == goal.getY()) {
+                    adjacent.setParent(toExpand);
+                    System.out.println("Goal found");
+                    return adjacent;
                 }
-                // filter out so inside border and open/empty in grid
-                else if (isInsideBorder(x, y) && (grid[x][y] == null || grid[x][y].isOpen())) {
-                    // check first if node is already in openList.
-                    if (grid[x][y] != null && grid[x][y].isOpen()) {
-                        double newGn = toExpand.getGn() + actionCost;
 
-                        if (grid[x][y].getGn() > newGn) {
-                            AStarNode rmNode = grid[x][y];
-                            openList.remove(rmNode); //remove temporarily so doesn't mess up tree-set structure
-                            rmNode.setGn(newGn);
-                            rmNode.setParent(toExpand);  //set the new parent with better costed path
-                            openList.add(rmNode);
-                        }
-                    } else if (grid[x][y] == null) {
-                        //add to openlist
-                        double hn = manhattanHeuristic(x, y, goal);
-                        AStarNode toAdd = new AStarNode(x, y, hn, 0, toExpand);
-                        openList.add(toAdd);
-                        grid[x][y] = toAdd; //add to grid
+                if(closedList.contains(adjacent)) continue;
+
+                if(!openList.contains(adjacent)) {
+                    adjacent.setParent(toExpand);
+                    adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1);
+                    openList.add(adjacent);
+                } else {
+                    if(adjacent.getGn() > manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1) {
+                        adjacent.setParent(toExpand);
+                        adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1);
                     }
-                    // otherwise if closed do nothing
                 }
-            }// end of for loop
-            AStarNode rmNode = grid[toExpand.getX()][toExpand.getY()]; //have finished expanding
-            openList.remove(rmNode);
-            closedList.add(rmNode);
-            rmNode.setClosed(); // add to closed list
+            }
         }
 
-        return result; //only gets here if result is null
+        System.out.println("Oops! Path not found!");
+        return null;
+    }
+
+    private AStarNode findLowestCost(PriorityQueue<AStarNode> openList) {
+        AStarNode lowestNode = openList.peek();
+        double cost = lowestNode.getFn();
+
+        for(AStarNode node : openList) {
+            if(node.getFn() < cost) {
+                cost = node.getFn();
+                lowestNode = node;
+            }
+        }
+        return lowestNode;
+    }
+
+    private List<AStarNode> getAdjacent(AStarNode current) {
+        List<AStarNode> list = new ArrayList<>();
+
+        if(current.getX() < grid.length - 1) {
+            list.add(grid[current.getX() + 1][current.getY()]);
+        }
+
+        if(current.getY() < grid.length - 1) {
+            list.add(grid[current.getX()][current.getY() + 1]);
+        }
+
+        if(current.getY() > 0) {
+            list.add(grid[current.getX()][current.getY() - 1]);
+        }
+
+        if(current.getX() > 0) {
+            list.add(grid[current.getX() - 1][current.getY()]);
+        }
+
+        return list;
     }
 
     //gets path by backtracking through parents
@@ -174,6 +150,11 @@ public class Grid {
         LinkedList<AStarNode> list = new LinkedList<AStarNode>();
         list.add(goal);
         AStarNode current = goal;
+
+        if (current == null) {
+            System.out.println("No path!");
+            return new LinkedList<AStarNode>();
+        }
         while (!current.isRoot()) {
             current = current.getParent();
             list.addFirst(current);
@@ -250,26 +231,18 @@ public class Grid {
         return -1;
     }
 
-    private int manhattanHeuristic(int x, int y, AStarNode goalNode) {
-        return Math.abs(x - goalNode.getX()) + Math.abs(y - goalNode.getY());
+    /**
+     * @param x in cm
+     * @param y in cm
+     * @return the closest node in 'node coordinates'
+     */
+    public int[] findClosestNode(double x, double y) {
+        double tmpx = x / DISTANCE_BETWEEN_NODES;
+        double tmpy = y / DISTANCE_BETWEEN_NODES;
+        tmpx = Math.round(tmpx);
+        tmpy = Math.round(tmpy);
+        return new int[]{(int) tmpx, (int) tmpy};
     }
-
-
-    public boolean isInsideBorder(int x, int y) {
-        int tmp1 = NUMBER_OF_NODES_PER_EDGE - BORDER_NODE_WIDTH;
-        if (x > BORDER_NODE_WIDTH && y > BORDER_NODE_WIDTH && x < tmp1 && y < tmp1) {
-            return true;
-        }
-        return false;
-    }
-
-    public double getNodeSize() {
-        return DISTANCE_BETWEEN_NODES;
-    }
-
-/////////////////////////////////////////////////////////////////////////////
-// below are the object placing methods, for map/grid
-/////////////////////////////////////////////////////////////////////////////
 
     /**
      * Updates the map so that it won't navigate though a CYLINDER OBJECT
@@ -491,7 +464,7 @@ public class Grid {
     }
 
     /*
-     * inputed into the ith row and jth column
+     * input into the ith row and jth column
      */
     private void addClosedListNode(int i, int j) { //debugging, tmp disable bordercheck
         if (isInsideBorder(i, j)) {
@@ -525,9 +498,23 @@ public class Grid {
         return new double[]{m, c};
     }
 
-    public static double[] findLineEq(double[] a, double[] b) {
+    private static double[] findLineEq(double[] a, double[] b) {
         double m = (a[1] - b[1]) / (a[0] - b[0]);
         double c = a[1] - m * a[0];
         return new double[]{m, c};
     }
+
+    public boolean isInsideBorder(int x, int y) {
+        int tmp1 = NODES_PER_EDGE - BORDER_NODE_WIDTH;
+        if (x > BORDER_NODE_WIDTH && y > BORDER_NODE_WIDTH && x < tmp1 && y < tmp1) {
+            return true;
+        }
+        return false;
+    }
+
+    public double getNodeSize() {
+        return DISTANCE_BETWEEN_NODES;
+    }
+
+
 }

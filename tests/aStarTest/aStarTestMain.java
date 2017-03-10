@@ -1,15 +1,13 @@
 package tests.aStarTest;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import main.term2Challenges.AStarNode;
-import main.term2Challenges.Grid;
-import main.term2Challenges.RobotMovement;
+import main.term2Challenges.AlternativeGrid;
 
 public class aStarTestMain {
     public static void main(String[] args) throws InterruptedException {
-        Grid model = new Grid();
+        AlternativeGrid model = new AlternativeGrid(62);
         int size = model.getSize();
         GridFrame grid = new GridFrame(model.getSize());
         for (int i = 0; i < size; ++i) {
@@ -23,7 +21,7 @@ public class aStarTestMain {
         //calculate tunnel position
         double[] goal = model.inputTunnelPosition(90, 90, 90);
 
-        AStarNode goalNode = model.findGoalNodeFromRoot(20, 20, (int) goal[1], (int) goal[0]);
+        AStarNode goalNode = model.aStarSearch(20, 20, (int) goal[1], (int) goal[0]);
         LinkedList<AStarNode> list = model.getListPathFromGoalNode(goalNode);
         //List<RobotMovement> actionList = model.calculatePath(list);
 

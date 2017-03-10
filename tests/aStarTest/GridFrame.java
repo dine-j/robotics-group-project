@@ -70,6 +70,25 @@ public class GridFrame extends JFrame {
     	}
     }
 
+    public void readGrid(AlternativeGrid grid){
+        AStarNode[][] matrix = grid.getGrid();
+        for(int i = 0; i < nodes.length; ++i){
+            for( int j = 0; j < nodes.length; ++ j) {
+                if(matrix[i][j] == null){
+                    //pass
+
+                }else if (!matrix[i][j].isOpen()){
+                    nodes[nodes.length - 1 - i][j].setState(Color.black);// display (0,0 at bottom left
+                }else if (matrix[i][j].isGoal()){
+                    nodes[nodes.length - 1 - i][j].setState(Color.green);
+                }else if (matrix[i][j].isRoot()){
+                    //placeRobot(nodes.length - 1 - i,j);  // display (0,0 at bottom left)
+                    nodes[nodes.length - 1 - i][j].setState(Color.PINK);
+                }
+            }
+        }
+    }
+
 	public void placeGoal(int[] pos) {
 		placeGoal(pos[0], pos[1]);
 		

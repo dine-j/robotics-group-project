@@ -52,7 +52,7 @@ public class Challenge1 {
         //get action list
         List<RobotMovement> actionList = model.calculatePath(list);
         
-        r.followInstructions(actionList);
+        //r.followInstructions(actionList);
 
         //reverse through path provided
 
@@ -65,7 +65,7 @@ public class Challenge1 {
 		//get reverse action list
 		List<RobotMovement> reverseActionList = model.calculatePath(reverseList);
 
-		r.followInstructions(reverseActionList);
+		//r.followInstructions(reverseActionList);
 		
 		
 		
