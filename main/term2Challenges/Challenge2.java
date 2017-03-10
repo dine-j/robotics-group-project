@@ -16,14 +16,17 @@ public class Challenge2 {
         EV3LargeRegulatedMotor motorR = new EV3LargeRegulatedMotor(MotorPort.D);
         EV3MediumRegulatedMotor visionMotor = new EV3MediumRegulatedMotor(MotorPort.B);
 
-
         EV3GyroSensor gyroSensor = new EV3GyroSensor(SensorPort.S1);
         EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
         EV3TouchSensor touchSensor = new EV3TouchSensor(SensorPort.S3);
         EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S4);
 
-
         Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor, gyroSensor, touchSensor);
+
+        Position greenObstacle = new Position(0, 0);
+        Position redObstacle = new Position(0, 0);
+        AStarNode coloredObstacle;
+
         Button.waitForAnyPress();
 
         // Localize with Bayesian 'strip'
@@ -38,6 +41,10 @@ public class Challenge2 {
 
         // Sensing color
         boolean green = r.getNextObstacle();
+        if(green)
+            coloredObstacle = new AStarNode(greenObstacle.x, greenObstacle.y);
+        else
+            coloredObstacle = new AStarNode(redObstacle.x, redObstacle.y);
 
         // Moving back
 
