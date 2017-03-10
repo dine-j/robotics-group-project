@@ -41,7 +41,15 @@ public class Challenge1 {
 
 		// Goal using A * (doesn't have to go inside)
 		Grid model = new Grid();
-		AStarNode goalNode = model.findGoalNodeFromRoot(32, 32);
+		//AStarNode goalNode = model.findGoalNodeFromRoot(32, 32);
+		
+		int n = 16;
+		r.moveDistance(model.distanceToNextNodeOnStrip(n));
+		double[] startCoords = model.nextNodeCoordsOnStrip(n);
+		//TODO: betters input (+ not hardcoded)
+		AStarNode goalNode = model.findGoalNodeFromRoot((int) (startCoords[0]/2), (int) (startCoords[1]/2));
+		
+		
         LinkedList<AStarNode> list = model.getListPathFromGoalNode(goalNode);
         List<RobotMovement> actionList = model.calculatePath(list);
 

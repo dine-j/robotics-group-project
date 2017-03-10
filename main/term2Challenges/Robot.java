@@ -202,7 +202,7 @@ public class Robot {
      * Move the robot forward or backward given a certain distance
      * @param distance Distance for movement, can be positive or negative
      */
-    private void moveDistance(double distance) {
+    public void moveDistance(double distance) {
         motorL.setSpeed(120);
         motorR.setSpeed(120);
         double angle = distance * 360 / DISTANCE_PER_REVOLUTION;

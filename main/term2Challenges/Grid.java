@@ -199,7 +199,7 @@ public class Grid {
      * @return A list of Actions for robot to follow
      */
     public List<RobotMovement> calculatePath(LinkedList<AStarNode> path) {
-        int direction = RobotMovement.NW;
+        int direction = RobotMovement.NW; //TODO: fix bug, robot is pointing NE
         List<RobotMovement> list = new ArrayList<RobotMovement>();
         AStarNode startNode = path.remove();
         int x = startNode.getX();
