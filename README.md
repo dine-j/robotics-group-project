@@ -41,9 +41,21 @@ LEGO EV3 Robots are used in this project and Java is required to be used for pro
 * The robot stops at the curtain.
 
 
-## Term 2 tasks
+## Term 2 tasks: self-localization and path planning
 
-TODO
+### Task 1
+
+* The robot should localize its position using the **Bayesian filter** methodology.
+* The robot should use the **A star** algorithm to find a path to a given goal, avoiding the obstacles.
+* The robot should return to its starting position.
+
+### Task 2
+
+* The robot should localize its position using the **Bayesian filter** methodology.
+* The robot should use the **A star** algorithm to find a path to a given goal, avoiding the obstacles.
+* The robot should enter a tunnel and read a color.
+* The robot should go to the corresponding colored point.
+* The robot should return to its starting position.
 
 
 ## Dependencies
@@ -61,6 +73,11 @@ leJOS has a [dedicated plugin](https://sourceforge.net/projects/lejos/) for Wind
 * **Sources:** 
   * lejos-ev3-code/ev3classes/src
   * lejos-ev3-code/DBusJava/src
+
+
+## Project structure
+
+TODO
 
 
 ## Team members

@@ -2,9 +2,11 @@ package main.term2Challenges;
 
 import java.util.List;
 
+import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.*;
+import lejos.robotics.Color;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
@@ -28,10 +30,11 @@ public class Robot {
     private EV3ColorSensor colorSensor;
     private EV3UltrasonicSensor ultrasonicSensor;
     private EV3GyroSensor gyroSensor;
+    private EV3TouchSensor touchSensor;
 
     private static final double DISTANCE_PER_REVOLUTION = 17.27; // cm per 360° rotation
 
-    public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor, EV3GyroSensor gyroSensor) {
+    public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor, EV3GyroSensor gyroSensor, EV3TouchSensor touchSensor) {
         this.motorL = motorL;
         this.motorR = motorR;
 
@@ -39,12 +42,30 @@ public class Robot {
         this.colorSensor = colorSensor;
         this.ultrasonicSensor = ultrasonicSensor;
         this.gyroSensor = gyroSensor;
+        this.touchSensor = touchSensor;
 
         this.motorL.setSpeed(120);
         this.motorR.setSpeed(120);
 
         this.ultrasonicSensor.getDistanceMode();
         this.visionMotor.rotateTo(0);
+    }
+
+    public boolean isSensorDrifting() {
+        gyroSensor.reset();
+        SampleProvider sampleProvider = gyroSensor.getAngleMode();
+        float[] sample = new float[sampleProvider.sampleSize()];
+        sampleProvider.fetchSample(sample, 0);
+        float start = sample[0];
+        for(int i = 0; i < 100; ++i) {
+            sampleProvider.fetchSample(sample, 0);
+            Delay.msDelay(2);
+        }
+        if(Math.abs(start - sample[0]) > 2) {
+            Sound.twoBeeps();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -143,6 +164,53 @@ public class Robot {
     }
 
     /**
+     * Move forward until reaches the end of the tunnel
+     */
+    public void enterTunnel() {
+        SampleProvider sampleProvider = touchSensor.getTouchMode();
+        float[] sample = new float[sampleProvider.sampleSize()];
+        sampleProvider.fetchSample(sample, 0);
+
+        motorL.setSpeed(120);
+        motorR.setSpeed(120);
+
+        while(sample[0] == 0) { // button is not pressed
+            motorL.forward();
+            motorR.forward();
+            sampleProvider.fetchSample(sample, 0);
+        }
+
+        // Debugging
+//        System.out.println("Button pressed");
+
+        motorL.stop();
+        motorR.stop();
+    }
+
+    /**
+     * Sense color and return true if the color is green, false otherwise
+     */
+    public boolean getNextObstacle() {
+        SensorMode colorMode = colorSensor.getRGBMode();
+        float[] sample = new float[colorMode.sampleSize()];
+
+        colorMode.fetchSample(sample, 0);
+
+        // Debugging
+//        System.out.println(sample[0]);
+
+        return isGreen(sample[0]);
+    }
+
+    public void exitTunnel() {
+        moveDistance(-20);
+    }
+
+    public void turnToGoAway() {
+        rotate(-90);
+    }
+
+    /**
      * Rotate robot by given angle, which can be positive (anticlockwise) or negative (clockwise)
      * @param rotationValue Angle of rotation
      */
@@ -158,7 +226,6 @@ public class Robot {
         int tp = 10;
         float integral = 0f;
         float derivative = 0f;
-
 
         if (rotationValue > 0) {
             while (sample[0] < rotationValue) {
@@ -194,13 +261,16 @@ public class Robot {
             }
         }
 
+        // Debugging
+//        System.out.println(sample[0]);
+
         motorL.stop();
         motorR.stop();
     }
 
     /**
      * Move the robot forward or backward given a certain distance
-     * @param distance Distance for movement, can be positive or negative
+     * @param distance Distance for movement in cm, can be positive or negative
      */
     public void moveDistance(double distance) {
         motorL.setSpeed(120);
@@ -208,5 +278,14 @@ public class Robot {
         double angle = distance * 360 / DISTANCE_PER_REVOLUTION;
         motorL.rotate((int) angle, true);
         motorR.rotate((int) angle);
+    }
+
+    /**
+     * Check if a given value corresponds to green
+     * @param colorValue    Value given by sensor
+     * @return  True if the color is green, false otherwise
+     */
+    private boolean isGreen(float colorValue) {
+        return colorValue < Color.GREEN; // TODO: to be modified once we get the true colors
     }
 }
