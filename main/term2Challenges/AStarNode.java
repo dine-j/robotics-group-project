@@ -126,4 +126,9 @@ public class AStarNode implements Comparable<AStarNode>{
 		if (isClosed) return "C";
 		else return "O";
 	}
+
+	public boolean isDiagonalToParent() {
+		if (parent == null) return true;
+		return Math.abs(x - parent.x) == 1 && Math.abs(y - parent.y) == 1;
+	}
 }

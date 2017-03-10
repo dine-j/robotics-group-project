@@ -60,6 +60,10 @@ public class AlternativeGrid {
                 grid[i][j] = new AStarNode(i, j, Math.abs(i - xGoal) + Math.abs(j - yGoal), Integer.MAX_VALUE, null);
             }
         }
+
+        //check whether robot is facing diagonal already
+        boolean isFacingDiagonal = false;
+
         //add obstacles to closedList
         inputCylinderPosition(40, 122 - 40);
         inputCorners();
@@ -77,12 +81,16 @@ public class AlternativeGrid {
         openList.add(init);
         System.out.println("Added initial point");
 
-        System.out.println(Arrays.deepToString(grid).replace("], ", "]\n"));
+        //System.out.println(Arrays.deepToString(grid).replace("], ", "]\n"));
 
         while (!openList.isEmpty()) {
             AStarNode toExpand = findLowestCost(openList); //find node with minimum value
             toExpand.setClosed();
             openList.remove(toExpand);
+
+            //check whether toExpand is diagonal compared to parent
+            if (toExpand.isDiagonalToParent()) isFacingDiagonal = true;
+            else isFacingDiagonal = false;
 
             for(AStarNode adjacent : getAdjacent(toExpand)) {
                 //exit out method if found goal
@@ -96,12 +104,26 @@ public class AlternativeGrid {
 
                 if(!openList.contains(adjacent)) {
                     adjacent.setParent(toExpand);
-                    adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1);
+
+                    if (isFacingDiagonal) adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1.5);
+                    else adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1);
+
                     openList.add(adjacent);
-                } else {
-                    if(adjacent.getGn() > manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1) {
-                        adjacent.setParent(toExpand);
-                        adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1);
+                }
+
+                else {
+                    if (isFacingDiagonal) {
+                        if(adjacent.getGn() > manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1.5) {
+                            adjacent.setParent(toExpand);
+                            adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1.5);
+                        }
+                    }
+
+                    else {
+                        if(adjacent.getGn() > manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1) {
+                            adjacent.setParent(toExpand);
+                            adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1);
+                        }
                     }
                 }
             }
@@ -118,16 +140,30 @@ public class AlternativeGrid {
 
                 if(!openList.contains(adjacent)) {
                     adjacent.setParent(toExpand);
-                    adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1.5);
+
+                    if (isFacingDiagonal) adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1);
+                    else adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1.5);
+
                     openList.add(adjacent);
                 }
+
                 else {
-                    if(adjacent.getGn() > manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1.5) {
-                        adjacent.setParent(toExpand);
-                        adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1.5);
+                    if (isFacingDiagonal) {
+                        if(adjacent.getGn() > manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1) {
+                            adjacent.setParent(toExpand);
+                            adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1);
+                        }
+                    }
+
+                    else {
+                        if(adjacent.getGn() > manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1.5) {
+                            adjacent.setParent(toExpand);
+                            adjacent.setGn(manhattanHeuristic(toExpand.getX(), toExpand.getY(), init) + 1.5);
+                        }
                     }
                 }
             }
+
         }
 
         System.out.println("Oops! Path not found!");
