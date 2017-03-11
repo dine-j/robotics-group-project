@@ -50,8 +50,8 @@ public class Challenge1 {
 		AStarNode goalNode = model.findGoalNodeFromRoot((int) (startCoords[0]/2), (int) (startCoords[1]/2));
 		
 		
-        LinkedList<AStarNode> list = model.getListPathFromGoalNode(goalNode);
-        List<RobotMovement> actionList = model.calculatePath(list);
+        LinkedList<AStarNode> list = model.findForwardPath(goalNode);
+        List<RobotMovement> actionList = model.parsePathToMovements(list);
 
 		double nodeSize = model.getNodeSize();
 		double nodeDiagonal = Math.sqrt(nodeSize * nodeSize + nodeSize * nodeSize);

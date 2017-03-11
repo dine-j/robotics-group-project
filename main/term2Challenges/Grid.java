@@ -180,25 +180,34 @@ public class Grid {
     }
 
     /* helper method for calculatePath() */
-    public LinkedList<AStarNode> getListPathFromGoalNode(AStarNode goal) {
+    public LinkedList<AStarNode> findForwardPath(AStarNode goal) {
         LinkedList<AStarNode> list = new LinkedList<AStarNode>();
         list.add(goal);
         AStarNode current = goal;
         while (!current.isRoot()) {
+//        while (current != null) {
             current = current.getParent();
             list.addFirst(current);
         }
         return list;
     }
+    
+    public LinkedList<AStarNode> findBackwardPath(AStarNode goal) {
+        LinkedList<AStarNode> list = new LinkedList<AStarNode>();
+        list.add(goal);
+        AStarNode current = goal;
+        while (!current.isRoot()) {
+            current = current.getParent();
+            list.addLast(current);
+        }
+        return list;
+    }
 
     /**
-     * After doing A* search, parses the path to a list of actions to follow
-     *
-     * @param
-     * @param
-     * @return A list of Actions for robot to follow
+     * @param path The sequence of nodes that represents the path
+     * @return A list of RobotMovement's for robot to follow
      */
-    public List<RobotMovement> calculatePath(LinkedList<AStarNode> path) {
+    public List<RobotMovement> parsePathToMovements(LinkedList<AStarNode> path) {
         int direction = RobotMovement.NW; //TODO: fix bug, robot is pointing NE
         List<RobotMovement> list = new ArrayList<RobotMovement>();
         AStarNode startNode = path.remove();
@@ -229,6 +238,8 @@ public class Grid {
 
     private RobotMovement changeDirection(int direction, int newDirection) {
         switch (direction - newDirection) {
+        	case -3:
+        		return RobotMovement.LEFT135;
             case -2:
                 return RobotMovement.LEFT90;
             case -1:
@@ -237,6 +248,10 @@ public class Grid {
                 return RobotMovement.RIGHT45;
             case 2:
                 return RobotMovement.RIGHT90;
+            case 3:
+                return RobotMovement.RIGHT135;
+            case 4:
+                return RobotMovement.RIGHT180;
         }
         return null;
     }

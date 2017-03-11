@@ -21,7 +21,7 @@ public class aStarTestMain {
         }
 
         AStarNode goalNode = model.findGoalNodeFromRoot(20, 20);
-        LinkedList<AStarNode> list = model.getListPathFromGoalNode(goalNode);
+        List<AStarNode> list = model.findForwardPath(goalNode);
         //TODO: work out strange bug that means need to comment out below line: to print blue path
         //List<RobotMovement> actionList = model.calculatePath(list);
 
