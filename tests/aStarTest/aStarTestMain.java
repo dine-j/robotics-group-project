@@ -20,7 +20,7 @@ public class aStarTestMain {
             }
         }
 
-        AStarNode goalNode = model.findGoalNodeFromRoot(20, 20);
+        AStarNode goalNode = model.aStarSearch(20, 20);
         List<AStarNode> list = model.findForwardPath(goalNode);
         //TODO: work out strange bug that means need to comment out below line: to print blue path
         //List<RobotMovement> actionList = model.calculatePath(list);
@@ -28,10 +28,10 @@ public class aStarTestMain {
         grid.readGrid(model);
         grid.setVisible(true);
 
-        Thread.sleep(500);
+        Thread.sleep(400);
         for (AStarNode element : list) {
             grid.placeRobot(element.getX(), element.getY());
-            Thread.sleep(200);
+            Thread.sleep(60);
         }
 
 //        for(int i = 0; i < 10; ++i) {

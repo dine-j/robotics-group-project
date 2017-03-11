@@ -47,7 +47,7 @@ public class Challenge1 {
 		r.moveDistance(model.distanceToNextNodeOnStrip(n));
 		double[] startCoords = model.nextNodeCoordsOnStrip(n);
 		//TODO: betters input (+ not hardcoded)
-		AStarNode goalNode = model.findGoalNodeFromRoot((int) (startCoords[0]/2), (int) (startCoords[1]/2));
+		AStarNode goalNode = model.aStarSearch((int) (startCoords[0]/2), (int) (startCoords[1]/2));
 		
 		
         LinkedList<AStarNode> list = model.findForwardPath(goalNode);

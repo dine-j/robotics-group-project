@@ -64,7 +64,7 @@ public class Grid {
     }
 
     // method used to approximate goalNodePosition
-    private int[] findClosestNode(double x, double y) {
+    private int[] closestNodeCoords(double x, double y) {
         double tmpx = x / NODE_GAP_DIST;
         double tmpy = y / NODE_GAP_DIST;
         tmpx = Math.round(tmpx);
@@ -108,27 +108,16 @@ public class Grid {
      * @param yStart
      * @return Either goalNode, with parent chain to root,  or null in result of failure
      */
-    public AStarNode findGoalNodeFromRoot(int xStart, int yStart) {
+    public AStarNode aStarSearch(int xStart, int yStart) {
         AStarNode result = null;
 
-        // 1. Add closed list stuff
-        inputCylinderPosition(40, 122 - 40); // we don't know yet
-        inputCorners();
-        double[] goalIdeal = inputTunnelPosition(82.5, 110, 90);
-
-        /*
-         * TODO:  why flipping works?
-         * //TODO:check coordinates of goal node
-         */
-        int[] goalTmp = new int[]{(int) goalIdeal[1], (int) goalIdeal[0]};
-
-        // Maybe good idea:
-        inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
+        // 1. Add closed list stuff & get cm coordinates of goalNode
+        double[] goalIdeal = initClosedList();
 
         // 1b. Add goal node
-        int goalCoord[] = findClosestNode(goalTmp[0], goalTmp[1]);
-        AStarNode goal = new AStarNode(goalCoord[0], goalCoord[1], true); //create goal node
-        grid[goalCoord[0]][goalCoord[1]] = goal; //add to grid
+        int goalNodeXY[] = closestNodeCoords((int) goalIdeal[1], (int) goalIdeal[0]); //TODO: why reversed?
+        AStarNode goal = new AStarNode(goalNodeXY[0], goalNodeXY[1], true);
+        grid[goalNodeXY[0]][goalNodeXY[1]] = goal; //add to grid
 
         // 2. Add initial pos to open list
         AStarNode init = new AStarNode(xStart, yStart, manhattanHeuristic(xStart, yStart, goal), 0, null, true);
@@ -178,6 +167,18 @@ public class Grid {
 
         return result; //only gets here if result is null
     }
+    
+    
+    public double[] initClosedList(){
+    	inputCylinderPosition(40, 122 - 40); // we don't know yet
+        inputCorners();
+        double[] goalIdeal = inputTunnelPosition(82.5, 110, 90);     
+        // Maybe good idea:
+        //inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
+        
+        return goalIdeal;
+    }
+    
 
     /* helper method for calculatePath() */
     public LinkedList<AStarNode> findForwardPath(AStarNode goal) {
@@ -223,7 +224,7 @@ public class Grid {
             if(newDirection == -1)
                 throw new IllegalArgumentException("Wrong direction");
             if(direction != newDirection) {
-                list.add(changeDirection(direction, newDirection));
+                list.add(dirChange(direction, newDirection));
             }
             direction = newDirection;
             if(direction == RobotMovement.NE || direction == RobotMovement.NW)
@@ -236,7 +237,7 @@ public class Grid {
         return list;
     }
 
-    private RobotMovement changeDirection(int direction, int newDirection) {
+    private RobotMovement dirChange(int direction, int newDirection) {
         switch (direction - newDirection) {
         	case -3:
         		return RobotMovement.LEFT135;
@@ -253,7 +254,7 @@ public class Grid {
             case 4:
                 return RobotMovement.RIGHT180;
         }
-        return null;
+        return null; // precondition is: direction != newDirection
     }
 
     private int getDirectionToGoal(int xChange, int yChange) {
