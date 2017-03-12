@@ -29,14 +29,18 @@ public enum RobotMovement {
 	final static int N = 2;
 	final static int NE = 3;
 	final static int E = 4;
+	final static int SE = 5;
+	final static int S = 6;
+	final static int SW = 7;
+	
 	
 	
     /**
      * @param path The sequence of nodes that represents the path
+     * @param direction The initial direction robot is facing
      * @return A list of RobotMovement's for robot to follow
      */
-    public static List<RobotMovement> parsePathToMovements(LinkedList<AStarNode> path) {
-        int direction = NW; //TODO: fix bug, robot is pointing NE
+    public static List<RobotMovement> parsePathToMovements(LinkedList<AStarNode> path, int direction) {
         List<RobotMovement> list = new ArrayList<RobotMovement>();
         AStarNode startNode = path.remove();
         int x = startNode.getX();
@@ -83,6 +87,16 @@ public enum RobotMovement {
                 return RIGHT180;
         }
         return null; 
+    }
+    
+    
+    /**
+     * @param path The sequence of nodes that represents the path
+     * @return A list of RobotMovement's for robot to follow
+     */
+    public static List<RobotMovement> parsePathToMovements(LinkedList<AStarNode> path) {
+    	int direction = NW; //TODO: fix bug, robot is pointing NE
+    	return parsePathToMovements(path, direction);
     }
 
     private static int getDirectionToGoal(int xChange, int yChange) {

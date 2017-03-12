@@ -12,6 +12,7 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.utility.Delay;
 
 public class Challenge1 {
 
@@ -41,7 +42,7 @@ public class Challenge1 {
 
 		// Goal using A * (doesn't have to go inside)
 		Grid model = new Grid();
-		int n = 7; // stub  (sensor over 8th cell(position 7), is more or furthest back
+		int n = 7; // stub  (sensor over 8th cell(position 7), is farthest back possible
 		
 		
 		int  cellOffset = 2; // center of robot is 2 cells behind colour sensor reader.
@@ -57,10 +58,20 @@ public class Challenge1 {
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
 		double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
+        //TODO: find way so always faces goal
+        
+        Delay.msDelay(3000); // found goal (hopefully)
+        
+        //turn 180 -- could do easier way
+        List<RobotMovement> l = new LinkedList<RobotMovement>();
+        l.add( RobotMovement.RIGHT180); 
+        r.followInstructions(l, 1, 1);
         
 		// Going back to starting point
         list = model.findBackwardPath(goalNode);
-        actionList = RobotMovement.parsePathToMovements(list);
+        // get direction robot is facing now (below is stub) - should make new method?
+        int directionRobotFacingNow = RobotMovement.S; //TODO: find better way to do this
+        actionList = RobotMovement.parsePathToMovements(list, directionRobotFacingNow);
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
 
 	}
