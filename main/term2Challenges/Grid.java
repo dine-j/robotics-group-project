@@ -78,9 +78,12 @@ public class Grid {
         openList.add(init);
         grid[xNodeStart][yNodeStart] = init; //add to grid
         
+        int debugCounter = 0;
         // list of possible actions to use in while loop
         int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
+        //int[][] ACTION = new int[][]{ {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}}; //change(NE Favoured))
         while (!openList.isEmpty()) {
+        	++debugCounter; //debugging
             AStarNode toExpand = openList.poll(); //find node with minimum value
 //            if (toExpand.getX() == goal.getX() && toExpand.getY() == goal.getY()) {
 //                goal.setParent(toExpand);
@@ -91,12 +94,13 @@ public class Grid {
             for (int i = 0; i < ACTION.length; ++i) {
                 final int x = toExpand.getX() + ACTION[i][0];
                 final int y = toExpand.getY() + ACTION[i][1];
-                double actionCost = (i % 2 == 0) ? 1.0 : RobotMovement.SQRT2;
+                double actionCost = (i % 2 == 0) ? 1.0 : RobotMovement.SQRT2; //RobotMovement.SQRT2: 1.0;
                 actionCost *= GridGeo.NODE_GAP_DIST;
 
                 //exit out method if found goal
                 if (x == goal.getX() && y == goal.getY()) {
                     goal.setParent(toExpand);
+                    System.out.println(debugCounter);
                     return goal;
                 }
                 // filter out so inside border and open/empty in grid

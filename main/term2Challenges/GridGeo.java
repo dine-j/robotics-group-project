@@ -6,6 +6,7 @@ package main.term2Challenges;
 public class GridGeo {
 	
     public static final int NODES_PER_EDGE = 62; // 62 means 2cm between each node
+//	public static final int NODES_PER_EDGE = 15; //smaller grid for debugging
     public static final double COURSE_WIDTH = 122; // in cm
     public static final double CORNER_DIAG_WIDTH = 21; // in cm
     public static final double BAYESIAN_ZEROTH_DIAG = CORNER_DIAG_WIDTH + 2; // in cm
