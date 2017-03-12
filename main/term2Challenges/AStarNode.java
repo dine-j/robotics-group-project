@@ -80,17 +80,17 @@ public class AStarNode implements Comparable<AStarNode>{
 	}
 	
 
-	@Override
-	public boolean equals(Object other){
-		try{
-			if (other instanceof AStarNode){
-				return this.compareTo((AStarNode) other) == 0;
-			}
-		} catch( Exception e){
-			e.printStackTrace();
-		}
-		return false;
-	}
+//	@Override
+//	public boolean equals(Object other){
+//		try{
+//			if (other instanceof AStarNode){
+//				return this.compareTo((AStarNode) other) == 0;
+//			}
+//		} catch( Exception e){
+//			e.printStackTrace();
+//		}
+//		return false;
+//	}
 	
 	public int compareTo(AStarNode other){
 		return Double.compare(this.fn,other.fn);
@@ -122,7 +122,8 @@ public class AStarNode implements Comparable<AStarNode>{
 	
 	@Override
 	public String toString(){
-		return "["+x+","+y+"] "+(isOpen() ? "OPEN":"CLOSED");
+		//return "["+x+","+y+"] "+(isOpen() ? "OPEN":"CLOSED")+ " h,g,f = "+ hn+","+gn+","+fn;
+		return "["+x+","+y+"] "+(isOpen() ? "OPEN":"CLOSED")+ " h,g,f = " + String.format("%.1f,%.1f,%.1f", hn,gn,fn);
 	}
 	
 	public static class PositionComparator implements Comparator<AStarNode>{
