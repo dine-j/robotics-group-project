@@ -5,6 +5,7 @@ import java.util.List;
 
 import main.term2Challenges.AStarNode;
 import main.term2Challenges.Grid;
+import main.term2Challenges.GridGeo;
 import main.term2Challenges.RobotMovement;
 
 public class aStarTestMain {
@@ -20,7 +21,7 @@ public class aStarTestMain {
             }
         }
 
-        AStarNode goalNode = model.aStarSearch(20, 20);
+        AStarNode goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(6));
         List<AStarNode> list = model.findForwardPath(goalNode);
         //TODO: work out strange bug that means need to comment out below line: to print blue path
         //List<RobotMovement> actionList = model.calculatePath(list);

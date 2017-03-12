@@ -33,31 +33,34 @@ public class Challenge1 {
 		// Measure drift 
 		
 		// Localize with Bayesian 'strip'
-//		System.out.println(r.localize());
-		
-		//TODO: measurement from r.localize()  + how to convert
+		//int n = r.localize();  //stubbed out for 16 for the moment 
+		//System.out.println(n);
 
 		// Make a sound
 
 		// Goal using A * (doesn't have to go inside)
 		Grid model = new Grid();
-		//AStarNode goalNode = model.findGoalNodeFromRoot(32, 32);
+		int n = 7; // stub  (sensor over 8th cell(position 7), is more or furthest back
 		
-		int n = 16;
-		r.moveDistance(model.distanceToNextNodeOnStrip(n));
-		double[] startCoords = model.nextNodeCoordsOnStrip(n);
-		//TODO: betters input (+ not hardcoded)
-		AStarNode goalNode = model.aStarSearch((int) (startCoords[0]/2), (int) (startCoords[1]/2));
+		
+		int  cellOffset = 2; // center of robot is 2 cells behind colour sensor reader.
+		double[] startPosition = GridGeo.BayesianCoordinate(n - cellOffset);
+		double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
+		double distToMove = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
+		
+		r.moveDistance(distToMove);
+		AStarNode goalNode = model.aStarSearch(firstNodePosition);
 		
 		
         LinkedList<AStarNode> list = model.findForwardPath(goalNode);
         List<RobotMovement> actionList = model.parsePathToMovements(list);
-
-		double nodeSize = model.getNodeSize();
-		double nodeDiagonal = Math.sqrt(nodeSize * nodeSize + nodeSize * nodeSize);
+		double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
-		
+        
 		// Going back to starting point
+        list = model.findBackwardPath(goalNode);
+        actionList = model.parsePathToMovements(list);
+        r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
 
 	}
 

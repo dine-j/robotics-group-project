@@ -1,6 +1,7 @@
 package tests.aStarTest;
 
 import main.term2Challenges.Grid;
+import main.term2Challenges.GridGeo;
 
 /**
  * Used to check if all the Grid map-placing methods functioned correctly
@@ -24,19 +25,15 @@ public class GridTest {
         }
         
         double[] tmp = model.inputTunnelPosition(82.5, 110, 90);
+//        double[] tmp = model.inputTunnelPosition(82.5, 80, 15);
         model.inputCylinderPosition(40, 122-40);
         model.inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
         model.inputCorners();
         grid.readGrid(model);
-        //grid.placeGoal(model.findClosestNode(tmp[1], tmp[0]));
-        grid.placeGoal(55,34); //what above commented-out (private)method calculates
+        grid.placeGoal(GridGeo.closestNodeInNodeCoords(tmp[1], tmp[0]));
         grid.placeRobot(20,20);
         
         grid.setVisible(true);
       
-//        for(int i = 0; i < 10; ++i) {
-//            grid.placeRobot(40 - i, 30);
-//            Thread.sleep(500);
-//        }
     }
 }
