@@ -75,29 +75,19 @@ public class Grid {
         openList.add(init);
         grid[startNodeXY[0]][startNodeXY[1]] = init; //add to grid
         
-        int debugCounter = 0;
         // list of possible actions to use in while loop
         int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
-        //int[][] ACTION = new int[][]{ {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}}; //change(NE Favoured))
         while (!openList.isEmpty()) {
-        	++debugCounter; //debugging
             AStarNode toExpand = openList.poll(); //find node with minimum value
-//            if (toExpand.getX() == goal.getX() && toExpand.getY() == goal.getY()) {
-//                goal.setParent(toExpand);
-//                return goal; //exit if expanding goal
-//            }
-            
             
             for (int i = 0; i < ACTION.length; ++i) {
                 final int x = toExpand.getX() + ACTION[i][0];
                 final int y = toExpand.getY() + ACTION[i][1];
-                double actionCost = (i % 2 == 0) ? 1.0 : RobotMovement.SQRT2; //RobotMovement.SQRT2: 1.0;
-                //actionCost *= GridGeo.NODE_GAP_DIST;
+                double actionCost = (i % 2 == 0) ? 1.0 : RobotMovement.SQRT2;
 
                 //exit out method if found goal
                 if (x == goal.getX() && y == goal.getY()) {
                     goal.setParent(toExpand);
-                    System.out.println(debugCounter);
                     return goal;
                 }
                 // filter out so inside border and open/empty in grid
@@ -116,20 +106,16 @@ public class Grid {
                     } else if (grid[x][y] == null) {
                         //add to openlist
                         double hn = manhattanHeuristic(x, y, goal);
-                        double gn = toExpand.getGn() + actionCost; //new Change .......(12/3/17)
+                        double gn = toExpand.getGn() + actionCost; //new Change....(12/3/17)
                         AStarNode toAdd = new AStarNode(x, y, hn, gn, toExpand, true);
-                        //debugging statement 
-                        System.out.println(toAdd.getFn());
                         openList.add(toAdd);
                         grid[x][y] = toAdd; //add to grid
                     }
                     // otherwise if closed do nothing
                 }
             }// end of for loop
-            AStarNode rmNode = grid[toExpand.getX()][toExpand.getY()]; //have finished expanding
-//            openList.remove(rmNode); // superfluous, as .poll() already removed
-            closedList.add(rmNode);
-            rmNode.setClosed(); // add to closed list
+            toExpand.setClosed(); // add expanded node to closed list
+            closedList.add(toExpand); 
         }
 
         return null; //default return if no path found

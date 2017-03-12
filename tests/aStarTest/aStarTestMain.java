@@ -20,16 +20,14 @@ public class aStarTestMain {
                 }
             }
         }
-        
-        model.inputWallPosition(4, 88, 32, 88, 3);
-        model.inputWallPosition(40, 52, 40, 72, 3);
 
-
-        //AStarNode goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(6));
-        //AStarNode goalNode = model.aStarSearch(74,22);
-        AStarNode goalNode = model.aStarSearch(60,12);
+        // some extra tests.
+//        model.inputCylinderPosition(61, 61);
+//        AStarNode goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(20));
         
-        List<AStarNode> list = model.findForwardPath(goalNode);
+        AStarNode goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(6));
+//        List<AStarNode> list = model.findForwardPath(goalNode);
+        List<AStarNode> list = model.findBackwardPath(goalNode);
         grid.readGrid(model);
         grid.setVisible(true);
 

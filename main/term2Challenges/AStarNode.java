@@ -18,7 +18,6 @@ public class AStarNode implements Comparable<AStarNode>{
 	
 	private NodeState state;  //node may either be open or closed
 	
-	
 	public AStarNode(int x, int y, double hn, double gn, AStarNode parent, boolean open){
 		this.x = x;
 		this.y = y;
@@ -75,23 +74,13 @@ public class AStarNode implements Comparable<AStarNode>{
 		this.parent = parent;
 	}
 	
-	public boolean isRoot(){ //TODO: debug this
-		return parent == null;///*;//*/ && state!= NodeState.CLOSED; 
+	public boolean isRoot(){
+		return parent == null; 
 	}
 	
-
-//	@Override
-//	public boolean equals(Object other){
-//		try{
-//			if (other instanceof AStarNode){
-//				return this.compareTo((AStarNode) other) == 0;
-//			}
-//		} catch( Exception e){
-//			e.printStackTrace();
-//		}
-//		return false;
-//	}
-	
+	/*
+	 * Removed Equals method 12/3/17 as it introduced nasty bug, in different datastructures
+	 */
 	public int compareTo(AStarNode other){
 		return Double.compare(this.fn,other.fn);
 	}
@@ -122,7 +111,6 @@ public class AStarNode implements Comparable<AStarNode>{
 	
 	@Override
 	public String toString(){
-		//return "["+x+","+y+"] "+(isOpen() ? "OPEN":"CLOSED")+ " h,g,f = "+ hn+","+gn+","+fn;
 		return "["+x+","+y+"] "+(isOpen() ? "OPEN":"CLOSED")+ " h,g,f = " + String.format("%.1f,%.1f,%.1f", hn,gn,fn);
 	}
 	
