@@ -82,6 +82,12 @@ public class Grid {
         int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
         while (!openList.isEmpty()) {
             AStarNode toExpand = openList.poll(); //find node with minimum value
+//            if (toExpand.getX() == goal.getX() && toExpand.getY() == goal.getY()) {
+//                goal.setParent(toExpand);
+//                return goal; //exit if expanding goal
+//            }
+            
+            
             for (int i = 0; i < ACTION.length; ++i) {
                 final int x = toExpand.getX() + ACTION[i][0];
                 final int y = toExpand.getY() + ACTION[i][1];
@@ -109,7 +115,8 @@ public class Grid {
                     } else if (grid[x][y] == null) {
                         //add to openlist
                         double hn = manhattanHeuristic(x, y, goal);
-                        AStarNode toAdd = new AStarNode(x, y, hn, 0, toExpand, true);
+                        double gn = toExpand.getGn() + actionCost; //new Change .......(12/3/17)
+                        AStarNode toAdd = new AStarNode(x, y, hn, gn, toExpand, true);
                         openList.add(toAdd);
                         grid[x][y] = toAdd; //add to grid
                     }

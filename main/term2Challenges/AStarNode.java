@@ -120,6 +120,11 @@ public class AStarNode implements Comparable<AStarNode>{
 		return fn;
 	}
 	
+	@Override
+	public String toString(){
+		return "["+x+","+y+"] "+(isOpen() ? "OPEN":"CLOSED");
+	}
+	
 	public static class PositionComparator implements Comparator<AStarNode>{
 		@Override
 		public int compare(AStarNode o1, AStarNode o2) {
