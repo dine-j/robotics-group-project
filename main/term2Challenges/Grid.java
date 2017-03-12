@@ -9,8 +9,8 @@ public class Grid {
 
     // robot dimensions are 15cm x 20cm,  with wheel-center point (7.5cm,12cm)
     final private static int ROBOT_RADIUS = 8; // in cm
-    // Array of 'actions'
-    final private static int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
+    
+    //number of definitely inaccessible nodes away from course-edges
     final private static int BORDER_NODE_WIDTH = (int) ((ROBOT_RADIUS) / GridGeo.NODE_GAP_DIST); 
     
     
@@ -55,7 +55,7 @@ public class Grid {
      * precondition: (xStart, yStart) in cm and should line up with a node.
      */
     public AStarNode aStarSearch(double xStart, double yStart) {
-        AStarNode result = null;
+        AStarNode result = null; //default return if no path found
 
         // 1. Add closed list stuff & get cm coordinates of goalNode
         double[] goalIdeal = initClosedList();
@@ -73,7 +73,9 @@ public class Grid {
         AStarNode init = new AStarNode(xNodeStart, yNodeStart, manhattanHeuristic(xNodeStart, yNodeStart, goal), 0, null, true);
         openList.add(init);
         grid[xNodeStart][yNodeStart] = init; //add to grid
-
+        
+        // list of possible actions to use in while loop
+        int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
         while (!openList.isEmpty()) {
             AStarNode toExpand = openList.poll(); //find node with minimum value
             for (int i = 0; i < ACTION.length; ++i) {
@@ -159,87 +161,13 @@ public class Grid {
         return list;
     }
 
-    /**
-     * @param path The sequence of nodes that represents the path
-     * @return A list of RobotMovement's for robot to follow
-     */
-    public List<RobotMovement> parsePathToMovements(LinkedList<AStarNode> path) {
-        int direction = RobotMovement.NW; //TODO: fix bug, robot is pointing NE
-        List<RobotMovement> list = new ArrayList<RobotMovement>();
-        AStarNode startNode = path.remove();
-        int x = startNode.getX();
-        int y = startNode.getY();
-
-        while (!path.isEmpty()) {
-            AStarNode nextNode = path.remove();
-            int changeInX = nextNode.getX() - x;
-            int changeInY = nextNode.getY() - y;
-
-            int newDirection = getDirectionToGoal(changeInX, changeInY);
-            if(newDirection == -1)
-                throw new IllegalArgumentException("Wrong direction");
-            if(direction != newDirection) {
-                list.add(dirChange(direction, newDirection));
-            }
-            direction = newDirection;
-            if(direction == RobotMovement.NE || direction == RobotMovement.NW)
-                list.add(RobotMovement.FORWARD_ON_DIAGONAL);
-            else
-                list.add(RobotMovement.FORWARD);
-            x = nextNode.getX();
-            y = nextNode.getY();
-        }
-        return list;
-    }
-
-    // precondition is: direction != newDirection
-    private RobotMovement dirChange(int direction, int newDirection) {
-        switch (direction - newDirection) {
-        	case -3:
-        		return RobotMovement.LEFT135;
-            case -2:
-                return RobotMovement.LEFT90;
-            case -1:
-                return RobotMovement.LEFT45;
-            case 1:
-                return RobotMovement.RIGHT45;
-            case 2:
-                return RobotMovement.RIGHT90;
-            case 3:
-                return RobotMovement.RIGHT135;
-            case 4:
-                return RobotMovement.RIGHT180;
-        }
-        return null; 
-    }
-
-    private int getDirectionToGoal(int xChange, int yChange) {
-//        System.out.println("Change in x: " + xChange + ", change in y: " + yChange);
-        if(xChange == 0) { // Next square if at left or right
-            if(yChange > 0) // Next square at right
-                return RobotMovement.E;
-            else
-                return RobotMovement.W;
-        }
-        if(yChange == 0) { // Up or down
-            if(xChange > 0) // Up
-                return RobotMovement.N;
-        }
-        if(xChange == 1 && yChange == 1)
-            return RobotMovement.NW;
-        if(xChange == 1 && yChange == -1)
-            return RobotMovement.NE;
-        return -1;
-    }
-
     private int manhattanHeuristic(int x, int y, AStarNode goalNode) {
         return Math.abs(x - goalNode.getX()) + Math.abs(y - goalNode.getY());
     }
 
-
     public boolean isInsideBorder(int x, int y) {
         int tmp1 = GridGeo.NODES_PER_EDGE - BORDER_NODE_WIDTH;
-        if (x > BORDER_NODE_WIDTH && y > BORDER_NODE_WIDTH && x < tmp1 && y < tmp1) {
+        if (x >= BORDER_NODE_WIDTH && y >= BORDER_NODE_WIDTH && x < tmp1 && y < tmp1) {
             return true;
         }
         return false;
@@ -431,6 +359,7 @@ public class Grid {
         }
     }
 
+    // adds to ith row and jth column of 'grid' matrix
     private void addClosedNode(int i, int j) {
         if (isInsideBorder(i, j)) {
             AStarNode toAdd = new AStarNode(i, j);
@@ -439,6 +368,7 @@ public class Grid {
         }
     }
 
+    //rotates 
     private static double[] rotateVector(double[] vector, double centerX, double centerY, double radians) {
         if (vector.length != 2) throw new IllegalArgumentException();
         double[] toRotate = new double[]{centerX - vector[0], centerY - vector[1]};

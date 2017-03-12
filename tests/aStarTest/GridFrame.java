@@ -5,9 +5,12 @@ import main.term2Challenges.*;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Gui, to represent AStarNodes with different colours after reading from Grid class
+ */
 public class GridFrame extends JFrame {
-
-    private GridNode[][] nodes;
+	private static final long serialVersionUID = 1L;
+	private GridNode[][] nodes;
 
     public GridFrame(int size) {
         super("Grid");
@@ -17,6 +20,7 @@ public class GridFrame extends JFrame {
         for(int i = 0; i < size; ++i) {
             for(int j = 0; j < size; ++j) {
                 nodes[i][j] = new GridNode();
+                nodes[i][j].setCoordString(i, j);
                 add(nodes[i][j]);
             }
         }
@@ -60,6 +64,7 @@ public class GridFrame extends JFrame {
     			
     			}else if (!matrix[i][j].isOpen()){
     				nodes[nodes.length - 1 - i][j].setState(Color.black);// display (0,0 at bottom left
+    				if(matrix[i][j].getParent()!= null) nodes[nodes.length - 1 - i][j].setState(Color.yellow);
     			}else if (matrix[i][j].isGoal()){
     				nodes[nodes.length - 1 - i][j].setState(Color.green);
     			}else if (matrix[i][j].isRoot()){  

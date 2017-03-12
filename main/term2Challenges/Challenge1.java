@@ -23,6 +23,7 @@ public class Challenge1 {
 		
 		EV3GyroSensor gyroSensor = new EV3GyroSensor(SensorPort.S1);
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
+		@SuppressWarnings({ "unused", "resource" })
 		EV3TouchSensor touchSensor = new EV3TouchSensor(SensorPort.S3);
 		EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S4);
 		
@@ -53,13 +54,13 @@ public class Challenge1 {
 		
 		
         LinkedList<AStarNode> list = model.findForwardPath(goalNode);
-        List<RobotMovement> actionList = model.parsePathToMovements(list);
+        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
 		double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
         
 		// Going back to starting point
         list = model.findBackwardPath(goalNode);
-        actionList = model.parsePathToMovements(list);
+        actionList = RobotMovement.parsePathToMovements(list);
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
 
 	}

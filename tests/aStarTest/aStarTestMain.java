@@ -1,13 +1,13 @@
 package tests.aStarTest;
 
-import java.util.LinkedList;
 import java.util.List;
-
 import main.term2Challenges.AStarNode;
 import main.term2Challenges.Grid;
 import main.term2Challenges.GridGeo;
-import main.term2Challenges.RobotMovement;
 
+/**
+ * Creates grid gui, to see how A* search will perform
+ */
 public class aStarTestMain {
     public static void main(String[] args) throws InterruptedException {
         Grid model = new Grid();
@@ -22,10 +22,9 @@ public class aStarTestMain {
         }
 
         AStarNode goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(6));
+        //AStarNode goalNode = model.aStarSearch(60,20);
+        
         List<AStarNode> list = model.findForwardPath(goalNode);
-        //TODO: work out strange bug that means need to comment out below line: to print blue path
-        //List<RobotMovement> actionList = model.calculatePath(list);
-
         grid.readGrid(model);
         grid.setVisible(true);
 
@@ -35,9 +34,5 @@ public class aStarTestMain {
             Thread.sleep(60);
         }
 
-//        for(int i = 0; i < 10; ++i) {
-//            grid.placeRobot(40 - i, 30);
-//            Thread.sleep(500);
-//        }
     }
 }
