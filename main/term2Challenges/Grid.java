@@ -36,7 +36,7 @@ public class Grid {
     }
 
     private Grid(int numberOfNodesPerEdge) {
-        closedList = new TreeSet<AStarNode>(new AStarNode.positionComparator());
+        closedList = new TreeSet<AStarNode>(new AStarNode.PositionComparator());
         openList = new PriorityQueue<AStarNode>();
         // pointers stored in grid for easy x,y access
         grid = new AStarNode[numberOfNodesPerEdge][numberOfNodesPerEdge]; 
@@ -48,6 +48,10 @@ public class Grid {
 
     public AStarNode[][] getGrid() {
         return grid;
+    }
+    
+    private static int manhattanHeuristic(int x, int y, AStarNode goalNode) {
+        return Math.abs(x - goalNode.getX()) + Math.abs(y - goalNode.getY());
     }
 
     /**
@@ -129,16 +133,6 @@ public class Grid {
     	return aStarSearch(start[0], start[1]);
     }
     
-    public double[] initClosedList(){
-    	inputCylinderPosition(GridGeo.RAND_CYCL_31cm_Center); 
-        inputCorners();
-        double[] goalIdeal = inputTunnelPosition(82.5, 110, 90);     
-        // Maybe good idea:
-        //inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
-        
-        return goalIdeal;
-    }
-    
     public LinkedList<AStarNode> findForwardPath(AStarNode goal) {
         LinkedList<AStarNode> list = new LinkedList<AStarNode>();
         list.add(goal);
@@ -161,10 +155,6 @@ public class Grid {
         return list;
     }
 
-    private int manhattanHeuristic(int x, int y, AStarNode goalNode) {
-        return Math.abs(x - goalNode.getX()) + Math.abs(y - goalNode.getY());
-    }
-
     public boolean isInsideBorder(int x, int y) {
         int tmp1 = GridGeo.NODES_PER_EDGE - BORDER_NODE_WIDTH;
         if (x >= BORDER_NODE_WIDTH && y >= BORDER_NODE_WIDTH && x < tmp1 && y < tmp1) {
@@ -180,6 +170,20 @@ public class Grid {
 /////////////////////////////////////////////////////////////////////////////
 // below are the object placing methods, for map/grid
 /////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Initialises ClosedNodes and closed list
+     * @return An ideal position in 'cm' coordinates of goal node.
+     */
+    public double[] initClosedList(){
+    	inputCylinderPosition(GridGeo.RAND_CYCL_31cm_Center); 
+        inputCorners();
+        double[] goalIdeal = inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
+        // Maybe good idea:
+        //inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
+        
+        return goalIdeal;
+    }
 
     /**
      * Updates the map so that it won't navigate though a CYLINDER OBJECT
@@ -235,6 +239,10 @@ public class Grid {
         return rotateVector(x, y - depthToCenter - extraDist, x, y, radians);
     }
 
+    private double[] inputTunnelPosition(double[] center, double degrees) {
+    	if (center.length != 2) throw new IllegalArgumentException();
+    	return inputTunnelPosition(center[0], center[1], degrees);
+    }
     /**
      * Updates the map so that it won't navigate though a WALL OBJECT
      */

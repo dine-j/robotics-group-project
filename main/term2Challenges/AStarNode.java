@@ -7,7 +7,7 @@ import java.util.Comparator;
  *
  */
 public class AStarNode implements Comparable<AStarNode>{
-	private static enum NodeState{OPEN, CLOSED, GOAL, ROOT};
+	private static enum NodeState{OPEN, CLOSED, GOAL};
 	private int x;
 	private int y;
 	private AStarNode parent;
@@ -75,8 +75,8 @@ public class AStarNode implements Comparable<AStarNode>{
 		this.parent = parent;
 	}
 	
-	public boolean isRoot(){
-		return parent == null;
+	public boolean isRoot(){ //TODO: debug this
+		return parent == null;///*;//*/ && state!= NodeState.CLOSED; 
 	}
 	
 
@@ -120,7 +120,7 @@ public class AStarNode implements Comparable<AStarNode>{
 		return fn;
 	}
 	
-	public static class positionComparator implements Comparator<AStarNode>{
+	public static class PositionComparator implements Comparator<AStarNode>{
 		@Override
 		public int compare(AStarNode o1, AStarNode o2) {
 			return o1.x * 500 + o1.y - o2.x * 500 - o2.y; //works for grid size of up to 500
