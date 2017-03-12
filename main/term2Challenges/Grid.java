@@ -128,7 +128,7 @@ public class Grid {
     }
     
     public double[] initClosedList(){
-    	inputCylinderPosition(40, 122 - 40); // we don't know yet
+    	inputCylinderPosition(GridGeo.RAND_CYCL_31cm_Center); 
         inputCorners();
         double[] goalIdeal = inputTunnelPosition(82.5, 110, 90);     
         // Maybe good idea:
@@ -260,6 +260,13 @@ public class Grid {
         addClosedNodeCircle(x / GridGeo.NODE_GAP_DIST, y / GridGeo.NODE_GAP_DIST,
         		(GridGeo.CYLINDER_RADIUS + ROBOT_RADIUS) / GridGeo.NODE_GAP_DIST);
     }
+    /**
+     * Updates the map so that it won't navigate though a CYLINDER OBJECT
+     */
+    public void inputCylinderPosition(double[] vect) {
+        inputCylinderPosition(vect[0], vect[1]);
+    }
+    
 
     /**
      * Adds corners into the closed list

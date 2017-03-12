@@ -18,6 +18,10 @@ public class GridGeo {
 	public static final double[] TUNNEL_BACK_LEFT = new double[]{-11,9};
 	public static final double[] TUNNEL_BACK_RIGHT = new double[]{11,9};
 	
+	public static final double[] RAND_CYCL_31cm_Center = new double[]{40, 82};
+	public static final double[] GREEN_CYCL_14cm_Center = new double[]{72, 50};
+	public static final double[] RED_CYCL_31cm_Center = new double[]{82, 40};
+	
 	/**
 	 * @return The result of adding offsetVector[] to {x, y}
 	 */
