@@ -39,7 +39,7 @@ public class Challenge1 {
 		// Make a sound
 
 		// Goal using A * (doesn't have to go inside)
-		Grid model = new Grid();
+		OldGrid model = new OldGrid();
 
 		//calculate tunnel position
 		double[] goal = model.inputTunnelPosition(90, 90, 90);

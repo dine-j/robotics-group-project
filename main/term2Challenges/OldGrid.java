@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Represents the internal map of the course with path planning methods
  */
-public class Grid {
+public class OldGrid {
 
     // course is 122 cm x 122cm
     final private int COURSE_WIDTH = 122;  // in cm
@@ -41,11 +41,11 @@ public class Grid {
     private PriorityQueue<AStarNode> openList;
 
 
-    public Grid() {
+    public OldGrid() {
         this(62); //calculated to be 2cm between each node
     }
 
-    public Grid(int numberOfNodesPerEdge) {
+    public OldGrid(int numberOfNodesPerEdge) {
 
         closedList = new TreeSet<AStarNode>(new AStarNode.positionComparator());
         openList = new PriorityQueue<AStarNode>();

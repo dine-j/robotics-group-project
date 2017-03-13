@@ -3,7 +3,7 @@ package tests.aStarTest;
 
 import main.term2Challenges.AStarNode;
 import main.term2Challenges.AlternativeGrid;
-import main.term2Challenges.Grid;
+import main.term2Challenges.OldGrid;
 
 import java.util.LinkedList;
 
@@ -12,7 +12,7 @@ public class aStarReverseTestMain {
     public static void main(String[] args) throws InterruptedException {
         AlternativeGrid model = new AlternativeGrid(62);
         int size = model.getSize();
-        GridFrame grid = new GridFrame(model.getSize());
+        OldGridFrame grid = new OldGridFrame(model.getSize());
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < size; ++j) {
                 if (!model.isInsideBorder(i, j)) {

@@ -5,11 +5,11 @@ import main.term2Challenges.*;
 import javax.swing.*;
 import java.awt.*;
 
-public class GridFrame extends JFrame {
+public class OldGridFrame extends JFrame {
 
     private GridNode[][] nodes;
 
-    public GridFrame(int size) {
+    public OldGridFrame(int size) {
         super("Grid");
         setSize(600, 600);
         setLayout(new GridLayout(size, size));
@@ -52,7 +52,7 @@ public class GridFrame extends JFrame {
         nodes[nodes.length - 1 - x][y].setState(Color.red);
     }
     
-    public void readGrid(Grid grid){
+    public void readGrid(OldGrid grid){
     	AStarNode[][] matrix = grid.getGrid();
     	for(int i = 0; i < nodes.length; ++i){
     		for( int j = 0; j < nodes.length; ++ j) {

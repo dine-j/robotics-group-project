@@ -1,19 +1,19 @@
 package tests.aStarTest;
 
-import main.term2Challenges.Grid;
+import main.term2Challenges.OldGrid;
 
 /**
  * Used to check if all the Grid map-placing methods functioned correctly
  * 
  *
  */
-public class GridTest {
+public class OldGridTest {
     public static void main(String[] args) throws InterruptedException {
-        Grid model = new Grid();
+        OldGrid model = new OldGrid();
         //model.findGoalNodeFromRoot(40, 30);
         
         int size = model.getSize();
-        GridFrame grid = new GridFrame(model.getSize());
+        OldGridFrame grid = new OldGridFrame(model.getSize());
         
         for(int i = 0; i < size; ++i){
         	 for(int j = 0; j < size; ++j){
