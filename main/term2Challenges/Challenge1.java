@@ -12,6 +12,7 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.utility.Delay;
 
 public class Challenge1 {
 
@@ -25,63 +26,54 @@ public class Challenge1 {
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
 		EV3TouchSensor touchSensor = new EV3TouchSensor(SensorPort.S3);
 		EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S4);
+		
 
 		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor, gyroSensor, touchSensor);
 		Button.waitForAnyPress();
 
-		// Measure drift
+		// Measure drift 
 		if(r.isSensorDrifting())
 			return;
 		
 		// Localize with Bayesian 'strip'
-//		System.out.println(r.localize());
+		//int n = r.localize();  //stubbed out for 16 for the moment 
+		//System.out.println(n);
 
 		// Make a sound
 
 		// Goal using A * (doesn't have to go inside)
-		OldGrid model = new OldGrid();
-
-		//calculate tunnel position
-		double[] goal = model.inputTunnelPosition(90, 90, 90);
-
-		//find path
-		//AStarNode goalNode = model.findGoalNodeFromRoot(32, 32, (int) goal[1], (int) goal[0]);
-
-		//get list containing path
-		//AStarNode goalNode = model.findGoalNodeFromRoot(32, 32);
-
-		int n = 16;
-		r.moveDistance(model.distanceToNextNodeOnStrip(n));
-		double[] startCoords = model.nextNodeCoordsOnStrip(n);
-		//TODO: betters input (+ not hardcoded)
-		AStarNode goalNode = model.findGoalNodeFromRoot((int) (startCoords[0]/2), (int) (startCoords[1]/2), (int) goal[1], (int) goal[0]);
-
-
-        LinkedList<AStarNode> list = model.getListPathFromGoalNode(goalNode);
-
-        //get action list
-        List<RobotMovement> actionList = model.calculatePath(list);
-
-        //r.followInstructions(actionList);
-
-        //reverse through path provided
-
-		//find reverse path
-		AStarNode startNode = model.findGoalNodeFromRoot((int) goal[1], (int) goal[0], 20, 20);
-
-		//get list with reverse path
-		LinkedList<AStarNode> reverseList = model.getListPathFromGoalNode(startNode);
-
-		//get reverse action list
-		List<RobotMovement> reverseActionList = model.calculatePath(reverseList);
-
-		//r.followInstructions(reverseActionList);
+		Grid model = new Grid();
+		int n = 7; // stub  (sensor over 8th cell(position 7), is farthest back possible
 		
-
-
-		// Update A* plan if it see obstacle in the way.
-
+		
+		int  cellOffset = 2; // center of robot is 2 cells behind colour sensor reader.
+		double[] startPosition = GridGeo.BayesianCoordinate(n - cellOffset);
+		double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
+		double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
+		
+		r.moveDistance(distToMoveOnDiagonal);
+		Node goalNode = model.aStarSearch(firstNodePosition);
+		
+		
+        LinkedList<Node> list = model.findForwardPath(goalNode);
+        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
+		double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
+        r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
+        //TODO: find way so always faces goal
+        
+        Delay.msDelay(3000); // found goal (hopefully)
+        
+        //turn 180 -- could do easier way
+        List<RobotMovement> l = new LinkedList<RobotMovement>();
+        l.add( RobotMovement.RIGHT180); 
+        r.followInstructions(l, 1, 1);
+        
 		// Going back to starting point
+        list = model.findBackwardPath(goalNode);
+        // get direction robot is facing now (below is stub) - should make new method?
+        int directionRobotFacingNow = RobotMovement.S; //TODO: find better way to do this
+        actionList = RobotMovement.parsePathToMovements(list, directionRobotFacingNow);
+        r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
 
 	}
 
