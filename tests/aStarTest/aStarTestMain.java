@@ -24,8 +24,9 @@ public class aStarTestMain {
         // some extra tests.
 //        model.inputCylinderPosition(61, 61);
 //        AStarNode goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(20));
-        
+        long startTime = System.currentTimeMillis();
         AStarNode goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(6));
+        System.out.println(System.currentTimeMillis() - startTime);
 //        List<AStarNode> list = model.findForwardPath(goalNode);
         List<AStarNode> list = model.findBackwardPath(goalNode);
         grid.readGrid(model);
