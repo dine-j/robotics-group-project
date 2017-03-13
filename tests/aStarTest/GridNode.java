@@ -33,8 +33,8 @@ public class GridNode extends JButton implements ActionListener {
     }
     public void setCoordString(int i, int j) {
     	coordString = String.format(
-    			"x: %.2fcm, y: %.2fcm node:%d , %d", j * GridGeo.NODE_GAP_DIST ,
-    			GridGeo.COURSE_WIDTH - i * GridGeo.NODE_GAP_DIST,
+    			"x: %.2fcm, y: %.2fcm node:%d , %d", j * GridGeo.NODE_SIZE ,
+    			GridGeo.COURSE_WIDTH - i * GridGeo.NODE_SIZE,
     			j , GridGeo.NODES_PER_EDGE-1 - i);
     }
 

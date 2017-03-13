@@ -1,7 +1,10 @@
 package main.term2Challenges;
 
 /**
- * Some Geometry methods and constants for Grid class
+ * Some Geometry methods and constants for the following: 
+ * 1) Grid class having correct size and location of objects
+ * 2) Helping the robot move on and off the 'Grid network' 
+ * 3) Helping the robot find it's coordinates on the Bayesian strip
  */
 public class GridGeo {
 	
@@ -10,7 +13,7 @@ public class GridGeo {
     public static final double COURSE_WIDTH = 122; // in cm
     public static final double CORNER_DIAG_WIDTH = 21; // in cm
     public static final double BAYESIAN_ZEROTH_DIAG = CORNER_DIAG_WIDTH + 2; // in cm
-    public static final double NODE_GAP_DIST = (double) COURSE_WIDTH / (double) (NODES_PER_EDGE - 1);	
+    public static final double NODE_SIZE = (double) COURSE_WIDTH / (double) (NODES_PER_EDGE - 1);	
     public static final double BAYESIAN_GAP_DIST = 2; //in cm
     public static final double CYLINDER_RADIUS = 2.5; // in cm
 	public static final double TUNNEL_WALL_RADIUS = 0.9; // in cm
@@ -38,8 +41,8 @@ public class GridGeo {
 	 * @return The closest node in 'NodeScale' coordinates
 	 */
     public static int[] closestNodeInNodeCoords(double x, double y) {
-        double tmpx = x / NODE_GAP_DIST;
-        double tmpy = y / NODE_GAP_DIST;
+        double tmpx = x / NODE_SIZE;
+        double tmpy = y / NODE_SIZE;
         tmpx = Math.round(tmpx);
         tmpy = Math.round(tmpy);
         //debugging println statement
@@ -52,7 +55,7 @@ public class GridGeo {
 	 */
     public static double[] closestNode(double x, double y) {
         int[] tmp = closestNodeInNodeCoords(x, y);
-        return new double[]{ ((double)tmp[0]) / NODE_GAP_DIST , ((double)tmp[1]) / NODE_GAP_DIST};
+        return new double[]{ ((double)tmp[0]) / NODE_SIZE , ((double)tmp[1]) / NODE_SIZE};
     }
     
     /**
@@ -67,7 +70,7 @@ public class GridGeo {
      * @return The next node on leading diagonal relative to currPos[] in 'cm' coordinates
      */
     public static double[] nextNodeOnLeadingDiagonal( double[] currPos){
-    	double xOrY = (Math.ceil(currPos[0]/ NODE_GAP_DIST)) * NODE_GAP_DIST;
+    	double xOrY = (Math.ceil(currPos[0]/ NODE_SIZE)) * NODE_SIZE;
     	return new double[]{ xOrY, xOrY};
     }
 	

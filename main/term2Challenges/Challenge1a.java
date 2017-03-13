@@ -47,9 +47,9 @@ public class Challenge1a {
 		int  cellOffset = 2; // center of robot is 2 cells behind colour sensor reader.
 		double[] startPosition = GridGeo.BayesianCoordinate(n - cellOffset);
 		double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
-		double distToMove = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
+		double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
 		
-		r.moveDistance(distToMove);
+		r.moveDistance(distToMoveOnDiagonal);
 		Node goalNode = model.aStarSearch(firstNodePosition);
 		
 		

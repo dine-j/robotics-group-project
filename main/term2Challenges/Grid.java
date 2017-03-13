@@ -11,7 +11,7 @@ public class Grid {
     final private static int ROBOT_RADIUS = 8; // in cm
     
     //number of definitely inaccessible nodes away from course-edges
-    final private static int BORDER_NODE_WIDTH = (int) ((ROBOT_RADIUS) / GridGeo.NODE_GAP_DIST); 
+    final private static int BORDER_NODE_WIDTH = (int) ((ROBOT_RADIUS) / GridGeo.NODE_SIZE); 
     
     
     /*
@@ -26,8 +26,9 @@ public class Grid {
      *  |
      *  Matrix coordinate (0,0)
      */
-    private Node[][] grid;
-    private TreeSet<Node> closedList;
+    private Node[][] grid; 
+    // use of grid storing closedNodes makes storing separate closed list unnecessary
+    // private TreeSet<Node> closedList;
     private PriorityQueue<Node> openList;
 
 
@@ -36,7 +37,6 @@ public class Grid {
     }
 
     private Grid(int numberOfNodesPerEdge) {
-        closedList = new TreeSet<Node>(new Node.PositionComparator());
         openList = new PriorityQueue<Node>();
         // pointers stored in grid for easy x,y access
         grid = new Node[numberOfNodesPerEdge][numberOfNodesPerEdge]; 
@@ -65,7 +65,7 @@ public class Grid {
 
         // 1b. Add goal node
         int goalNodeXY[] = GridGeo.closestNodeInNodeCoords((int) goalIdeal[1], (int) goalIdeal[0]); //TODO: why reversed?
-        Node goal = new Node(goalNodeXY[0], goalNodeXY[1], true);
+        Node goal = new Node(goalNodeXY[0], goalNodeXY[1]);
         grid[goalNodeXY[0]][goalNodeXY[1]] = goal; //add to grid
 
         // 2. Add initial pos to open list
@@ -98,15 +98,15 @@ public class Grid {
 
                         if (grid[x][y].getGn() > newGn) {
                             Node rmNode = grid[x][y];
-                            openList.remove(rmNode); //remove temporarily so doesn't mess up tree-set structure
-                            rmNode.setGn(newGn);
+                            openList.remove(rmNode); //remove temporarily so doesn't mess up heap/tree data-structure
+                            rmNode.setGn(newGn); //will also update fn (class invariant fn=gn+hn)
                             rmNode.setParent(toExpand);  //set the new parent with better costed path
-                            openList.add(rmNode);
+                            openList.add(rmNode); //re-added so node is now in correct place in heap/tree PQ relative to it's new fn value
                         }
                     } else if (grid[x][y] == null) {
                         //add to openlist
                         double hn = manhattanHeuristic(x, y, goal);
-                        double gn = toExpand.getGn() + actionCost; //new Change....(12/3/17)
+                        double gn = toExpand.getGn() + actionCost;
                         Node toAdd = new Node(x, y, hn, gn, toExpand, true);
                         openList.add(toAdd);
                         grid[x][y] = toAdd; //add to grid
@@ -115,7 +115,6 @@ public class Grid {
                 }
             }// end of for loop
             toExpand.setClosed(); // add expanded node to closed list
-            closedList.add(toExpand); 
         }
 
         return null; //default return if no path found
@@ -135,7 +134,7 @@ public class Grid {
         Node current = goal;
         while (!current.isRoot()) {
             current = current.getParent();
-            list.addFirst(current);
+            list.addFirst(current); //as starting at goal: this results in the forward order.
         }
         return list;
     }
@@ -146,7 +145,7 @@ public class Grid {
         Node current = goal;
         while (!current.isRoot()) {
             current = current.getParent();
-            list.addLast(current);
+            list.addLast(current);//starts at goal: so results in reversed list
         }
         return list;
     }
@@ -160,7 +159,7 @@ public class Grid {
     }
 
     public double getNodeSize() {
-        return GridGeo.NODE_GAP_DIST;
+        return GridGeo.NODE_SIZE;
     }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -185,8 +184,8 @@ public class Grid {
      * Updates the map so that it won't navigate though a CYLINDER OBJECT
      */
     public void inputCylinderPosition(double x, double y) {
-        addClosedNodeCircle(x / GridGeo.NODE_GAP_DIST, y / GridGeo.NODE_GAP_DIST,
-        		(GridGeo.CYLINDER_RADIUS + ROBOT_RADIUS) / GridGeo.NODE_GAP_DIST);
+        addClosedNodeCircle(x / GridGeo.NODE_SIZE, y / GridGeo.NODE_SIZE,
+        		(GridGeo.CYLINDER_RADIUS + ROBOT_RADIUS) / GridGeo.NODE_SIZE);
     }
     /**
      * Updates the map so that it won't navigate though a CYLINDER OBJECT
@@ -200,9 +199,9 @@ public class Grid {
      * Adds corners into the closed list
      */
     public void inputCorners() {
-        double dist = 29.3 / GridGeo.NODE_GAP_DIST; // in nodes
-        double r = ROBOT_RADIUS / GridGeo.NODE_GAP_DIST;
-        double w = GridGeo.COURSE_WIDTH / GridGeo.NODE_GAP_DIST;
+        double dist = 29.3 / GridGeo.NODE_SIZE; // in nodes
+        double r = ROBOT_RADIUS / GridGeo.NODE_SIZE;
+        double w = GridGeo.COURSE_WIDTH / GridGeo.NODE_SIZE;
         addClosedNodeRectangle(dist, 0, 0, dist, r);
         addClosedNodeRectangle(w - dist, w, w, w - dist, r);
     }
@@ -243,7 +242,7 @@ public class Grid {
      * Updates the map so that it won't navigate though a WALL OBJECT
      */
     public void inputWallPosition(double x1, double y1, double x2, double y2, double r) {
-        double scale = GridGeo.NODE_GAP_DIST; // switch to work on the 'nodes' scale
+        double scale = GridGeo.NODE_SIZE; // switch to work on the 'nodes' scale
         x1 = x1 / scale;
         y1 = y1 / scale;
         x2 = x2 / scale;
@@ -367,7 +366,6 @@ public class Grid {
     private void addClosedNode(int i, int j) {
         if (isInsideBorder(i, j)) {
             Node toAdd = new Node(i, j);
-            closedList.add(toAdd);
             grid[i][j] = toAdd;
         }
     }
@@ -392,6 +390,11 @@ public class Grid {
     	return rotateVector(new double[]{x,y},centerX,centerY,radians);
     }
 
+    /**
+     * @param pntA The first point a line goes through
+     * @param pntB The second point a line goes through
+     * @return A 2-element array representing [m,c]  of the line equation y = mx + c
+     */
     private static double[] findLineEq(double[] pntA, double[] pntB) {
         double m = (pntA[1] - pntB[1]) / (pntA[0] - pntB[0]);
         double c = pntA[1] - m * pntA[0];
