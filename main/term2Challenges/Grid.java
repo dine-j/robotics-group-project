@@ -26,9 +26,9 @@ public class Grid {
      *  |
      *  Matrix coordinate (0,0)
      */
-    private AStarNode[][] grid;
-    private TreeSet<AStarNode> closedList;
-    private PriorityQueue<AStarNode> openList;
+    private Node[][] grid;
+    private TreeSet<Node> closedList;
+    private PriorityQueue<Node> openList;
 
 
     public Grid() {
@@ -36,21 +36,21 @@ public class Grid {
     }
 
     private Grid(int numberOfNodesPerEdge) {
-        closedList = new TreeSet<AStarNode>(new AStarNode.PositionComparator());
-        openList = new PriorityQueue<AStarNode>();
+        closedList = new TreeSet<Node>(new Node.PositionComparator());
+        openList = new PriorityQueue<Node>();
         // pointers stored in grid for easy x,y access
-        grid = new AStarNode[numberOfNodesPerEdge][numberOfNodesPerEdge]; 
+        grid = new Node[numberOfNodesPerEdge][numberOfNodesPerEdge]; 
     }
 
     public int getSize() {
         return grid.length;
     }
 
-    public AStarNode[][] getGrid() {
+    public Node[][] getGrid() {
         return grid;
     }
     
-    private static int manhattanHeuristic(int x, int y, AStarNode goalNode) {
+    private static int manhattanHeuristic(int x, int y, Node goalNode) {
         return Math.abs(x - goalNode.getX()) + Math.abs(y - goalNode.getY());
     }
 
@@ -58,27 +58,27 @@ public class Grid {
      * Does A* search after initialising closed list
      * precondition: (xStart, yStart) in cm and should line up with a node.
      */
-    public AStarNode aStarSearch(double xStart, double yStart) {
+    public Node aStarSearch(double xStart, double yStart) {
     	
         // 1. Add closed list stuff & get cm coordinates of goalNode
         double[] goalIdeal = initClosedList();
 
         // 1b. Add goal node
         int goalNodeXY[] = GridGeo.closestNodeInNodeCoords((int) goalIdeal[1], (int) goalIdeal[0]); //TODO: why reversed?
-        AStarNode goal = new AStarNode(goalNodeXY[0], goalNodeXY[1], true);
+        Node goal = new Node(goalNodeXY[0], goalNodeXY[1], true);
         grid[goalNodeXY[0]][goalNodeXY[1]] = goal; //add to grid
 
         // 2. Add initial pos to open list
         int[] startNodeXY = GridGeo.closestNodeInNodeCoords(xStart, yStart);
         
-        AStarNode init = new AStarNode(startNodeXY[0], startNodeXY[1], manhattanHeuristic(startNodeXY[0], startNodeXY[1], goal), 0, null, true);
+        Node init = new Node(startNodeXY[0], startNodeXY[1], manhattanHeuristic(startNodeXY[0], startNodeXY[1], goal), 0, null, true);
         openList.add(init);
         grid[startNodeXY[0]][startNodeXY[1]] = init; //add to grid
         
         // list of possible actions to use in while loop
         int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
         while (!openList.isEmpty()) {
-            AStarNode toExpand = openList.poll(); //find node with minimum value
+            Node toExpand = openList.poll(); //find node with minimum value
             
             for (int i = 0; i < ACTION.length; ++i) {
                 final int x = toExpand.getX() + ACTION[i][0];
@@ -97,7 +97,7 @@ public class Grid {
                         double newGn = toExpand.getGn() + actionCost;
 
                         if (grid[x][y].getGn() > newGn) {
-                            AStarNode rmNode = grid[x][y];
+                            Node rmNode = grid[x][y];
                             openList.remove(rmNode); //remove temporarily so doesn't mess up tree-set structure
                             rmNode.setGn(newGn);
                             rmNode.setParent(toExpand);  //set the new parent with better costed path
@@ -107,7 +107,7 @@ public class Grid {
                         //add to openlist
                         double hn = manhattanHeuristic(x, y, goal);
                         double gn = toExpand.getGn() + actionCost; //new Change....(12/3/17)
-                        AStarNode toAdd = new AStarNode(x, y, hn, gn, toExpand, true);
+                        Node toAdd = new Node(x, y, hn, gn, toExpand, true);
                         openList.add(toAdd);
                         grid[x][y] = toAdd; //add to grid
                     }
@@ -125,14 +125,14 @@ public class Grid {
      * Does A* search after initialising closed list
      * precondition: start[] vector in cm and should line up with a node.
      */
-    public AStarNode aStarSearch(double[] start) {
+    public Node aStarSearch(double[] start) {
     	return aStarSearch(start[0], start[1]);
     }
     
-    public LinkedList<AStarNode> findForwardPath(AStarNode goal) {
-        LinkedList<AStarNode> list = new LinkedList<AStarNode>();
+    public LinkedList<Node> findForwardPath(Node goal) {
+        LinkedList<Node> list = new LinkedList<Node>();
         list.add(goal);
-        AStarNode current = goal;
+        Node current = goal;
         while (!current.isRoot()) {
             current = current.getParent();
             list.addFirst(current);
@@ -140,10 +140,10 @@ public class Grid {
         return list;
     }
     
-    public LinkedList<AStarNode> findBackwardPath(AStarNode goal) {
-        LinkedList<AStarNode> list = new LinkedList<AStarNode>();
+    public LinkedList<Node> findBackwardPath(Node goal) {
+        LinkedList<Node> list = new LinkedList<Node>();
         list.add(goal);
-        AStarNode current = goal;
+        Node current = goal;
         while (!current.isRoot()) {
             current = current.getParent();
             list.addLast(current);
@@ -366,7 +366,7 @@ public class Grid {
     // adds to ith row and jth column of 'grid' matrix
     private void addClosedNode(int i, int j) {
         if (isInsideBorder(i, j)) {
-            AStarNode toAdd = new AStarNode(i, j);
+            Node toAdd = new Node(i, j);
             closedList.add(toAdd);
             grid[i][j] = toAdd;
         }

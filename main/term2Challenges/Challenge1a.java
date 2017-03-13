@@ -14,7 +14,7 @@ import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.utility.Delay;
 
-public class Challenge1 {
+public class Challenge1a {
 
 	public static void main(String[] args) {
 		EV3LargeRegulatedMotor motorL = new EV3LargeRegulatedMotor(MotorPort.A);
@@ -51,10 +51,10 @@ public class Challenge1 {
 		double distToMove = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
 		
 		r.moveDistance(distToMove);
-		AStarNode goalNode = model.aStarSearch(firstNodePosition);
+		Node goalNode = model.aStarSearch(firstNodePosition);
 		
 		
-        LinkedList<AStarNode> list = model.findForwardPath(goalNode);
+        LinkedList<Node> list = model.findForwardPath(goalNode);
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
 		double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);

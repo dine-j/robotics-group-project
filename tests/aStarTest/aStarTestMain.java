@@ -1,7 +1,7 @@
 package tests.aStarTest;
 
 import java.util.List;
-import main.term2Challenges.AStarNode;
+import main.term2Challenges.Node;
 import main.term2Challenges.Grid;
 import main.term2Challenges.GridGeo;
 
@@ -25,15 +25,15 @@ public class aStarTestMain {
 //        model.inputCylinderPosition(61, 61);
 //        AStarNode goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(20));
         long startTime = System.currentTimeMillis();
-        AStarNode goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(6));
+        Node goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(6));
         System.out.println(System.currentTimeMillis() - startTime);
 //        List<AStarNode> list = model.findForwardPath(goalNode);
-        List<AStarNode> list = model.findBackwardPath(goalNode);
+        List<Node> list = model.findBackwardPath(goalNode);
         grid.readGrid(model);
         grid.setVisible(true);
 
         Thread.sleep(400);
-        for (AStarNode element : list) {
+        for (Node element : list) {
             grid.placeRobot(element.getX(), element.getY());
             Thread.sleep(60);
         }

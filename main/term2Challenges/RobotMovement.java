@@ -40,14 +40,14 @@ public enum RobotMovement {
      * @param direction The initial direction robot is facing
      * @return A list of RobotMovement's for robot to follow
      */
-    public static List<RobotMovement> parsePathToMovements(LinkedList<AStarNode> path, int direction) {
+    public static List<RobotMovement> parsePathToMovements(LinkedList<Node> path, int direction) {
         List<RobotMovement> list = new ArrayList<RobotMovement>();
-        AStarNode startNode = path.remove();
+        Node startNode = path.remove();
         int x = startNode.getX();
         int y = startNode.getY();
 
         while (!path.isEmpty()) {
-            AStarNode nextNode = path.remove();
+            Node nextNode = path.remove();
             int changeInX = nextNode.getX() - x;
             int changeInY = nextNode.getY() - y;
 
@@ -94,7 +94,7 @@ public enum RobotMovement {
      * @param path The sequence of nodes that represents the path
      * @return A list of RobotMovement's for robot to follow
      */
-    public static List<RobotMovement> parsePathToMovements(LinkedList<AStarNode> path) {
+    public static List<RobotMovement> parsePathToMovements(LinkedList<Node> path) {
     	int direction = NW; //TODO: fix bug, robot is pointing NE
     	return parsePathToMovements(path, direction);
     }

@@ -6,11 +6,11 @@ import java.util.Comparator;
  * Represents A* nodes, sorted by f(n) values or a comparator
  *
  */
-public class AStarNode implements Comparable<AStarNode>{
+public class Node implements Comparable<Node>{
 	private static enum NodeState{OPEN, CLOSED, GOAL};
 	private int x;
 	private int y;
-	private AStarNode parent;
+	private Node parent;
 
 	private double hn;
 	private double gn; // may be recomputed
@@ -18,7 +18,7 @@ public class AStarNode implements Comparable<AStarNode>{
 	
 	private NodeState state;  //node may either be open or closed
 	
-	public AStarNode(int x, int y, double hn, double gn, AStarNode parent, boolean open){
+	public Node(int x, int y, double hn, double gn, Node parent, boolean open){
 		this.x = x;
 		this.y = y;
 		this.hn = hn;
@@ -33,7 +33,7 @@ public class AStarNode implements Comparable<AStarNode>{
 	 * @param x
 	 * @param y
 	 */
-	public AStarNode (int x, int y){
+	public Node (int x, int y){
 		this.x = x;
 		this.y = y;
 		this.hn = 0;
@@ -48,7 +48,7 @@ public class AStarNode implements Comparable<AStarNode>{
 	 * @param x
 	 * @param y
 	 */
-	public AStarNode (int x, int y, boolean isGoal){
+	public Node (int x, int y, boolean isGoal){
 		this(x,y);
 		if(isGoal) state = NodeState.GOAL;
 	}
@@ -70,7 +70,7 @@ public class AStarNode implements Comparable<AStarNode>{
 		fn = gn + hn; // recompute fn;
 	}
 	
-	public void setParent(AStarNode parent) {
+	public void setParent(Node parent) {
 		this.parent = parent;
 	}
 	
@@ -81,7 +81,7 @@ public class AStarNode implements Comparable<AStarNode>{
 	/*
 	 * Removed Equals method 12/3/17 as it introduced nasty bug, in different datastructures
 	 */
-	public int compareTo(AStarNode other){
+	public int compareTo(Node other){
 		return Double.compare(this.fn,other.fn);
 	}
 	
@@ -93,7 +93,7 @@ public class AStarNode implements Comparable<AStarNode>{
 		return y;
 	}
 
-	public AStarNode getParent() {
+	public Node getParent() {
 		return parent;
 	}
 
@@ -114,9 +114,9 @@ public class AStarNode implements Comparable<AStarNode>{
 		return "["+x+","+y+"] "+(isOpen() ? "OPEN":"CLOSED")+ " h,g,f = " + String.format("%.1f,%.1f,%.1f", hn,gn,fn);
 	}
 	
-	public static class PositionComparator implements Comparator<AStarNode>{
+	public static class PositionComparator implements Comparator<Node>{
 		@Override
-		public int compare(AStarNode o1, AStarNode o2) {
+		public int compare(Node o1, Node o2) {
 			return o1.x * 500 + o1.y - o2.x * 500 - o2.y; //works for grid size of up to 500
 		}
 	}

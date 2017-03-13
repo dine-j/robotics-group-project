@@ -56,7 +56,7 @@ public class GridFrame extends JFrame {
     }
     
     public void readGrid(Grid grid){
-    	AStarNode[][] matrix = grid.getGrid();
+    	Node[][] matrix = grid.getGrid();
     	for(int i = 0; i < nodes.length; ++i){
     		for( int j = 0; j < nodes.length; ++ j) {
     			if(matrix[i][j] == null){
