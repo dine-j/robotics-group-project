@@ -21,17 +21,17 @@ public enum RobotMovement {
 	FORWARD_ON_DIAGONAL;
 	
 	//Pre-computed value of square root of 2
-	final static double SQRT2 = Math.sqrt(2);
+	public final static double SQRT2 = Math.sqrt(2);
 	
 	// Numeric constants for directions
-    final static int W = 0;
-    final static int NW = 1;
-	final static int N = 2;
-	final static int NE = 3;
-	final static int E = 4;
-	final static int SE = 5;
-	final static int S = 6;
-	final static int SW = 7;
+	public final static int W = 0;
+	public final static int NW = 1;
+	public final static int N = 2;
+	public final static int NE = 3;
+	public final static int E = 4;
+	public final static int SE = 5;
+	public final static int S = 6;
+	public final static int SW = 7;
 	
 	
 	
@@ -58,7 +58,8 @@ public enum RobotMovement {
                 list.add(dirChange(direction, newDirection));
             }
             direction = newDirection;
-            if(direction == NE || direction == RobotMovement.NW)
+            if(direction == NE || direction == RobotMovement.NW 
+            		|| direction == RobotMovement.SW || direction == RobotMovement.SE )
                 list.add(FORWARD_ON_DIAGONAL);
             else
                 list.add(FORWARD);
@@ -110,11 +111,20 @@ public enum RobotMovement {
         if(yChange == 0) { // Up or down
             if(xChange > 0) // Up
                 return N;
+            else{
+            	return S;
+            }
         }
         if(xChange == 1 && yChange == 1)
             return NW;
+        if(xChange == -1 && yChange == 1)
+            return SW;
         if(xChange == 1 && yChange == -1)
             return NE;
+        if(xChange == -1 && yChange == -1)
+            return SE;
+        
+        
         return -1;
     }
 }
