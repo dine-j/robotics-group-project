@@ -37,14 +37,15 @@ public class Challenge1 {
 			return;
 		
 		// Localize with Bayesian 'strip'
-		//int n = r.localize();  //stubbed out for 16 for the moment 
-		//System.out.println(n);
+		int n = r.localize();  
+		System.out.println(n);
+		Delay.msDelay(3000); // found goal (hopefully)
 
 		// Make a sound
 
 		// Goal using A * (doesn't have to go inside)
 		Grid model = new Grid();
-		int n = 7; // stub  (sensor over 8th cell(position 7), is farthest back possible
+		//int n = 7; // stub  (sensor over 8th cell(position 7), is farthest back possible
 		
 		
 		int  cellOffset = 2; // center of robot is 2 cells behind colour sensor reader.

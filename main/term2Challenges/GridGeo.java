@@ -26,6 +26,7 @@ public class GridGeo {
 	 *Can add as many cylinder positions as want to test out 
 	 */
 	public static final double[] RAND_CYCL_31cm_Center = new double[]{40, 82};
+	public static final double[] RAND_CYCL_14cm_Center = new double[]{50, 72};
 	public static final double[] GREEN_CYCL_14cm_Center = new double[]{72, 50};
 	public static final double[] RED_CYCL_31cm_Center = new double[]{82, 40};
 	public static final double[] TUNNEL_BeginMarch_Center = new double[]{82.5, 110};

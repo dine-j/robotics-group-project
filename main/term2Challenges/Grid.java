@@ -171,7 +171,7 @@ public class Grid {
      * @return An ideal position in 'cm' coordinates of goal node.
      */
     public double[] initClosedList(){
-    	inputCylinderPosition(GridGeo.RAND_CYCL_31cm_Center); 
+    	inputCylinderPosition(GridGeo.RAND_CYCL_14cm_Center); 
         inputCorners();
         double[] goalIdeal = inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
         // Maybe good idea:
@@ -229,7 +229,7 @@ public class Grid {
         inputWallPosition(bRight, fRight, r);
 
         // compute a sensible ideal goal to plan to & return
-        final int extraDist = 10;
+        final int extraDist = 14;
         final int depthToCenter = 10;
         return rotateVector(x, y - depthToCenter - extraDist, x, y, radians);
     }
