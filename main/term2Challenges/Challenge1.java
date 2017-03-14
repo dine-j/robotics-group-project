@@ -7,6 +7,7 @@ import lejos.hardware.Button;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.MotorPort;
+import lejos.hardware.port.Port;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3GyroSensor;
@@ -22,7 +23,7 @@ public class Challenge1 {
 		EV3MediumRegulatedMotor visionMotor = new EV3MediumRegulatedMotor(MotorPort.B);
 		
 		
-		EV3GyroSensor gyroSensor = new EV3GyroSensor(SensorPort.S1);
+		EV3GyroSensor gyroSensor = new EV3GyroSensor((Port)SensorPort.S1);
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
 		EV3TouchSensor touchSensor = new EV3TouchSensor(SensorPort.S3);
 		EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S4);

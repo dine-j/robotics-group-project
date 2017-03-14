@@ -17,8 +17,8 @@ public class GridGeo {
     public static final double BAYESIAN_GAP_DIST = 2; //in cm
     public static final double CYLINDER_RADIUS = 2.5; // in cm
 	public static final double TUNNEL_WALL_RADIUS = 0.9; // in cm
-	public static final double[] TUNNEL_FRONT_LEFT = new double[]{-11,-10};
-	public static final double[] TUNNEL_FRONT_RIGHT = new double[]{11,-10};
+	public static final double[] TUNNEL_FRONT_LEFT = new double[]{-11,-14}; //new double[]{-11,-10};
+	public static final double[] TUNNEL_FRONT_RIGHT = new double[]{11,-14};//new double[]{11,-10};
 	public static final double[] TUNNEL_BACK_LEFT = new double[]{-11,9};
 	public static final double[] TUNNEL_BACK_RIGHT = new double[]{11,9};
 	

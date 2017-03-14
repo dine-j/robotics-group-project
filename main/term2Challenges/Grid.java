@@ -229,7 +229,7 @@ public class Grid {
         inputWallPosition(bRight, fRight, r);
 
         // compute a sensible ideal goal to plan to & return
-        final int extraDist = 5;
+        final int extraDist = 10;
         final int depthToCenter = 10;
         return rotateVector(x, y - depthToCenter - extraDist, x, y, radians);
     }
