@@ -9,7 +9,7 @@ import main.term2Challenges.RobotMovement;
  * A test class to test 
  *
  */
-public class HandMadeOptimalPaths {
+public class MockedPathGenerator {
 	
 	
 	/**

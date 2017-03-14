@@ -1,17 +1,14 @@
 package tests.aStarTest;
 
 import main.term2Challenges.Grid;
+import main.term2Challenges.GridGeo;
 
 /**
  * Used to check if all the Grid map-placing methods functioned correctly
- * 
- *
  */
 public class GridTest {
     public static void main(String[] args) throws InterruptedException {
         Grid model = new Grid();
-        //model.findGoalNodeFromRoot(40, 30);
-        
         int size = model.getSize();
         GridFrame grid = new GridFrame(model.getSize());
         
@@ -24,19 +21,22 @@ public class GridTest {
         }
         
         double[] tmp = model.inputTunnelPosition(82.5, 110, 90);
-        model.inputCylinderPosition(40, 122-40);
-        model.inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
+        model.inputCylinderPosition(GridGeo.RAND_CYCL_31cm_Center);
         model.inputCorners();
+        
+        //further testing
+//        model.inputCylinderPosition(GridGeo.RED_CYCL_31cm_Center);
+        model.inputCylinderPosition(GridGeo.GREEN_CYCL_14cm_Center);
+        
+        //test invisible walls on way back (challenge 2)
+        model.inputWallPosition(0, 120, 60, 60, 4);
+        model.inputWallPosition(0,0 , 60, 60, 4);
+        
         grid.readGrid(model);
-        //grid.placeGoal(model.findClosestNode(tmp[1], tmp[0]));
-        grid.placeGoal(55,34); //what above commented-out (private)method calculates
+        grid.placeGoal(GridGeo.closestNodeInNodeCoords(tmp[1], tmp[0]));
         grid.placeRobot(20,20);
         
         grid.setVisible(true);
       
-//        for(int i = 0; i < 10; ++i) {
-//            grid.placeRobot(40 - i, 30);
-//            Thread.sleep(500);
-//        }
     }
 }

@@ -1,13 +1,16 @@
 package tests.aStarTest;
 
-import java.util.LinkedList;
+import java.util.List;
+import main.term2Challenges.Node;
+import main.term2Challenges.Grid;
+import main.term2Challenges.GridGeo;
 
-import main.term2Challenges.AStarNode;
-import main.term2Challenges.AlternativeGrid;
-
+/**
+ * Creates grid gui, to see how A* search will perform
+ */
 public class aStarTestMain {
     public static void main(String[] args) throws InterruptedException {
-        AlternativeGrid model = new AlternativeGrid(62);
+        Grid model = new Grid();
         int size = model.getSize();
         GridFrame grid = new GridFrame(model.getSize());
         for (int i = 0; i < size; ++i) {
@@ -18,25 +21,22 @@ public class aStarTestMain {
             }
         }
 
-        //calculate tunnel position
-        double[] goal = model.inputTunnelPosition(90, 90, 90);
-
-        AStarNode goalNode = model.aStarSearch(20, 20, (int) goal[1], (int) goal[0]);
-        LinkedList<AStarNode> list = model.getListPathFromGoalNode(goalNode);
-        //List<RobotMovement> actionList = model.calculatePath(list);
-
+        // some extra tests.
+//        model.inputCylinderPosition(61, 61);
+//        AStarNode goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(20));
+        long startTime = System.currentTimeMillis();
+        Node goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(6));
+        System.out.println(System.currentTimeMillis() - startTime);
+//        List<AStarNode> list = model.findForwardPath(goalNode);
+        List<Node> list = model.findBackwardPath(goalNode);
         grid.readGrid(model);
         grid.setVisible(true);
 
-        Thread.sleep(500);
-        for (AStarNode element : list) {
+        Thread.sleep(400);
+        for (Node element : list) {
             grid.placeRobot(element.getX(), element.getY());
-            Thread.sleep(200);
+            Thread.sleep(60);
         }
 
-//        for(int i = 0; i < 10; ++i) {
-//            grid.placeRobot(40 - i, 30);
-//            Thread.sleep(500);
-//        }
     }
 }

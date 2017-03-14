@@ -7,22 +7,13 @@ import java.util.*;
  */
 public class Grid {
 
-    // course is 122 cm x 122cm
-    final private int COURSE_WIDTH = 122;  // in cm
     // robot dimensions are 15cm x 20cm,  with wheel-center point (7.5cm,12cm)
-    final private int ROBOT_RADIUS = 8; // in cm
-    final private int ROBOT_WIDTH = 10;   // Robot is 30x20cm
-    final private int ROBOT_LENGTH = 15;
-    //final private int ROBOT_RADIUS = (int) Math.sqrt(ROBOT_WIDTH * ROBOT_WIDTH + ROBOT_LENGTH * ROBOT_LENGTH) + 1;
-
-    // Array of 'actions'
-    final int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
-
-    final private double NODE_GAP_DIST; //in cm
-    final private int NODES_PER_EDGE; // in # of nodes
-    final private int BORDER_NODE_WIDTH; // in # of nodes
-
-
+    final private static int ROBOT_RADIUS = 8; // in cm
+    
+    //number of definitely inaccessible nodes away from course-edges
+    final private static int BORDER_NODE_WIDTH = (int) ((ROBOT_RADIUS) / GridGeo.NODE_SIZE); 
+    
+    
     /*
      * Nodes are stored as follows in the 'map' , where b's represent the bayesian strip.
      *  -------------------
@@ -35,117 +26,60 @@ public class Grid {
      *  |
      *  Matrix coordinate (0,0)
      */
-    private AStarNode[][] grid;
-
-    private TreeSet<AStarNode> closedList;
-    private PriorityQueue<AStarNode> openList;
+    private Node[][] grid; 
+    // use of grid storing closedNodes makes storing separate closed list unnecessary
+    // private TreeSet<Node> closedList;
+    private PriorityQueue<Node> openList;
 
 
     public Grid() {
-        this(62); //calculated to be 2cm between each node
+        this(GridGeo.NODES_PER_EDGE);
     }
 
-    public Grid(int numberOfNodesPerEdge) {
-
-        closedList = new TreeSet<AStarNode>(new AStarNode.positionComparator());
-        openList = new PriorityQueue<AStarNode>();
-
-        NODES_PER_EDGE = numberOfNodesPerEdge;
-        NODE_GAP_DIST = (double) COURSE_WIDTH / (double) (NODES_PER_EDGE - 1);
-        BORDER_NODE_WIDTH = (int) ((ROBOT_RADIUS) / NODE_GAP_DIST);
-
+    private Grid(int numberOfNodesPerEdge) {
+        openList = new PriorityQueue<Node>();
         // pointers stored in grid for easy x,y access
-        grid = new AStarNode[numberOfNodesPerEdge][numberOfNodesPerEdge];
+        grid = new Node[numberOfNodesPerEdge][numberOfNodesPerEdge]; 
     }
 
     public int getSize() {
-        return NODES_PER_EDGE;
+        return grid.length;
     }
 
-    public AStarNode[][] getGrid() {
+    public Node[][] getGrid() {
         return grid;
     }
-
-    // method used to approximate goalNodePosition
-    private int[] findClosestNode(double x, double y) {
-        double tmpx = x / NODE_GAP_DIST;
-        double tmpy = y / NODE_GAP_DIST;
-        tmpx = Math.round(tmpx);
-        tmpy = Math.round(tmpy);
-        //debugging println statement
-        //System.out.println("closestNodeResults: x = " + tmpx + " , y = " + tmpy);
-        return new int[]{(int) tmpx, (int) tmpy};
+    
+    private static int manhattanHeuristic(int x, int y, Node goalNode) {
+        return Math.abs(x - goalNode.getX()) + Math.abs(y - goalNode.getY());
     }
-
-    /**
-     * @param n The index of the Bayesian strip the robot is sensing
-     * @return A distance in cm to travel to next node
-     */
-    public double distanceToNextNodeOnStrip(int n){
-    	//21 center till corner-wall, 2cm to center of zeroth cell, -4cm to robot-center
-    	double distanceOnDiagonal = 21 + 2 - 4 + n;
-    	double xCoord = distanceOnDiagonal / RobotMovement.SQRT2;
-    	double[] toReach = nextNodeCoordsOnStrip(n);
-    	return (toReach[0] - xCoord) * RobotMovement.SQRT2;
-    }
-
-    /**
-     * @param n The index of the Bayesian strip the robot is sensing
-     * @return Coordinates in cm of next node
-     */
-    public double[] nextNodeCoordsOnStrip(int n){
-    	//21 center till corner-wall, 2cm to center of zeroth cell, -4cm to robot-center
-    	double distanceOnDiagonal = 21 + 2 - 4 + n;
-    	double x, y;
-    	x = y = (distanceOnDiagonal / RobotMovement.SQRT2) / NODE_GAP_DIST;
-    	x = y = Math.ceil(x) * NODE_GAP_DIST;
-    	return new double[]{x, y};
-    }
-
-    // TODO: test the A* search
 
     /**
      * Does A* search after initialising closed list
-     *
-     * @param xStart
-     * @param yStart
-     * @return Either goalNode, with parent chain to root,  or null in result of failure
+     * precondition: (xStart, yStart) in cm and should line up with a node.
      */
-    public AStarNode findGoalNodeFromRoot(int xStart, int yStart, int xGoal, int yGoal) {
-        AStarNode result = null;
-
-        // 1. Add closed list stuff
-        //obstacle position
-        inputCylinderPosition(40, 122 - 40); // we don't know yet
-        inputCorners();
-
-
-
-        //middle point of the tunnel
-        //double[] goalIdeal = inputTunnelPosition(90, 90, 90);
-
-        /*
-         * TODO:  why flipping works?
-         * //TODO:check coordinates of goal node
-         */
-        //int[] goalTmp = new int[]{(int) goalIdeal[1], (int) goalIdeal[0]};
-
-        // Maybe good idea:
-        inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
+    public Node aStarSearch(double xStart, double yStart) {
+    	
+        // 1. Add closed list stuff & get cm coordinates of goalNode
+        double[] goalIdeal = initClosedList();
 
         // 1b. Add goal node
-        int goalCoord[] = findClosestNode(xGoal, yGoal);
-        AStarNode goal = new AStarNode(goalCoord[0], goalCoord[1]); //create goal node
-        grid[goalCoord[0]][goalCoord[1]] = goal; //add to grid
+        int goalNodeXY[] = GridGeo.closestNodeInNodeCoords((int) goalIdeal[1], (int) goalIdeal[0]); //TODO: why reversed?
+        Node goal = new Node(goalNodeXY[0], goalNodeXY[1]);
+        grid[goalNodeXY[0]][goalNodeXY[1]] = goal; //add to grid
 
         // 2. Add initial pos to open list
-        int initCoord[] = findClosestNode(xStart, yStart);
-        AStarNode init = new AStarNode(initCoord[0], initCoord[1], manhattanHeuristic(xStart, yStart, goal), 0, null);
+        int[] startNodeXY = GridGeo.closestNodeInNodeCoords(xStart, yStart);
+        
+        Node init = new Node(startNodeXY[0], startNodeXY[1], manhattanHeuristic(startNodeXY[0], startNodeXY[1], goal), 0, null, true);
         openList.add(init);
-        grid[initCoord[0]][initCoord[1]] = init; //add to grid
-
+        grid[startNodeXY[0]][startNodeXY[1]] = init; //add to grid
+        
+        // list of possible actions to use in while loop
+        int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
         while (!openList.isEmpty()) {
-            AStarNode toExpand = openList.poll(); //find node with minimum value
+            Node toExpand = openList.poll(); //find node with minimum value
+            
             for (int i = 0; i < ACTION.length; ++i) {
                 final int x = toExpand.getX() + ACTION[i][0];
                 final int y = toExpand.getY() + ACTION[i][1];
@@ -157,277 +91,211 @@ public class Grid {
                     return goal;
                 }
                 // filter out so inside border and open/empty in grid
-                else if (isInsideBorder(x, y) && (grid[x][y] == null || !grid[x][y].isClosed())) {
+                else if (isInsideBorder(x, y) && (grid[x][y] == null || grid[x][y].isOpen())) {
                     // check first if node is already in openList.
-                    if (grid[x][y] != null && !grid[x][y].isClosed()) {
+                    if (grid[x][y] != null && grid[x][y].isOpen()) {
                         double newGn = toExpand.getGn() + actionCost;
 
                         if (grid[x][y].getGn() > newGn) {
-                            AStarNode rmNode = grid[x][y];
-                            openList.remove(rmNode); //remove temporarily so doesn't mess up tree-set structure
-                            rmNode.setGn(newGn);
+                            Node rmNode = grid[x][y];
+                            openList.remove(rmNode); //remove temporarily so doesn't mess up heap/tree data-structure
+                            rmNode.setGn(newGn); //will also update fn (class invariant fn=gn+hn)
                             rmNode.setParent(toExpand);  //set the new parent with better costed path
-                            openList.add(rmNode);
+                            openList.add(rmNode); //re-added so node is now in correct place in heap/tree PQ relative to it's new fn value
                         }
                     } else if (grid[x][y] == null) {
                         //add to openlist
                         double hn = manhattanHeuristic(x, y, goal);
-                        AStarNode toAdd = new AStarNode(x, y, hn, 0, toExpand);
+                        double gn = toExpand.getGn() + actionCost;
+                        Node toAdd = new Node(x, y, hn, gn, toExpand, true);
                         openList.add(toAdd);
                         grid[x][y] = toAdd; //add to grid
                     }
                     // otherwise if closed do nothing
                 }
             }// end of for loop
-            AStarNode rmNode = grid[toExpand.getX()][toExpand.getY()]; //have finished expanding
-            openList.remove(rmNode);
-            closedList.add(rmNode);
-            rmNode.setClosed(); // add to closed list
+            toExpand.setClosed(); // add expanded node to closed list
         }
 
-        return result; //only gets here if result is null
+        return null; //default return if no path found
     }
-
-    //gets path by backtracking through parents
-    public LinkedList<AStarNode> getListPathFromGoalNode(AStarNode goal) {
-        LinkedList<AStarNode> list = new LinkedList<AStarNode>();
+    
+    /**
+     * Does A* search after initialising closed list
+     * precondition: start[] vector in cm and should line up with a node.
+     */
+    public Node aStarSearch(double[] start) {
+    	return aStarSearch(start[0], start[1]);
+    }
+    
+    public LinkedList<Node> findForwardPath(Node goal) {
+        LinkedList<Node> list = new LinkedList<Node>();
         list.add(goal);
-        AStarNode current = goal;
+        Node current = goal;
         while (!current.isRoot()) {
             current = current.getParent();
-            list.addFirst(current);
+            list.addFirst(current); //as starting at goal: this results in the forward order.
         }
         return list;
     }
-
-    /**
-     * After doing A* search, parses the path to a list of actions to follow
-     *
-     * @param
-     * @param
-     * @return A list of Actions for robot to follow
-     */
-    public List<RobotMovement> calculatePath(LinkedList<AStarNode> path) {
-        int direction = RobotMovement.NW; //TODO: fix bug, robot is pointing NE
-        List<RobotMovement> list = new ArrayList<RobotMovement>();
-        AStarNode startNode = path.remove();
-        int x = startNode.getX();
-        int y = startNode.getY();
-
-        while (!path.isEmpty()) {
-            AStarNode nextNode = path.remove();
-            int changeInX = nextNode.getX() - x;
-            int changeInY = nextNode.getY() - y;
-
-            int newDirection = getDirectionToGoal(changeInX, changeInY);
-            if(newDirection == -1)
-                throw new IllegalArgumentException("Wrong direction");
-            if(direction != newDirection) {
-                list.add(changeDirection(direction, newDirection));
-            }
-            direction = newDirection;
-            if(direction == RobotMovement.NE || direction == RobotMovement.NW)
-                list.add(RobotMovement.FORWARD_ON_DIAGONAL);
-            else
-                list.add(RobotMovement.FORWARD);
-            x = nextNode.getX();
-            y = nextNode.getY();
+    
+    public LinkedList<Node> findBackwardPath(Node goal) {
+        LinkedList<Node> list = new LinkedList<Node>();
+        list.add(goal);
+        Node current = goal;
+        while (!current.isRoot()) {
+            current = current.getParent();
+            list.addLast(current);//starts at goal: so results in reversed list
         }
         return list;
     }
-
-    private RobotMovement changeDirection(int direction, int newDirection) {
-        switch (direction - newDirection) {
-            case -2:
-                return RobotMovement.LEFT90;
-            case -1:
-                return RobotMovement.LEFT45;
-            case 1:
-                return RobotMovement.RIGHT45;
-            case 2:
-                return RobotMovement.RIGHT90;
-        }
-        return null;
-    }
-
-    private int getDirectionToGoal(int xChange, int yChange) {
-//        System.out.println("Change in x: " + xChange + ", change in y: " + yChange);
-        if(xChange == 0) { // Next square if at left or right
-            if(yChange > 0) // Next square at right
-                return RobotMovement.E;
-            else
-                return RobotMovement.W;
-        }
-        if(yChange == 0) { // Up or down
-            if(xChange > 0) // Up
-                return RobotMovement.N;
-        }
-        if(xChange == 1 && yChange == 1)
-            return RobotMovement.NW;
-        if(xChange == 1 && yChange == -1)
-            return RobotMovement.NE;
-        return -1;
-    }
-
-    private int manhattanHeuristic(int x, int y, AStarNode goalNode) {
-        return Math.abs(x - goalNode.getX()) + Math.abs(y - goalNode.getY());
-    }
-
 
     public boolean isInsideBorder(int x, int y) {
-        int tmp1 = NODES_PER_EDGE - BORDER_NODE_WIDTH;
-        if (x > BORDER_NODE_WIDTH && y > BORDER_NODE_WIDTH && x < tmp1 && y < tmp1) {
+        int tmp1 = GridGeo.NODES_PER_EDGE - BORDER_NODE_WIDTH;
+        if (x >= BORDER_NODE_WIDTH && y >= BORDER_NODE_WIDTH && x < tmp1 && y < tmp1) {
             return true;
         }
         return false;
     }
 
     public double getNodeSize() {
-        return NODE_GAP_DIST;
+        return GridGeo.NODE_SIZE;
     }
 
 /////////////////////////////////////////////////////////////////////////////
 // below are the object placing methods, for map/grid
 /////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Initialises ClosedNodes and closed list
+     * @return An ideal position in 'cm' coordinates of goal node.
+     */
+    public double[] initClosedList(){
+    	inputCylinderPosition(GridGeo.RAND_CYCL_31cm_Center); 
+        inputCorners();
+        double[] goalIdeal = inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
+        // Maybe good idea:
+        //inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
+        
+        return goalIdeal;
+    }
 
     /**
      * Updates the map so that it won't navigate though a CYLINDER OBJECT
-     * CYCLINDER is hardcoded to be 5.5cm diameter
-     *
-     * @param x cm from LEFT wall
-     * @param y cm from BOTTOM wall
      */
     public void inputCylinderPosition(double x, double y) {
-        final double cr = 2.25; // the cylinderRadius
-        inputCirclePos(x / NODE_GAP_DIST, y / NODE_GAP_DIST, (cr + ROBOT_RADIUS) / NODE_GAP_DIST);
+        addClosedNodeCircle(x / GridGeo.NODE_SIZE, y / GridGeo.NODE_SIZE,
+        		(GridGeo.CYLINDER_RADIUS + ROBOT_RADIUS) / GridGeo.NODE_SIZE);
     }
+    /**
+     * Updates the map so that it won't navigate though a CYLINDER OBJECT
+     */
+    public void inputCylinderPosition(double[] vect) {
+        inputCylinderPosition(vect[0], vect[1]);
+    }
+    
 
     /**
      * Adds corners into the closed list
      */
     public void inputCorners() {
-        double dist = 29.3 / NODE_GAP_DIST; // in nodes
-        double r = ROBOT_RADIUS / NODE_GAP_DIST;
-        double w = COURSE_WIDTH / NODE_GAP_DIST;
-        inputSlantRectangle(dist, 0, 0, dist, r);
-        inputSlantRectangle(w - dist, w, w, w - dist, r);
+        double dist = 29.3 / GridGeo.NODE_SIZE; // in nodes
+        double r = ROBOT_RADIUS / GridGeo.NODE_SIZE;
+        double w = GridGeo.COURSE_WIDTH / GridGeo.NODE_SIZE;
+        addClosedNodeRectangle(dist, 0, 0, dist, r);
+        addClosedNodeRectangle(w - dist, w, w, w - dist, r);
     }
 
     /**
      * Updates the map so that it won't navigate though a TUNNEL OBJECT
      * TUNNEL is hardcoded to be 24cm width by 20cm depth   2cm walls
-     *
-     * @param x       x coordinate of centre of tunnel in cm
-     * @param y       x coordinate of centre of tunnel in cm
-     * @param degrees degrees clockwise from south
-     * @return A two element array, containing x & y, of ideal goal position
      */
     public double[] inputTunnelPosition(double x, double y, double degrees) {
-        double[] result = new double[2];
-        //add left wall (centre calculated to be (24 + 2)/2 = 13 away from middle line of wall
-        double tmpx, tmpy;
-        double tmpxend, tmpyend;
+        double radians = degrees * (Math.PI / 180.0);
+        
+        double[] tmp = GridGeo.correctOffset(x, y, GridGeo.TUNNEL_FRONT_RIGHT);
+        double[] fRight = rotateVector(tmp, x, y, radians);
+        tmp = GridGeo.correctOffset(x, y, GridGeo.TUNNEL_BACK_RIGHT);
+        double[] bRight = rotateVector(tmp, x, y, radians);
+        tmp = GridGeo.correctOffset(x, y, GridGeo.TUNNEL_BACK_LEFT);
+        double[] bLeft = rotateVector(tmp, x, y, radians);
+        tmp = GridGeo.correctOffset(x, y, GridGeo.TUNNEL_FRONT_LEFT);
+        double[] fLeft = rotateVector(tmp, x, y, radians);
 
-        double radians = degrees * (Math.PI / 180.0); // convert to radians to work with math functions.
-        tmpx = x - 13;
-        tmpy = y - 10;
-        double[] frontLeft = rotateVector(new double[]{tmpx, tmpy}, x, y, radians);
-        tmpxend = tmpx;
-        tmpyend = y + 11; // extra cm to go to middle line of back wall
-        tmpx = tmpxend;
-        tmpy = tmpyend;
-        double[] backLeft = rotateVector(new double[]{tmpx, tmpy}, x, y, radians);
-        tmpxend = x + 13;
-        tmpyend = y + 11;
-        tmpx = tmpxend;
-        tmpy = tmpyend;
-        double[] backRight = rotateVector(new double[]{tmpx, tmpy}, x, y, radians);
-        tmpxend = x + 13;
-        tmpyend = y - 10;
-        double[] frontRight = rotateVector(new double[]{tmpxend, tmpyend}, x, y, radians);
-
+        double r = GridGeo.TUNNEL_WALL_RADIUS + ROBOT_RADIUS;
         //add the walls
-        inputWallPosition(frontLeft[0], frontLeft[1], backLeft[0], backLeft[1], ROBOT_RADIUS);
-        inputWallPosition(backLeft[0], backLeft[1], backRight[0], backRight[1], ROBOT_RADIUS);
-        inputWallPosition(backRight[0], backRight[1], frontRight[0], frontRight[1], ROBOT_RADIUS);
+        inputWallPosition(fLeft, bLeft, r);
+        inputWallPosition(bLeft, bRight, r);
+        inputWallPosition(bRight, fRight, r);
 
-        // compute a sensible ideal goal to plan to..
-        final int DIST_FROM_ENTRANCE_OPENING = 5;
-        final int DEPTH_TO_CENTER = 10;
-
-        result = rotateVector(new double[]{x, y - DEPTH_TO_CENTER - DIST_FROM_ENTRANCE_OPENING}, x, y, radians);
-
-        return result;
-
+        // compute a sensible ideal goal to plan to & return
+        final int extraDist = 5;
+        final int depthToCenter = 10;
+        return rotateVector(x, y - depthToCenter - extraDist, x, y, radians);
     }
 
+    private double[] inputTunnelPosition(double[] center, double degrees) {
+    	if (center.length != 2) throw new IllegalArgumentException();
+    	return inputTunnelPosition(center[0], center[1], degrees);
+    }
     /**
      * Updates the map so that it won't navigate though a WALL OBJECT
-     *
-     * @param xStart in cm
-     * @param yStart in cm
-     * @param xEnd   in cm
-     * @param yEnd   in cm
-     * @param radius
      */
-    public void inputWallPosition(double xStart, double yStart, double xEnd, double yEnd, double radius) {
-        // work on the 'nodes' scale
-        double scale = NODE_GAP_DIST;
-        xStart = xStart / scale;
-        yStart = yStart / scale;
-        xEnd = xEnd / scale;
-        yEnd = yEnd / scale;
-        radius = radius / scale;
-        inputSlantRectangle(xStart, yStart, xEnd, yEnd, radius);
-        inputCirclePos(xStart, yStart, radius);
-        inputCirclePos(xEnd, yEnd, radius);
+    public void inputWallPosition(double x1, double y1, double x2, double y2, double r) {
+        double scale = GridGeo.NODE_SIZE; // switch to work on the 'nodes' scale
+        x1 = x1 / scale;
+        y1 = y1 / scale;
+        x2 = x2 / scale;
+        y2 = y2 / scale;
+        r = r / scale;
+        addClosedNodeRectangle(x1, y1, x2, y2, r);
+        addClosedNodeCircle(x1, y1, r);
+        addClosedNodeCircle(x2, y2, r);
+    }
+    
+    /**
+     * Updates the map so that it won't navigate though a WALL OBJECT
+     */
+    public void inputWallPosition(double[] pntA, double[] pntB, double r) {
+    	inputWallPosition(pntA[0], pntA[1], pntB[0], pntB[1], r);
     }
 
-    /**
-     * Works on 'NodeScale'
-     *
-     * @param xStart
-     * @param yStart
-     * @param xEnd
-     * @param yEnd
-     * @param radius
-     */
-    private void inputSlantRectangle(double xStart, double yStart, double xEnd, double yEnd, double radius) {
-        if (xStart == xEnd || yStart == yEnd) {
-            if (xStart == xEnd && yStart == yEnd) {
-            } //don't do anything
-            else if (yStart == yEnd) {
-                int top = (int) Math.floor(yStart + radius);
-                int bottom = (int) Math.ceil(yStart - radius);
+    //(x1,y1), (x2,y2) are mid points of rectangle ends
+    private void addClosedNodeRectangle(double x1, double y1, double x2, double y2, double r) {
+        if (x1 == x2 || y1 == y2) { // CODE IF MID-LINE ALIGNED TO X OR Y AXIS
+            if (x1 == x2 && y1 == y2) {
+             //both points identical so don't do anything
+            }else if (y1 == y2) {
+                int top = (int) Math.floor(y1 + r);
+                int bottom = (int) Math.ceil(y1 - r);
                 for (int i = top; i >= bottom; --i) {
-                    int begin = (int) Math.ceil(Math.min(xEnd, xStart));
-                    double end = Math.max(xEnd, xStart);
+                    int begin = (int) Math.ceil(Math.min(x2, x1));
+                    double end = Math.max(x2, x1);
                     for (int j = begin; j < end; ++j) {
-                        addClosedListNode(i, j);
+                        addClosedNode(i, j);
                     }
-                } //end of for loop
-            } else {
-                int top = (int) Math.floor(Math.max(yStart, yEnd));
-                int bottom = (int) Math.ceil(Math.min(yStart, yEnd));
+                } 
+            } else { // if x1 == x2
+                int top = (int) Math.floor(Math.max(y1, y2));
+                int bottom = (int) Math.ceil(Math.min(y1, y2));
                 for (int i = top; i >= bottom; --i) {
-                    int begin = (int) Math.ceil(xStart - radius);
-                    double end = xStart + radius;
+                    int begin = (int) Math.ceil(x1 - r);
+                    double end = x1 + r;
                     for (int j = begin; j < end; ++j) {
-                        addClosedListNode(i, j);
+                        addClosedNode(i, j);
                     }
-                } //end of for loop
-            }// end of grid-aligned condition
-        } else {
+                }
+            }
+        } else { // CODE IF MID-LINE NOT-ALIGNED TO X OR Y AXIS
             LinkedList<double[]> pnts = new LinkedList<double[]>();
-            double centerX = (xStart + xEnd) / 2;
-            double centerY = (yStart + yEnd) / 2;
-            double len = Math.sqrt((xEnd - xStart) * (xEnd - xStart) + (yEnd - yStart) * (yEnd - yStart));
-            double m = (yEnd - yStart) / (xEnd - xStart);
-            double angle = Math.atan(m); //rotate anti-clockwise
-            pnts.add(new double[]{centerX - len / 2, centerY + radius});
-            pnts.add(new double[]{centerX - len / 2, centerY - radius});
-            pnts.add(new double[]{centerX + len / 2, centerY + radius});
-            pnts.add(new double[]{centerX + len / 2, centerY - radius});
+            double centerX = (x1 + x2) / 2;
+            double centerY = (y1 + y2) / 2;
+            double len = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+            double angle = Math.atan((y2 - y1) / (x2 - x1));
+            pnts.add(new double[]{centerX - len / 2, centerY + r});
+            pnts.add(new double[]{centerX - len / 2, centerY - r});
+            pnts.add(new double[]{centerX + len / 2, centerY + r});
+            pnts.add(new double[]{centerX + len / 2, centerY - r});
             for (double[] element : pnts) {
                 double[] rotated = rotateVector(element, centerX, centerY, angle);
                 element[0] = rotated[0];
@@ -438,7 +306,7 @@ public class Grid {
             {
                 @Override
                 public int compare(double[] o1, double[] o2) {
-                    return new Double(o1[1]).compareTo(new Double(o2[1]));
+                	return Double.compare(o1[1], o2[1]);
                 }
             });
 
@@ -456,95 +324,80 @@ public class Grid {
             double x = Math.min(otherPnt1[0], otherPnt2[0]);
             double w = Math.max(otherPnt1[0], otherPnt2[0]) - x;
 
-            inputBy4LineBounds(x, y, h, w, lineEqs);
+            addClosedNodeQuadrangle(x, y, h, w, lineEqs);
         }
     }
 
-    //need to input NNSS,  +ve grad, draw rect =end,left,start,right
-    //-ve grad drawrect = end,right,start,left .. I.e highest,highest,lowest,lowest
-    private void inputBy4LineBounds(double boxXCoord, double boxYCoord, double boxHeight, double boxWidth, double[][] lineEqs) {
-        boolean[] north = new boolean[]{true, true, false, false};
+    // lineEqs must be inputed as first two being upper-bounding and second two being lower-bounding
+    private void addClosedNodeQuadrangle(double x, double y, double h, double w, double[][] lineEqs) {
+        boolean[] isUpperBounding = new boolean[]{true, true, false, false};
         if (lineEqs.length > 4) throw new IllegalArgumentException("upto four line equations!");
-        for (int i = (int) Math.ceil(boxYCoord); i < boxYCoord + boxHeight; ++i) {
-            for (int j = (int) Math.ceil(boxXCoord); j < boxXCoord + boxWidth; ++j) {
-                boolean yesAddPlease = true;
+        for (int i = (int) Math.ceil(y); i < y + h; ++i) {
+            for (int j = (int) Math.ceil(x); j < x + w; ++j) {
+                boolean insideLines = true;
                 for (int k = 0; k < lineEqs.length; ++k) {
-                    //check line equ
-                    if (north[k]) {
-                        if (i > lineEqs[k][0] * j + lineEqs[k][1]) yesAddPlease = false;
+                    if (isUpperBounding[k]) {
+                        if (i > lineEqs[k][0] * j + lineEqs[k][1]) insideLines = false;
                     } else {
-                        if (i < lineEqs[k][0] * j + lineEqs[k][1]) yesAddPlease = false;
+                        if (i < lineEqs[k][0] * j + lineEqs[k][1]) insideLines = false;
                     }
                 }
-                if (yesAddPlease) addClosedListNode(i, j);
+                if (insideLines) addClosedNode(i, j);
             }
         }
     }
 
-
-    // x^2 + y^2 = r^2
-
-    /**
-     * Works on the 'NodeScale'
-     *
-     * @param xNodeCoord
-     * @param yNodeCoord
-     * @param r
-     */
-    private void inputCirclePos(double xNodeCoord, double yNodeCoord, double r) {
-        int highest = (int) Math.floor(yNodeCoord + r);
-        int lowest = (int) Math.ceil(yNodeCoord - r);
+    private void addClosedNodeCircle(double x, double y, double r) {
+        int highest = (int) Math.floor(y + r);
+        int lowest = (int) Math.ceil(y - r);
 
         for (int i = highest; i >= lowest; --i) {
-            double y = yNodeCoord - i;
-            double change = Math.sqrt(r * r - y * y);
-
-            int xmin = (int) Math.ceil(xNodeCoord - change);
-            int xmax = (int) Math.floor(xNodeCoord + change);
+            double h = y - i;
+            double change = Math.sqrt(r * r - h * h);
+            int xmin = (int) Math.ceil(x - change);
+            int xmax = (int) Math.floor(x + change);
             for (int j = xmin; j <= xmax; ++j) {
-                addClosedListNode(i, j);
+                addClosedNode(i, j);
             }
         }
     }
 
-    /*
-     * inputed into the ith row and jth column
-     */
-    private void addClosedListNode(int i, int j) { //debugging, tmp disable bordercheck
+    // adds to ith row and jth column of 'grid' matrix
+    private void addClosedNode(int i, int j) {
         if (isInsideBorder(i, j)) {
-            AStarNode toAdd = new AStarNode(i, j);
-            closedList.add(toAdd);
+            Node toAdd = new Node(i, j);
             grid[i][j] = toAdd;
         }
     }
 
-    public static double[] rotateVector(double[] vector, double centerX, double centerY, double radians) {
+    //rotates 
+    private static double[] rotateVector(double[] vector, double centerX, double centerY, double radians) {
         if (vector.length != 2) throw new IllegalArgumentException();
-        //line center to vector // cv
         double[] toRotate = new double[]{centerX - vector[0], centerY - vector[1]};
         double cos = Math.cos(radians);
         double sin = Math.sin(radians);
         double[] toAdd = new double[]{cos * toRotate[0] - sin * toRotate[1],
                 sin * toRotate[0] + cos * toRotate[1]};
         double[] result = new double[]{centerX + toAdd[0], centerY + toAdd[1]};
-
+        
         for (int i = 0; i < 2; ++i) {
             result[i] = 1e-12 * Math.rint(1e12 * result[i]);  // discards small multiplication errors
         }
-//		System.out.println("x " + result[0] + "   y " + result[1]);
         return result;
     }
-
-
-    public static double[] findLineEq(double x1, double y1, double x2, double y2) {
-        double m = (y1 - y2) / (x1 - x2);
-        double c = y1 - m * x1;
-        return new double[]{m, c};
+    
+    private static double[] rotateVector(double x, double y, double centerX, double centerY, double radians){
+    	return rotateVector(new double[]{x,y},centerX,centerY,radians);
     }
 
-    public static double[] findLineEq(double[] a, double[] b) {
-        double m = (a[1] - b[1]) / (a[0] - b[0]);
-        double c = a[1] - m * a[0];
+    /**
+     * @param pntA The first point a line goes through
+     * @param pntB The second point a line goes through
+     * @return A 2-element array representing [m,c]  of the line equation y = mx + c
+     */
+    private static double[] findLineEq(double[] pntA, double[] pntB) {
+        double m = (pntA[1] - pntB[1]) / (pntA[0] - pntB[0]);
+        double c = pntA[1] - m * pntA[0];
         return new double[]{m, c};
     }
 }

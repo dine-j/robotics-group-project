@@ -25,7 +25,7 @@ public class Challenge2 {
 
         Position greenObstacle = new Position(0, 0);
         Position redObstacle = new Position(0, 0);
-        AStarNode coloredObstacle;
+        Node coloredObstacle;
 
         Button.waitForAnyPress();
 
@@ -44,9 +44,9 @@ public class Challenge2 {
         // Sensing color
         boolean green = r.getNextObstacle();
         if(green)
-            coloredObstacle = new AStarNode(greenObstacle.x, greenObstacle.y);
+            coloredObstacle = new Node(greenObstacle.x, greenObstacle.y);
         else
-            coloredObstacle = new AStarNode(redObstacle.x, redObstacle.y);
+            coloredObstacle = new Node(redObstacle.x, redObstacle.y);
 
         // Moving back
         r.exitTunnel();
