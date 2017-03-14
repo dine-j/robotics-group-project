@@ -17,8 +17,8 @@ public class GridGeo {
     public static final double BAYESIAN_GAP_DIST = 2; //in cm
     public static final double CYLINDER_RADIUS = 2.5; // in cm
 	public static final double TUNNEL_WALL_RADIUS = 0.9; // in cm
-	public static final double[] TUNNEL_FRONT_LEFT = new double[]{-11,-10};
-	public static final double[] TUNNEL_FRONT_RIGHT = new double[]{11,-10};
+	public static final double[] TUNNEL_FRONT_LEFT = new double[]{-11,-14}; //new double[]{-11,-10};
+	public static final double[] TUNNEL_FRONT_RIGHT = new double[]{11,-14};//new double[]{11,-10};
 	public static final double[] TUNNEL_BACK_LEFT = new double[]{-11,9};
 	public static final double[] TUNNEL_BACK_RIGHT = new double[]{11,9};
 	
@@ -26,6 +26,7 @@ public class GridGeo {
 	 *Can add as many cylinder positions as want to test out 
 	 */
 	public static final double[] RAND_CYCL_31cm_Center = new double[]{40, 82};
+	public static final double[] RAND_CYCL_14cm_Center = new double[]{50, 72};
 	public static final double[] GREEN_CYCL_14cm_Center = new double[]{72, 50};
 	public static final double[] RED_CYCL_31cm_Center = new double[]{82, 40};
 	public static final double[] TUNNEL_BeginMarch_Center = new double[]{82.5, 110};

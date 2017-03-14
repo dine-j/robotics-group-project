@@ -7,6 +7,7 @@ import lejos.hardware.Button;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.MotorPort;
+import lejos.hardware.port.Port;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3GyroSensor;
@@ -22,7 +23,7 @@ public class Challenge1 {
 		EV3MediumRegulatedMotor visionMotor = new EV3MediumRegulatedMotor(MotorPort.B);
 		
 		
-		EV3GyroSensor gyroSensor = new EV3GyroSensor(SensorPort.S1);
+		EV3GyroSensor gyroSensor = new EV3GyroSensor((Port)SensorPort.S1);
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
 		EV3TouchSensor touchSensor = new EV3TouchSensor(SensorPort.S3);
 		EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S4);
@@ -36,14 +37,15 @@ public class Challenge1 {
 			return;
 		
 		// Localize with Bayesian 'strip'
-		//int n = r.localize();  //stubbed out for 16 for the moment 
-		//System.out.println(n);
+		int n = r.localize();  
+		System.out.println(n);
+		Delay.msDelay(3000); // found goal (hopefully)
 
 		// Make a sound
 
 		// Goal using A * (doesn't have to go inside)
 		Grid model = new Grid();
-		int n = 7; // stub  (sensor over 8th cell(position 7), is farthest back possible
+		//int n = 7; // stub  (sensor over 8th cell(position 7), is farthest back possible
 		
 		
 		int  cellOffset = 2; // center of robot is 2 cells behind colour sensor reader.
