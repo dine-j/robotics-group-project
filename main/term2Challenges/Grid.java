@@ -74,16 +74,30 @@ public class Grid {
         Node init = new Node(startNodeXY[0], startNodeXY[1], manhattanHeuristic(startNodeXY[0], startNodeXY[1], goal), 0, null, true);
         openList.add(init);
         grid[startNodeXY[0]][startNodeXY[1]] = init; //add to grid
+
+        boolean isFacingDiagonal = true;
         
         // list of possible actions to use in while loop
         int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
         while (!openList.isEmpty()) {
             Node toExpand = openList.poll(); //find node with minimum value
+
+            if(toExpand.getParent() != null) {
+                Node parent = toExpand.getParent();
+                if(Math.abs(toExpand.getX() - parent.getX()) == 1 && Math.abs(toExpand.getY() - parent.getY()) == 1) // if the parent node is a diagonal node
+                    isFacingDiagonal = true;
+                else
+                    isFacingDiagonal = false;
+            }
             
             for (int i = 0; i < ACTION.length; ++i) {
                 final int x = toExpand.getX() + ACTION[i][0];
                 final int y = toExpand.getY() + ACTION[i][1];
-                double actionCost = (i % 2 == 0) ? 1.0 : RobotMovement.SQRT2;
+                double actionCost;
+                if(isFacingDiagonal)
+                    actionCost = (i % 2 == 0) ? 1.0 + 0.5 : RobotMovement.SQRT2;
+                else
+                    actionCost = (i % 2 == 0) ? 1.0 : RobotMovement.SQRT2 + 0.5;
 
                 //exit out method if found goal
                 if (x == goal.getX() && y == goal.getY()) {
