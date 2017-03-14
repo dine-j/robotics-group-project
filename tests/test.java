@@ -12,7 +12,8 @@ import main.term2Challenges.RobotMovement;
 public class test {
 	public static void main(String args[]){
 		Grid model = new Grid();
-		int n = 7; // stub  (sensor over 8th cell(position 7), is farthest back possible
+		double[] goalCoords = model.initClosedList1();
+		int n = 20; // stub  (sensor over 8th cell(position 7), is farthest back possible
 		
 		
 		int  cellOffset = 2; // center of robot is 2 cells behind colour sensor reader.
@@ -20,7 +21,7 @@ public class test {
 		double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
 		double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
 		
-		Node goalNode = model.aStarSearch(firstNodePosition);
+		Node goalNode = model.aStarSearch(firstNodePosition, goalCoords);
 		
 		
         LinkedList<Node> list = model.findForwardPath(goalNode);

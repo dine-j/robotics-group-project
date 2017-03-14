@@ -58,10 +58,12 @@ public class Grid {
      * Does A* search after initialising closed list
      * precondition: (xStart, yStart) in cm and should line up with a node.
      */
-    public Node aStarSearch(double xStart, double yStart) {
+    public Node aStarSearch(double xStart, double yStart, double xGoal, double yGoal) {
     	
         // 1. Add closed list stuff & get cm coordinates of goalNode
-        double[] goalIdeal = initClosedList();
+        
+    	
+    	double[] goalIdeal = new double[] {xGoal, yGoal};
 
         // 1b. Add goal node
         int goalNodeXY[] = GridGeo.closestNodeInNodeCoords((int) goalIdeal[1], (int) goalIdeal[0]); //TODO: why reversed?
@@ -138,8 +140,8 @@ public class Grid {
      * Does A* search after initialising closed list
      * precondition: start[] vector in cm and should line up with a node.
      */
-    public Node aStarSearch(double[] start) {
-    	return aStarSearch(start[0], start[1]);
+    public Node aStarSearch(double[] start, double[] goal) {
+    	return aStarSearch(start[0], start[1], goal[0], goal[1]);
     }
     
     public LinkedList<Node> findForwardPath(Node goal) {
@@ -184,12 +186,14 @@ public class Grid {
      * Initialises ClosedNodes and closed list
      * @return An ideal position in 'cm' coordinates of goal node.
      */
-    public double[] initClosedList(){
+    public double[] initClosedList1(){
     	inputCylinderPosition(GridGeo.RAND_CYCL_14cm_Center); 
         inputCorners();
         double[] goalIdeal = inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
+        inputWallPosition(new double[]{61,61}, new double[]{51,51}  , 3);
+        
         // Maybe good idea:
-        //inputWallPosition(20, 0, 122, 100, 1);   // 'invisible' wall to reduce search-space
+        inputWallPosition(62, 54, 26,20, 2);   // 'invisible' wall to reduce search-space
         
         return goalIdeal;
     }

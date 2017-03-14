@@ -37,26 +37,27 @@ public class Challenge1 {
 			return;
 		
 		// Localize with Bayesian 'strip'
-		int n = r.localize();  
-		System.out.println(n);
-		Delay.msDelay(3000); // found goal (hopefully)
+//		int n = r.localize();  
+//		System.out.println(n);
+//		Delay.msDelay(6000); // found goal (hopefully)
 
 		// Make a sound
 
 		// Goal using A * (doesn't have to go inside)
-		Grid model = new Grid();
-		//int n = 7; // stub  (sensor over 8th cell(position 7), is farthest back possible
+		int n = 20; // stub
 		
 		
-		int  cellOffset = 2; // center of robot is 2 cells behind colour sensor reader.
+		int  cellOffset = 3; // center of robot is 2 cells behind colour sensor reader.
 		double[] startPosition = GridGeo.BayesianCoordinate(n - cellOffset);
+		System.out.printf("%.1f , %.1f", startPosition[0], startPosition[1]);
 		double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
 		double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
 		
 		r.moveDistance(distToMoveOnDiagonal);
-		Node goalNode = model.aStarSearch(firstNodePosition);
 		
-		
+		Grid model = new Grid();
+		double[] goalCoords = model.initClosedList1();
+		Node goalNode = model.aStarSearch(firstNodePosition, goalCoords);
         LinkedList<Node> list = model.findForwardPath(goalNode);
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
 		double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
@@ -77,6 +78,13 @@ public class Challenge1 {
         actionList = RobotMovement.parsePathToMovements(list, directionRobotFacingNow);
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
 
+	}
+	
+	private void planToGoal(){
+		
+	}
+	private void planBackToStart(){
+		
 	}
 
 }
