@@ -24,11 +24,12 @@ public class aStarTestMain {
         // some extra tests.
 //        model.inputCylinderPosition(61, 61);
 //        AStarNode goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(20));
+        double[] goalCoords = model.initClosedList1();
         long startTime = System.currentTimeMillis();
-        Node goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(6));
+        Node goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(20-3) ,goalCoords );
         System.out.println(System.currentTimeMillis() - startTime);
-//        List<AStarNode> list = model.findForwardPath(goalNode);
-        List<Node> list = model.findBackwardPath(goalNode);
+        List<Node> list = model.findForwardPath(goalNode);
+//        List<Node> list = model.findBackwardPath(goalNode);
         grid.readGrid(model);
         grid.setVisible(true);
 
