@@ -70,7 +70,7 @@ public class Challenge2 {
 		Node goalNode = model.aStarSearch(start, goalCoords);
         LinkedList<Node> list = model.findForwardPath(goalNode);
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
-        int tunnelWallDirection = RobotMovement.NE;
+        int tunnelWallDirection = RobotMovement.E;
         actionList.add(RobotMovement.dirChange(tunnelWallDirection));
 		double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
