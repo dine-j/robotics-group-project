@@ -71,7 +71,7 @@ public class Challenge1 {
         
         //turn 180 -- could do easier way
         List<RobotMovement> l = new LinkedList<RobotMovement>();
-        l.add( RobotMovement.RIGHT180); 
+        l.add( RobotMovement.RIGHT180);
         r.followInstructions(l, 1, 1);
         
 		// Going back to starting point

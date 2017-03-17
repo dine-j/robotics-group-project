@@ -93,7 +93,7 @@ public class Challenge2 {
 		//TODO: unhardcode this
 		Node goalNode = model.aStarSearch(new double[]{112,62} ,GridGeo.CHALLENGE2_BACK_TO_START );
         LinkedList<Node> list = model.findForwardPath(goalNode);
-        List<RobotMovement> actionList =RobotMovement.parsePathToMovements(list, RobotMovement.S);
+        List<RobotMovement> actionList =RobotMovement.parsePathToMovements(list);
 		double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
 	}

@@ -210,6 +210,7 @@ public class Robot {
 
     public void turnToGoAway() {
         rotate(-90);
+        RobotMovement.direction = RobotMovement.S;
     }
 
     /**
