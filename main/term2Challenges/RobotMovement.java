@@ -85,6 +85,8 @@ public enum RobotMovement {
                 return RIGHT135;
             case -4:
                 return RIGHT180;
+            case 7:
+                return RIGHT45;
         }
         return null; 
     }
