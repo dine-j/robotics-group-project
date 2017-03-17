@@ -21,15 +21,14 @@ public class Challenge1 {
 		EV3LargeRegulatedMotor motorL = new EV3LargeRegulatedMotor(MotorPort.A);
 		EV3LargeRegulatedMotor motorR = new EV3LargeRegulatedMotor(MotorPort.D);
 		EV3MediumRegulatedMotor visionMotor = new EV3MediumRegulatedMotor(MotorPort.B);
-		
-		
-		EV3GyroSensor gyroSensor = new EV3GyroSensor((Port)SensorPort.S1);
+
+		EV3GyroSensor gyroSensor = new EV3GyroSensor(SensorPort.S1);
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
 		EV3TouchSensor touchSensor = new EV3TouchSensor(SensorPort.S3);
 		EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S4);
-		
 
 		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor, gyroSensor, touchSensor);
+
 		Button.waitForAnyPress();
 
 		// Measure drift 
@@ -65,7 +64,6 @@ public class Challenge1 {
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
 		double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
-        //TODO: find way so always faces goal
         
         Delay.msDelay(3000); // found goal (hopefully)
         
@@ -76,18 +74,13 @@ public class Challenge1 {
         
 		// Going back to starting point
         list = model.findBackwardPath(goalNode);
-        // get direction robot is facing now (below is stub) - should make new method?
-        int directionRobotFacingNow = RobotMovement.S; //TODO: find better way to do this
         actionList = RobotMovement.parsePathToMovements(list);
+
+		// Add extra movement to face wall
+		int wallDirection = RobotMovement.SW;
+		actionList.add(RobotMovement.dirChange(wallDirection));
+
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
-
+		r.moveToWall();
 	}
-	
-	private void planToGoal(){
-		
-	}
-	private void planBackToStart(){
-		
-	}
-
 }

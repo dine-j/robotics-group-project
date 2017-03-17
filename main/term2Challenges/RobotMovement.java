@@ -69,7 +69,7 @@ public enum RobotMovement {
     }
 
     // precondition is: direction != newDirection
-    private static RobotMovement dirChange(int newDirection) {
+    public static RobotMovement dirChange(int newDirection) {
         switch (direction - newDirection) {
         	case 3:
         		return LEFT135;
@@ -87,6 +87,8 @@ public enum RobotMovement {
                 return RIGHT180;
             case 7:
                 return RIGHT45;
+            case -7:
+                return LEFT45;
         }
         return null; 
     }

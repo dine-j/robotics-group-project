@@ -168,7 +168,7 @@ public class Robot {
     /**
      * Move forward until reaches the end of the tunnel
      */
-    public void enterTunnel() {
+    public void moveToWall() {
         SampleProvider sampleProvider = touchSensor.getTouchMode();
         float[] sample = new float[sampleProvider.sampleSize()];
         sampleProvider.fetchSample(sample, 0);
@@ -217,7 +217,7 @@ public class Robot {
      * Rotate robot by given angle, which can be positive (anticlockwise) or negative (clockwise)
      * @param rotationValue Angle of rotation
      */
-    public void rotate(int rotationValue) {
+    private void rotate(int rotationValue) {
         gyroSensor.reset();
         SampleProvider sampleProvider = gyroSensor.getAngleMode();
         float[] sample = new float[sampleProvider.sampleSize()];

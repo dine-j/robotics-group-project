@@ -30,8 +30,9 @@ public class aStarTestMain {
         
         LinkedList<Node> list = model.findForwardPath(goalNode);
         RobotMovement.direction = RobotMovement.NE;
+        int wallDirection = RobotMovement.NE;
 //        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
-//        List<Node> list = model.findBackwardPath(goalNode);
+//        actionList.add(RobotMovement.dirChange(wallDirection));
         grid.readGrid(model);
         grid.setVisible(true);
 
