@@ -37,14 +37,14 @@ public class Challenge1 {
 			return;
 		
 		// Localize with Bayesian 'strip'
-//		int n = r.localize();  
-//		System.out.println(n);
+		int n = r.localize();  
+		System.out.println(n);
 //		Delay.msDelay(6000); // found goal (hopefully)
 
 		// Make a sound
 
 		// Goal using A * (doesn't have to go inside)
-		int n = 20; // stub - the last white square within two lines
+		//int n = 20; // stub - the last white square within two lines
 		
 		//Calculate where the robot center was based on where it finished reading.
 		double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
