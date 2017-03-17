@@ -29,7 +29,7 @@ public class AStarWayBack {
         model.initClosedList2(isGreen);
         long startTime = System.currentTimeMillis();
         
-        Node goalNode = model.aStarSearch(new double[]{112,62} ,GridGeo.CHALLENGE2_BACK_TO_START );
+        Node goalNode = model.aStarSearch(new double[]{110,62} ,GridGeo.CHALLENGE2_BACK_TO_START );
         System.out.println(System.currentTimeMillis() - startTime);
         
         LinkedList<Node> list = model.findForwardPath(goalNode);
