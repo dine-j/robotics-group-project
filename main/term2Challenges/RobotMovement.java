@@ -32,15 +32,14 @@ public enum RobotMovement {
 	public final static int SE = 5;
 	public final static int S = 6;
 	public final static int SW = 7;
-	
-	
-	
+
+    public static int direction;
+
     /**
      * @param path The sequence of nodes that represents the path
-     * @param direction The initial direction robot is facing
      * @return A list of RobotMovement's for robot to follow
      */
-    public static List<RobotMovement> parsePathToMovements(LinkedList<Node> path, int direction) {
+    public static List<RobotMovement> parsePathToMovements(LinkedList<Node> path) {
         List<RobotMovement> list = new ArrayList<RobotMovement>();
         Node startNode = path.remove();
         int x = startNode.getX();
@@ -55,7 +54,7 @@ public enum RobotMovement {
             if(newDirection == -1)
                 throw new IllegalArgumentException("Wrong direction");
             if(direction != newDirection) {
-                list.add(dirChange(direction, newDirection));
+                list.add(dirChange(newDirection));
             }
             direction = newDirection;
             if(direction == NE || direction == RobotMovement.NW 
@@ -70,34 +69,28 @@ public enum RobotMovement {
     }
 
     // precondition is: direction != newDirection
-    private static RobotMovement dirChange(int direction, int newDirection) {
+    public static RobotMovement dirChange(int newDirection) {
         switch (direction - newDirection) {
-        	case -3:
+        	case 3:
         		return LEFT135;
-            case -2:
-                return LEFT90;
-            case -1:
-                return LEFT45;
-            case 1:
-                return RIGHT45;
             case 2:
+                return LEFT90;
+            case 1:
+                return LEFT45;
+            case -1:
+                return RIGHT45;
+            case -2:
                 return RIGHT90;
-            case 3:
+            case -3:
                 return RIGHT135;
-            case 4:
+            case -4:
                 return RIGHT180;
+            case 7:
+                return RIGHT45;
+            case -7:
+                return LEFT45;
         }
         return null; 
-    }
-    
-    
-    /**
-     * @param path The sequence of nodes that represents the path
-     * @return A list of RobotMovement's for robot to follow
-     */
-    public static List<RobotMovement> parsePathToMovements(LinkedList<Node> path) {
-    	int direction = NW; //TODO: fix bug, robot is pointing NE
-    	return parsePathToMovements(path, direction);
     }
 
     private static int getDirectionToGoal(int xChange, int yChange) {
@@ -116,15 +109,14 @@ public enum RobotMovement {
             }
         }
         if(xChange == 1 && yChange == 1)
-            return NW;
-        if(xChange == -1 && yChange == 1)
-            return SW;
-        if(xChange == 1 && yChange == -1)
             return NE;
-        if(xChange == -1 && yChange == -1)
+        if(xChange == -1 && yChange == 1)
             return SE;
-        
-        
+        if(xChange == 1 && yChange == -1)
+            return NW;
+        if(xChange == -1 && yChange == -1)
+            return SW;
+
         return -1;
     }
 }

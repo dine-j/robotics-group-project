@@ -197,6 +197,33 @@ public class Grid {
         
         return goalIdeal;
     }
+    
+    /**
+     * Initialises ClosedNodes and closed list
+     * @return An ideal position in 'cm' coordinates of goal node.
+     */
+    public void initClosedList2(boolean isGreen){
+        //test invisible walls on way back (challenge 2)
+        inputWallPosition(0, 120, 60, 60, 4);
+        inputWallPosition(0,0 , 60, 60, 4);
+    	
+    	if( isGreen){
+    		inputCylinderPosition(GridGeo.GREEN_CYCL_14cm_Center);
+    	}
+    	else{
+    		inputCylinderPosition(GridGeo.RED_CYCL_31cm_Center); 
+    	}
+    	inputCylinderPosition(GridGeo.RAND_CYCL_14cm_Center); 
+        inputCorners();
+        inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
+        inputWallPosition(new double[]{61,61}, new double[]{51,51}  , 3);
+        
+        // Maybe good idea:
+        inputWallPosition(62, 54, 26,20, 2);   // 'invisible' wall to reduce search-space
+        
+        //return goalIdeal;
+    }
+    
 
     /**
      * Updates the map so that it won't navigate though a CYLINDER OBJECT
@@ -247,9 +274,9 @@ public class Grid {
         inputWallPosition(bRight, fRight, r);
 
         // compute a sensible ideal goal to plan to & return
-        final int extraDist = 14;
+        final int extraDist = 11;
         final int depthToCenter = 10;
-        return rotateVector(x, y - depthToCenter - extraDist, x, y, radians);
+        return rotateVector(x - 2, y - depthToCenter - extraDist, x, y, radians);
     }
 
     private double[] inputTunnelPosition(double[] center, double degrees) {

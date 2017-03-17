@@ -49,6 +49,8 @@ public class Robot {
 
         this.ultrasonicSensor.getDistanceMode();
         this.visionMotor.rotateTo(0);
+
+        RobotMovement.direction = RobotMovement.NE;
     }
 
     public boolean isSensorDrifting() {
@@ -166,7 +168,7 @@ public class Robot {
     /**
      * Move forward until reaches the end of the tunnel
      */
-    public void enterTunnel() {
+    public void moveToWall() {
         SampleProvider sampleProvider = touchSensor.getTouchMode();
         float[] sample = new float[sampleProvider.sampleSize()];
         sampleProvider.fetchSample(sample, 0);
@@ -199,15 +201,16 @@ public class Robot {
         // Debugging
 //        System.out.println(sample[0]);
 
-        return isGreen(sample[0]);
+        return isGreen(sample[2]);
     }
 
     public void exitTunnel() {
-        moveDistance(-20);
+        moveDistance(-21.5);
     }
 
     public void turnToGoAway() {
         rotate(-90);
+        RobotMovement.direction = RobotMovement.S;
     }
 
     /**
@@ -286,6 +289,6 @@ public class Robot {
      * @return  True if the color is green, false otherwise
      */
     private boolean isGreen(float colorValue) {
-        return colorValue < Color.GREEN; // TODO: to be modified once we get the true colors
+        return colorValue < 0.05;
     }
 }

@@ -21,15 +21,14 @@ public class Challenge1 {
 		EV3LargeRegulatedMotor motorL = new EV3LargeRegulatedMotor(MotorPort.A);
 		EV3LargeRegulatedMotor motorR = new EV3LargeRegulatedMotor(MotorPort.D);
 		EV3MediumRegulatedMotor visionMotor = new EV3MediumRegulatedMotor(MotorPort.B);
-		
-		
-		EV3GyroSensor gyroSensor = new EV3GyroSensor((Port)SensorPort.S1);
+
+		EV3GyroSensor gyroSensor = new EV3GyroSensor(SensorPort.S1);
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
 		EV3TouchSensor touchSensor = new EV3TouchSensor(SensorPort.S3);
 		EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S4);
-		
 
 		Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor, gyroSensor, touchSensor);
+
 		Button.waitForAnyPress();
 
 		// Measure drift 
@@ -37,23 +36,26 @@ public class Challenge1 {
 			return;
 		
 		// Localize with Bayesian 'strip'
-//		int n = r.localize();  
-//		System.out.println(n);
+		int n = r.localize();  
+		System.out.println(n);
 //		Delay.msDelay(6000); // found goal (hopefully)
 
 		// Make a sound
 
 		// Goal using A * (doesn't have to go inside)
-		int n = 20; // stub
+		//int n = 20; // stub - the last white square within two lines
 		
+		//Calculate where the robot center was based on where it finished reading.
+		double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
+		// startPosition should be about 2 cells behind the colour sensor in current build
 		
-		int  cellOffset = 3; // center of robot is 2 cells behind colour sensor reader.
-		double[] startPosition = GridGeo.BayesianCoordinate(n - cellOffset);
+		//debugging - Prints where center of robot was immediately after localization
 		System.out.printf("%.1f , %.1f", startPosition[0], startPosition[1]);
-		double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
-		double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
 		
-		r.moveDistance(distToMoveOnDiagonal);
+		double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
+		// calculate diagonal-distance to move based of x coordinate difference
+		double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
+		r.moveDistance(distToMoveOnDiagonal); 
 		
 		Grid model = new Grid();
 		double[] goalCoords = model.initClosedList1();
@@ -62,29 +64,19 @@ public class Challenge1 {
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
 		double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
-        //TODO: find way so always faces goal
         
         Delay.msDelay(3000); // found goal (hopefully)
         
-        //turn 180 -- could do easier way
-        List<RobotMovement> l = new LinkedList<RobotMovement>();
-        l.add( RobotMovement.RIGHT180); 
-        r.followInstructions(l, 1, 1);
-        
 		// Going back to starting point
+		System.out.println("Start to go back");
         list = model.findBackwardPath(goalNode);
-        // get direction robot is facing now (below is stub) - should make new method?
-        int directionRobotFacingNow = RobotMovement.S; //TODO: find better way to do this
-        actionList = RobotMovement.parsePathToMovements(list, directionRobotFacingNow);
+        actionList = RobotMovement.parsePathToMovements(list);
+
+		// Add extra movement to face wall
+		int wallDirection = RobotMovement.SW;
+		actionList.add(RobotMovement.dirChange(wallDirection));
+
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
-
+		r.moveToWall();
 	}
-	
-	private void planToGoal(){
-		
-	}
-	private void planBackToStart(){
-		
-	}
-
 }

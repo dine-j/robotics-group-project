@@ -14,7 +14,7 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 import main.term2Challenges.Grid;
 import main.term2Challenges.Robot;
 import main.term2Challenges.RobotMovement;
-import tests.aStarTest.MockedPathGenerator;
+//import tests.aStarTest.MockedPathGenerator;
 
 public class MockedPathTesting {
 
@@ -52,8 +52,8 @@ public class MockedPathTesting {
 		 * Accuracy of angle is within 5 to 10 degrees, perhaps maybe 2 degrees
 		 */
 		//tests inside of tunnel
-		List<RobotMovement> egActions = MockedPathGenerator.testPath4(); //PASSED
-		r.followInstructions(egActions, model.getNodeSize(), nodeDiagonal);
+//		List<RobotMovement> egActions = MockedPathGenerator.testPath4(); //PASSED
+//		r.followInstructions(egActions, model.getNodeSize(), nodeDiagonal);
 		
 
 	}

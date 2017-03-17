@@ -13,6 +13,8 @@ public class GridGeo {
     public static final double COURSE_WIDTH = 122; // in cm
     public static final double CORNER_DIAG_WIDTH = 21; // in cm
     public static final double BAYESIAN_ZEROTH_DIAG = CORNER_DIAG_WIDTH + 2; // in cm
+    public static final double BAYESIAN_DETECTOR_TO_ROBOT_CENTER_DIST = 4.5; // in cm
+    
     public static final double NODE_SIZE = (double) COURSE_WIDTH / (double) (NODES_PER_EDGE - 1);	
     public static final double BAYESIAN_GAP_DIST = 2; //in cm
     public static final double CYLINDER_RADIUS = 2.5 + 2; // in cm
@@ -30,6 +32,10 @@ public class GridGeo {
 	public static final double[] GREEN_CYCL_14cm_Center = new double[]{72, 50};
 	public static final double[] RED_CYCL_31cm_Center = new double[]{82, 40};
 	public static final double[] TUNNEL_BeginMarch_Center = new double[]{82.5, 110};
+	
+//	public static final double[] TUNNEL_BeginMarch_Center = new double[]{82.5, 112};
+	
+	public static final double[] CHALLENGE2_BACK_TO_START = new double[]{30, 16};
 	
 	/**
 	 * @return The result of adding offsetVector[] to {x, y}
@@ -73,6 +79,18 @@ public class GridGeo {
     public static double[] nextNodeOnLeadingDiagonal( double[] currPos){
     	double xOrY = (Math.ceil(currPos[0]/ NODE_SIZE)) * NODE_SIZE;
     	return new double[]{ xOrY, xOrY};
+    }
+    
+    /**
+     * @param colourReaderCenter The center of the colourReader in 'cm' coordinates
+     * @return The center of the robot in 'cm' coordinates, if center is SW behind colour sensor
+     */
+    public static double[] actualRobotCenterSW(double[] colourReaderCenter){
+    	double x = colourReaderCenter[0];
+    	double y = colourReaderCenter[1];
+    	x -= BAYESIAN_DETECTOR_TO_ROBOT_CENTER_DIST / RobotMovement.SQRT2;
+    	y -= BAYESIAN_DETECTOR_TO_ROBOT_CENTER_DIST / RobotMovement.SQRT2;
+    	return new double[]{x,y};
     }
 	
 }
