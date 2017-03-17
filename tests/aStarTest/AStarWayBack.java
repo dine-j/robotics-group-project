@@ -34,7 +34,8 @@ public class AStarWayBack {
         
         LinkedList<Node> list = model.findForwardPath(goalNode);
 //        List<Node> list = model.findBackwardPath(goalNode);
-        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
+        RobotMovement.direction = RobotMovement.S;
+//        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
         
         grid.readGrid(model);
         grid.setVisible(true);

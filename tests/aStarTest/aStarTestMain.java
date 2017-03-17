@@ -29,6 +29,8 @@ public class aStarTestMain {
         System.out.println(System.currentTimeMillis() - startTime + " ms to find path");
         
         LinkedList<Node> list = model.findForwardPath(goalNode);
+        RobotMovement.direction = RobotMovement.NE;
+//        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
 //        List<Node> list = model.findBackwardPath(goalNode);
         grid.readGrid(model);
         grid.setVisible(true);
