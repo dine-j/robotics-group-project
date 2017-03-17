@@ -67,12 +67,8 @@ public class Challenge1 {
         
         Delay.msDelay(3000); // found goal (hopefully)
         
-        //turn 180 -- could do easier way
-        List<RobotMovement> l = new LinkedList<RobotMovement>();
-        l.add( RobotMovement.RIGHT180);
-        r.followInstructions(l, 1, 1);
-        
 		// Going back to starting point
+		System.out.println("Start to go back");
         list = model.findBackwardPath(goalNode);
         actionList = RobotMovement.parsePathToMovements(list);
 
