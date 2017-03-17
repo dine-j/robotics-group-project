@@ -11,10 +11,42 @@ import main.term2Challenges.RobotMovement;
 
 public class test {
 	public static void main(String args[]){
+		
+		/*
+		double[] coords = GridGeo.actualRobotCenterSW(new double[]{55,55});
+		System.out.println(coords[0]);
+		System.out.println(coords[1]);
+		*/
+		
+		
+		/*
+		 * Calculating results of the stub 20
+		 */
+		/*
+		int n = 20; // stub - the last white square within two lines
+		//Calculate where the robot center was based on where it finished reading.
+		double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
+		// startPosition should be about 2 cells behind the colour sensor in current build
+		
+		double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
+		
+		
+		//debugging - Prints where center of robot was immediately after localization
+		System.out.printf("%.1f , %.1f\n", startPosition[0], startPosition[1]);
+		
+		//debugging - Prints where robot plans from
+		System.out.printf("%.1f , %.1f\n", firstNodePosition[0], firstNodePosition[1]);
+		*/
+		/*
+		 * Results are: 41.7 , 41.7
+		 * Results are: 42.0 , 42.0
+		 */
+		
+		
+		
 		Grid model = new Grid();
 		double[] goalCoords = model.initClosedList1();
-		int n = 20; // stub  (sensor over 8th cell(position 7), is farthest back possible
-		
+		int n = 20; // stub 
 		
 		int  cellOffset = 2; // center of robot is 2 cells behind colour sensor reader.
 		double[] startPosition = GridGeo.BayesianCoordinate(n - cellOffset);
@@ -27,9 +59,8 @@ public class test {
         LinkedList<Node> list = model.findForwardPath(goalNode);
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
 		double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
-        //TODO: find way so always faces goal
         
-        Delay.msDelay(3000); // found goal (hopefully)
+        //Delay.msDelay(3000); // found goal (hopefully)
         
         //turn 180 -- could do easier way
         List<RobotMovement> l = new LinkedList<RobotMovement>();
@@ -41,5 +72,6 @@ public class test {
         // get direction robot is facing now (below is stub) - should make new method?
         int directionRobotFacingNow = RobotMovement.S; //TODO: find better way to do this
         actionList = RobotMovement.parsePathToMovements(list, directionRobotFacingNow);
+        
 	}
 }

@@ -26,7 +26,13 @@ public class aStarTestMain {
 //        AStarNode goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(20));
         double[] goalCoords = model.initClosedList1();
         long startTime = System.currentTimeMillis();
-        Node goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(20-3) ,goalCoords );
+        Node goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(20-2) ,goalCoords );
+    	
+        /* ..........Actually doing search from 41.7 in (20-2) case but rounds..
+		 * Results are: 41.7 , 41.7
+		 * Results are: 42.0 , 42.0
+		 */
+        
         System.out.println(System.currentTimeMillis() - startTime);
         List<Node> list = model.findForwardPath(goalNode);
 //        List<Node> list = model.findBackwardPath(goalNode);

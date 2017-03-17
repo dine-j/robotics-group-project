@@ -44,16 +44,19 @@ public class Challenge1 {
 		// Make a sound
 
 		// Goal using A * (doesn't have to go inside)
-		int n = 20; // stub
+		int n = 20; // stub - the last white square within two lines
 		
+		//Calculate where the robot center was based on where it finished reading.
+		double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
+		// startPosition should be about 2 cells behind the colour sensor in current build
 		
-		int  cellOffset = 3; // center of robot is 2 cells behind colour sensor reader.
-		double[] startPosition = GridGeo.BayesianCoordinate(n - cellOffset);
+		//debugging - Prints where center of robot was immediately after localization
 		System.out.printf("%.1f , %.1f", startPosition[0], startPosition[1]);
-		double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
-		double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
 		
-		r.moveDistance(distToMoveOnDiagonal);
+		double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
+		// calculate diagonal-distance to move based of x coordinate difference
+		double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
+		r.moveDistance(distToMoveOnDiagonal); 
 		
 		Grid model = new Grid();
 		double[] goalCoords = model.initClosedList1();
