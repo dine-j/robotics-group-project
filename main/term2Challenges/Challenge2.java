@@ -51,6 +51,7 @@ public class Challenge2 {
 		// Goal using A * (doesn't have to go inside)
 		double[] goalCoords = planToGoal(firstNodePosition,r);
         // Going inside the tunnel
+		r.rotate(-90);
         r.enterTunnel();
         
         // Sensing color
@@ -87,9 +88,12 @@ public class Challenge2 {
 		
 		Grid model = new Grid();
 		model.initClosedList2(isGreen);
-		Node goalNode = model.aStarSearch(start, GridGeo.CHALLENGE2_BACK_TO_START);
+		//Node goalNode = model.aStarSearch(start, GridGeo.CHALLENGE2_BACK_TO_START);
+		
+		//TODO: unhardcode this
+		Node goalNode = model.aStarSearch(new double[]{112,62} ,GridGeo.CHALLENGE2_BACK_TO_START );
         LinkedList<Node> list = model.findForwardPath(goalNode);
-        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
+        List<RobotMovement> actionList =RobotMovement.parsePathToMovements(list, RobotMovement.S);
 		double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
 	}

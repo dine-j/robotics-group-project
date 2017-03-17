@@ -203,7 +203,7 @@ public class Robot {
     }
 
     public void exitTunnel() {
-        moveDistance(-20);
+        moveDistance(-21.5);
     }
 
     public void turnToGoAway() {
@@ -214,7 +214,7 @@ public class Robot {
      * Rotate robot by given angle, which can be positive (anticlockwise) or negative (clockwise)
      * @param rotationValue Angle of rotation
      */
-    private void rotate(int rotationValue) {
+    public void rotate(int rotationValue) {
         gyroSensor.reset();
         SampleProvider sampleProvider = gyroSensor.getAngleMode();
         float[] sample = new float[sampleProvider.sampleSize()];

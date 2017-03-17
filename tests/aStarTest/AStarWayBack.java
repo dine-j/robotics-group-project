@@ -1,14 +1,16 @@
 package tests.aStarTest;
 
+import java.util.LinkedList;
 import java.util.List;
 import main.term2Challenges.Node;
+import main.term2Challenges.RobotMovement;
 import main.term2Challenges.Grid;
 import main.term2Challenges.GridGeo;
 
 /**
- * Creates grid gui, to see how A* search will perform
+ * Creates grid gui, to see how A* search will perform   on the way back
  */
-public class aStarTestMain {
+public class AStarWayBack {
     public static void main(String[] args) throws InterruptedException {
         Grid model = new Grid();
         int size = model.getSize();
@@ -20,14 +22,20 @@ public class aStarTestMain {
                 }
             }
         }
+        
+//        boolean isGreen = true;
+        boolean isGreen = false;
 
-        double[] goalCoords = model.initClosedList1();
+        model.initClosedList2(isGreen);
         long startTime = System.currentTimeMillis();
-        Node goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(20-2) ,goalCoords );
+        
+        Node goalNode = model.aStarSearch(new double[]{112,62} ,GridGeo.CHALLENGE2_BACK_TO_START );
         System.out.println(System.currentTimeMillis() - startTime);
         
-        List<Node> list = model.findForwardPath(goalNode);
+        LinkedList<Node> list = model.findForwardPath(goalNode);
 //        List<Node> list = model.findBackwardPath(goalNode);
+        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list, RobotMovement.S);
+        
         grid.readGrid(model);
         grid.setVisible(true);
 
