@@ -23,8 +23,8 @@ public class AStarWayBack {
             }
         }
         
-//        boolean isGreen = true;
-        boolean isGreen = false;
+        boolean isGreen = true;
+//        boolean isGreen = false;
 
         model.initClosedList2(isGreen);
         long startTime = System.currentTimeMillis();
