@@ -49,6 +49,8 @@ public class Robot {
 
         this.ultrasonicSensor.getDistanceMode();
         this.visionMotor.rotateTo(0);
+
+        RobotMovement.direction = RobotMovement.NE;
     }
 
     public boolean isSensorDrifting() {

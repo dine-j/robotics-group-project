@@ -78,7 +78,7 @@ public class Challenge1 {
         list = model.findBackwardPath(goalNode);
         // get direction robot is facing now (below is stub) - should make new method?
         int directionRobotFacingNow = RobotMovement.S; //TODO: find better way to do this
-        actionList = RobotMovement.parsePathToMovements(list, directionRobotFacingNow);
+        actionList = RobotMovement.parsePathToMovements(list);
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
 
 	}

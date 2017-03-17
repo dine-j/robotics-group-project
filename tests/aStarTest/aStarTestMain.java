@@ -1,9 +1,11 @@
 package tests.aStarTest;
 
+import java.util.LinkedList;
 import java.util.List;
 import main.term2Challenges.Node;
 import main.term2Challenges.Grid;
 import main.term2Challenges.GridGeo;
+import main.term2Challenges.RobotMovement;
 
 /**
  * Creates grid gui, to see how A* search will perform
@@ -24,9 +26,9 @@ public class aStarTestMain {
         double[] goalCoords = model.initClosedList1();
         long startTime = System.currentTimeMillis();
         Node goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(20-2) ,goalCoords );
-        System.out.println(System.currentTimeMillis() - startTime);
+        System.out.println(System.currentTimeMillis() - startTime + " ms to find path");
         
-        List<Node> list = model.findForwardPath(goalNode);
+        LinkedList<Node> list = model.findForwardPath(goalNode);
 //        List<Node> list = model.findBackwardPath(goalNode);
         grid.readGrid(model);
         grid.setVisible(true);

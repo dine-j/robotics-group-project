@@ -32,15 +32,14 @@ public enum RobotMovement {
 	public final static int SE = 5;
 	public final static int S = 6;
 	public final static int SW = 7;
-	
-	
-	
+
+    public static int direction;
+
     /**
      * @param path The sequence of nodes that represents the path
-     * @param direction The initial direction robot is facing
      * @return A list of RobotMovement's for robot to follow
      */
-    public static List<RobotMovement> parsePathToMovements(LinkedList<Node> path, int direction) {
+    public static List<RobotMovement> parsePathToMovements(LinkedList<Node> path) {
         List<RobotMovement> list = new ArrayList<RobotMovement>();
         Node startNode = path.remove();
         int x = startNode.getX();
@@ -89,16 +88,6 @@ public enum RobotMovement {
         }
         return null; 
     }
-    
-    
-    /**
-     * @param path The sequence of nodes that represents the path
-     * @return A list of RobotMovement's for robot to follow
-     */
-    public static List<RobotMovement> parsePathToMovements(LinkedList<Node> path) {
-    	int direction = NW; //TODO: fix bug, robot is pointing NE
-    	return parsePathToMovements(path, direction);
-    }
 
     private static int getDirectionToGoal(int xChange, int yChange) {
 //        System.out.println("Change in x: " + xChange + ", change in y: " + yChange);
@@ -116,15 +105,14 @@ public enum RobotMovement {
             }
         }
         if(xChange == 1 && yChange == 1)
-            return NW;
-        if(xChange == -1 && yChange == 1)
             return SW;
+        if(xChange == -1 && yChange == 1)
+            return NW;
         if(xChange == 1 && yChange == -1)
-            return NE;
-        if(xChange == -1 && yChange == -1)
             return SE;
-        
-        
+        if(xChange == -1 && yChange == -1)
+            return NE;
+
         return -1;
     }
 }
