@@ -201,7 +201,7 @@ public class Robot {
         // Debugging
 //        System.out.println(sample[0]);
 
-        return isGreen(sample[0]);
+        return isGreen(sample[2]);
     }
 
     public void exitTunnel() {
@@ -289,6 +289,6 @@ public class Robot {
      * @return  True if the color is green, false otherwise
      */
     private boolean isGreen(float colorValue) {
-        return colorValue < Color.GREEN; // TODO: to be modified once we get the true colors
+        return colorValue < 0.05;
     }
 }
