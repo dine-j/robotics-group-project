@@ -54,7 +54,7 @@ public enum RobotMovement {
             if(newDirection == -1)
                 throw new IllegalArgumentException("Wrong direction");
             if(direction != newDirection) {
-                list.add(dirChange(direction, newDirection));
+                list.add(dirChange(newDirection));
             }
             direction = newDirection;
             if(direction == NE || direction == RobotMovement.NW 
@@ -69,21 +69,21 @@ public enum RobotMovement {
     }
 
     // precondition is: direction != newDirection
-    private static RobotMovement dirChange(int direction, int newDirection) {
+    private static RobotMovement dirChange(int newDirection) {
         switch (direction - newDirection) {
-        	case -3:
+        	case 3:
         		return LEFT135;
-            case -2:
-                return LEFT90;
-            case -1:
-                return LEFT45;
-            case 1:
-                return RIGHT45;
             case 2:
+                return LEFT90;
+            case 1:
+                return LEFT45;
+            case -1:
+                return RIGHT45;
+            case -2:
                 return RIGHT90;
-            case 3:
+            case -3:
                 return RIGHT135;
-            case 4:
+            case -4:
                 return RIGHT180;
         }
         return null; 
@@ -105,13 +105,13 @@ public enum RobotMovement {
             }
         }
         if(xChange == 1 && yChange == 1)
-            return SW;
-        if(xChange == -1 && yChange == 1)
-            return NW;
-        if(xChange == 1 && yChange == -1)
-            return SE;
-        if(xChange == -1 && yChange == -1)
             return NE;
+        if(xChange == -1 && yChange == 1)
+            return SE;
+        if(xChange == 1 && yChange == -1)
+            return NW;
+        if(xChange == -1 && yChange == -1)
+            return SW;
 
         return -1;
     }
