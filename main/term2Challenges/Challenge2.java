@@ -30,15 +30,15 @@ public class Challenge2 {
         Button.waitForAnyPress();
 
         // Localize with Bayesian 'strip'
-        // int n = r.localize();
-//		System.out.println(n);
+         int n = r.localize();
+		System.out.println(n);
 
         // Make a sound
         if(r.isSensorDrifting())
             return;
 
         // Get onto the 'Grid network'
-		int n = 20; // stub - the last white square within two lines
+//		int n = 20; // stub - the last white square within two lines
 		double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
         double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
         double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
