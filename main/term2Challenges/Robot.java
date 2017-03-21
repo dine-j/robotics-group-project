@@ -225,19 +225,16 @@ public class Robot {
         float[] sample = new float[sampleProvider.sampleSize()];
         sampleProvider.fetchSample(sample, 0);
 
-        float kp = 0.7f;
-        float ki = 0f;
-        float kd = 0f;
-        int tp = 10;
-        float integral = 0f;
-        float derivative = 0f;
+        float kp = 2f;
+        int tp = 30;
+        int threshold = 10;
 
         if (rotationValue > 0) {
             while (sample[0] < rotationValue) {
                 float angle = sample[0];
                 float error = angle - rotationValue;
 
-                float turn = kp * error + ki * integral + kd * derivative;
+                float turn = kp * error;
                 float power = tp - turn;
 
                 motorL.setSpeed(power);
@@ -247,13 +244,18 @@ public class Robot {
                 motorL.backward();
 
                 sampleProvider.fetchSample(sample, 0);
+
+                if(rotationValue - angle <= threshold) {
+                    kp = 0.7f;
+                    tp = 10;
+                }
             }
         } else {
             while (Math.abs(sample[0]) < -rotationValue) {
                 float angle = Math.abs(sample[0]);
                 float error = angle + rotationValue;
 
-                float turn = kp * error + ki * integral + kd * derivative;
+                float turn = kp * error;
                 float power = tp - turn;
 
                 motorL.setSpeed(power);
@@ -263,6 +265,11 @@ public class Robot {
                 motorR.backward();
 
                 sampleProvider.fetchSample(sample, 0);
+
+                if (-rotationValue - angle <= threshold) {
+                    kp = 0.7f;
+                    tp = 10;
+                }
             }
         }
 
