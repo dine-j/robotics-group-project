@@ -37,7 +37,7 @@ public class RotationMotion {
         float[] sample = new float[sampleProvider.sampleSize()];
         sampleProvider.fetchSample(sample, 0);
 
-        float kp = 0.7f;
+        float kp = 1.5f;//0.7f;
         float ki = 0f;
         float kd = 0f;
         int tp = 10;
