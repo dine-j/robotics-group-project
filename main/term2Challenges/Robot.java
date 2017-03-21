@@ -48,6 +48,10 @@ public class Robot {
         RobotMovement.direction = RobotMovement.NE;
     }
 
+    /**
+     * Test if the sensor is drifting and beep twice if this is the case
+     * @return  True if the sensor is drifting
+     */
     public boolean isSensorDrifting() {
         gyroSensor.reset();
         SampleProvider sampleProvider = gyroSensor.getAngleMode();
@@ -199,6 +203,9 @@ public class Robot {
         return isGreen(sample[2]);
     }
 
+    /**
+     * Exit tunnel by moving back 21.5cm
+     */
     public void exitTunnel() {
         moveDistance(-21.5);
     }
