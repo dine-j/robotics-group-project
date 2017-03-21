@@ -4,9 +4,7 @@ import java.util.List;
 
 import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.*;
-import lejos.robotics.Color;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
@@ -17,38 +15,35 @@ import lejos.utility.Delay;
  * Port B: HeadRotatingMotor
  * 
  * Port 1: Gyro
- * Port 2: Ultrasound
- * Port 3: Touch
+ * Port 2: Upper Touch - wall of tunnel
+ * Port 3: Bottom Touch - back of tunnel bumper
  * Port 4: Color
  */
 
 public class Robot {
 
     private EV3LargeRegulatedMotor motorL, motorR;
-    private EV3MediumRegulatedMotor visionMotor;
 
     private EV3ColorSensor colorSensor;
-    private EV3UltrasonicSensor ultrasonicSensor;
+    private EV3UltrasonicSensor upperTouchSensor;
     private EV3GyroSensor gyroSensor;
-    private EV3TouchSensor touchSensor;
+    private EV3TouchSensor bottomTouchSensor;
 
     private static final double DISTANCE_PER_REVOLUTION = 17.27; // cm per 360° rotation
 
-    public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3MediumRegulatedMotor visionMotor, EV3ColorSensor colorSensor, EV3UltrasonicSensor ultrasonicSensor, EV3GyroSensor gyroSensor, EV3TouchSensor touchSensor) {
+    public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3ColorSensor colorSensor, EV3UltrasonicSensor upperTouchSensor, EV3GyroSensor gyroSensor, EV3TouchSensor bottomTouchSensor) {
         this.motorL = motorL;
         this.motorR = motorR;
 
-        this.visionMotor = visionMotor;
         this.colorSensor = colorSensor;
-        this.ultrasonicSensor = ultrasonicSensor;
+        this.upperTouchSensor = upperTouchSensor;
         this.gyroSensor = gyroSensor;
-        this.touchSensor = touchSensor;
+        this.bottomTouchSensor = bottomTouchSensor;
 
         this.motorL.setSpeed(120);
         this.motorR.setSpeed(120);
 
-        this.ultrasonicSensor.getDistanceMode();
-        this.visionMotor.rotateTo(0);
+        this.upperTouchSensor.getDistanceMode();
 
         RobotMovement.direction = RobotMovement.NE;
     }
@@ -169,7 +164,7 @@ public class Robot {
      * Move forward until reaches the end of the tunnel
      */
     public void moveToWall() {
-        SampleProvider sampleProvider = touchSensor.getTouchMode();
+        SampleProvider sampleProvider = bottomTouchSensor.getTouchMode();
         float[] sample = new float[sampleProvider.sampleSize()];
         sampleProvider.fetchSample(sample, 0);
 
