@@ -21,24 +21,24 @@ public class Challenge2 {
         EV3MediumRegulatedMotor visionMotor = new EV3MediumRegulatedMotor(MotorPort.B);
 
         EV3GyroSensor gyroSensor = new EV3GyroSensor(SensorPort.S1);
-        EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
-        EV3TouchSensor touchSensor = new EV3TouchSensor(SensorPort.S3);
+        EV3UltrasonicSensor upperTouchSensor = new EV3UltrasonicSensor(SensorPort.S2);
+        EV3TouchSensor bottomTouchSensor = new EV3TouchSensor(SensorPort.S3);
         EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S4);
 
-        Robot r = new Robot(motorL, motorR, visionMotor, colorSensor, ultrasonicSensor, gyroSensor, touchSensor);
+        Robot r = new Robot(motorL, motorR, colorSensor, upperTouchSensor, gyroSensor, bottomTouchSensor);
 
         Button.waitForAnyPress();
 
         // Localize with Bayesian 'strip'
-        // int n = r.localize();
-//		System.out.println(n);
+         int n = r.localize();
+		System.out.println(n);
 
         // Make a sound
         if(r.isSensorDrifting())
             return;
 
         // Get onto the 'Grid network'
-		int n = 20; // stub - the last white square within two lines
+//		int n = 20; // stub - the last white square within two lines
 		double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
         double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
         double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
