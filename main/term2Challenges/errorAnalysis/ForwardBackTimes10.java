@@ -10,8 +10,11 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
+/**
+ * Initial testing for moving forward/backwards 2cm
+ */
 public class ForwardBackTimes10 {
-	private static RegulatedMotor motorL;
+    private static RegulatedMotor motorL;
     private static RegulatedMotor motorR;
     private static EV3GyroSensor gyro;
 
@@ -35,8 +38,8 @@ public class ForwardBackTimes10 {
 
         
         for (int k = 0; k < 5; ++k){  // Should be x10 but trying x5 first
-        	for(int i = 0; i < 10; ++i) {
-        		moveForward();
+            for(int i = 0; i < 10; ++i) {
+                moveForward();
                 Delay.msDelay(300);
                 // Record error
                 sampleProvider.fetchSample(sample, 0);
@@ -45,7 +48,7 @@ public class ForwardBackTimes10 {
             }
             
             for(int i = 0; i < 10; ++i) {
-            	moveBackward();
+                moveBackward();
                 Delay.msDelay(300);
                 // Record error
                 sampleProvider.fetchSample(sample, 0);

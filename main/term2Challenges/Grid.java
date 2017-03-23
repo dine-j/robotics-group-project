@@ -22,7 +22,7 @@ public class Grid {
      * |      b            |
      * |   b               |
      * |b                  |
-     * 	^------------------
+     *  ^------------------
      *  |
      *  Matrix coordinate (0,0)
      */
@@ -59,11 +59,11 @@ public class Grid {
      * precondition: (xStart, yStart) in cm and should line up with a node.
      */
     public Node aStarSearch(double xStart, double yStart, double xGoal, double yGoal) {
-    	
+        
         // 1. Add closed list stuff & get cm coordinates of goalNode
         
-    	
-    	double[] goalIdeal = new double[] {xGoal, yGoal};
+        
+        double[] goalIdeal = new double[] {xGoal, yGoal};
 
         // 1b. Add goal node
         int goalNodeXY[] = GridGeo.closestNodeInNodeCoords((int) goalIdeal[1], (int) goalIdeal[0]); //TODO: why reversed?
@@ -141,7 +141,7 @@ public class Grid {
      * precondition: start[] vector in cm and should line up with a node.
      */
     public Node aStarSearch(double[] start, double[] goal) {
-    	return aStarSearch(start[0], start[1], goal[0], goal[1]);
+        return aStarSearch(start[0], start[1], goal[0], goal[1]);
     }
     
     public LinkedList<Node> findForwardPath(Node goal) {
@@ -187,7 +187,7 @@ public class Grid {
      * @return An ideal position in 'cm' coordinates of goal node.
      */
     public double[] initClosedList1(){
-    	inputCylinderPosition(GridGeo.RAND_CYCL_14cm_Center); 
+        inputCylinderPosition(GridGeo.RAND_CYCL_14cm_Center); 
         inputCorners();
         double[] goalIdeal = inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
         inputWallPosition(new double[]{61,61}, new double[]{51,51}  , 3);
@@ -206,14 +206,14 @@ public class Grid {
         //test invisible walls on way back (challenge 2)
         inputWallPosition(0, 120, 60, 60, 4);
         inputWallPosition(0,0 , 60, 60, 4);
-    	
-    	if( isGreen){
-    		inputCylinderPosition(GridGeo.GREEN_CYCL_14cm_Center);
-    	}
-    	else{
-    		inputCylinderPosition(GridGeo.RED_CYCL_31cm_Center); 
-    	}
-    	inputCylinderPosition(GridGeo.RAND_CYCL_14cm_Center); 
+        
+        if( isGreen){
+            inputCylinderPosition(GridGeo.GREEN_CYCL_14cm_Center);
+        }
+        else{
+            inputCylinderPosition(GridGeo.RED_CYCL_31cm_Center); 
+        }
+        inputCylinderPosition(GridGeo.RAND_CYCL_14cm_Center); 
         inputCorners();
         inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
         inputWallPosition(new double[]{61,61}, new double[]{51,51}  , 3);
@@ -230,7 +230,7 @@ public class Grid {
      */
     public void inputCylinderPosition(double x, double y) {
         addClosedNodeCircle(x / GridGeo.NODE_SIZE, y / GridGeo.NODE_SIZE,
-        		(GridGeo.CYLINDER_RADIUS + ROBOT_RADIUS) / GridGeo.NODE_SIZE);
+                (GridGeo.CYLINDER_RADIUS + ROBOT_RADIUS) / GridGeo.NODE_SIZE);
     }
     /**
      * Updates the map so that it won't navigate though a CYLINDER OBJECT
@@ -280,8 +280,8 @@ public class Grid {
     }
 
     private double[] inputTunnelPosition(double[] center, double degrees) {
-    	if (center.length != 2) throw new IllegalArgumentException();
-    	return inputTunnelPosition(center[0], center[1], degrees);
+        if (center.length != 2) throw new IllegalArgumentException();
+        return inputTunnelPosition(center[0], center[1], degrees);
     }
     /**
      * Updates the map so that it won't navigate though a WALL OBJECT
@@ -302,7 +302,7 @@ public class Grid {
      * Updates the map so that it won't navigate though a WALL OBJECT
      */
     public void inputWallPosition(double[] pntA, double[] pntB, double r) {
-    	inputWallPosition(pntA[0], pntA[1], pntB[0], pntB[1], r);
+        inputWallPosition(pntA[0], pntA[1], pntB[0], pntB[1], r);
     }
 
     //(x1,y1), (x2,y2) are mid points of rectangle ends
@@ -351,7 +351,7 @@ public class Grid {
             {
                 @Override
                 public int compare(double[] o1, double[] o2) {
-                	return Double.compare(o1[1], o2[1]);
+                    return Double.compare(o1[1], o2[1]);
                 }
             });
 
@@ -432,7 +432,7 @@ public class Grid {
     }
     
     private static double[] rotateVector(double x, double y, double centerX, double centerY, double radians){
-    	return rotateVector(new double[]{x,y},centerX,centerY,radians);
+        return rotateVector(new double[]{x,y},centerX,centerY,radians);
     }
 
     /**

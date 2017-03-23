@@ -13,8 +13,15 @@ import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 
+/**
+ * Localize Robot, follow path to tunnel, enter tunnel and read color,
+ * follow path to wall at start location using other half of course and
+ * red/green cylinder location.
+ * Motors: left= A right = D
+ * Sensors: Color= 4,lowerTouch=3, upperTouch=2,  Gyro = 1
+ */
 public class Challenge2 {
-	
+
     public static void main(String[] args) {
         EV3LargeRegulatedMotor motorL = new EV3LargeRegulatedMotor(MotorPort.A);
         EV3LargeRegulatedMotor motorR = new EV3LargeRegulatedMotor(MotorPort.D);
@@ -29,23 +36,24 @@ public class Challenge2 {
 
         Button.waitForAnyPress();
 
-        // Localize with Bayesian 'strip'
-         int n = r.localize();
-		System.out.println(n);
-
-        // Make a sound
+        // Measure drift 
         if(r.isSensorDrifting())
             return;
 
+        // Localize with Bayesian 'strip'
+         int n = r.localize();
+        System.out.println(n);
+        // int n = 20; // stub - the last white square within two lines
+
+
         // Get onto the 'Grid network'
-//		int n = 20; // stub - the last white square within two lines
-		double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
+        double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
         double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
         double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
-		r.moveDistance(distToMoveOnDiagonal); 
-		
-		// Goal using A * (doesn't have to go inside)
-		double[] goalCoords = planToGoal(firstNodePosition,r);
+        r.moveDistance(distToMoveOnDiagonal); 
+        
+        // Goal using A * (doesn't have to go inside)
+        double[] goalCoords = planToGoal(firstNodePosition,r);
 
         // Going inside the tunnel
         r.moveToWall();
@@ -62,34 +70,35 @@ public class Challenge2 {
 
         // Move until reaches wall
         r.moveToWall();
+        //Sound.beep();
     }
     
-	private static double[] planToGoal(double[] start, Robot r){
+    private static double[] planToGoal(double[] start, Robot r){
         Grid model = new Grid();
-		double[] goalCoords = model.initClosedList1();
-		Node goalNode = model.aStarSearch(start, goalCoords);
+        double[] goalCoords = model.initClosedList1();
+        Node goalNode = model.aStarSearch(start, goalCoords);
         LinkedList<Node> list = model.findForwardPath(goalNode);
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
         int tunnelWallDirection = RobotMovement.E;
         actionList.add(RobotMovement.dirChange(tunnelWallDirection));
-		double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
+        double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
         return goalCoords;
-	}
-	
-	private static void planBackToStart(double[] start, Robot r, boolean isGreen){
-		
-		Grid model = new Grid();
-		model.initClosedList2(isGreen);
-		//Node goalNode = model.aStarSearch(start, GridGeo.CHALLENGE2_BACK_TO_START);
-		
-		//TODO: unhardcode this
-		Node goalNode = model.aStarSearch(new double[]{110,62} ,GridGeo.CHALLENGE2_BACK_TO_START );
+    }
+    
+    private static void planBackToStart(double[] start, Robot r, boolean isGreen){
+        Grid model = new Grid();
+        model.initClosedList2(isGreen);
+        // if (isGreen) Sound.beep(); else Sound.buzz();
+        //Node goalNode = model.aStarSearch(start, GridGeo.CHALLENGE2_BACK_TO_START);
+        
+        //TODO: unhardcode this
+        Node goalNode = model.aStarSearch(new double[]{110,62} ,GridGeo.CHALLENGE2_BACK_TO_START );
         LinkedList<Node> list = model.findForwardPath(goalNode);
         List<RobotMovement> actionList =RobotMovement.parsePathToMovements(list);
         int wallDirection = RobotMovement.SW;
         actionList.add(RobotMovement.dirChange(wallDirection));
-		double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
+        double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
-	}
+    }
 }

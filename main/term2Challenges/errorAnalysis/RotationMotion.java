@@ -7,6 +7,9 @@ import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
+/**
+ * Initial testing for rotating robot using PID algorithm
+ */
 public class RotationMotion {
     private static EV3LargeRegulatedMotor motorL;
     private static EV3LargeRegulatedMotor motorR;

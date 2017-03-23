@@ -11,6 +11,9 @@ import lejos.utility.Delay;
 
 import java.io.IOException;
 
+/**
+ * Test Gyro and uses PID to turn forever?
+ */
 public class GyroPidTest {
 
     private static EV3LargeRegulatedMotor motorL;
