@@ -44,16 +44,9 @@ public class Challenge1 {
         System.out.println(n);
         //int n = 20; // stub - the last white square within two lines
 
-        
-        //Calculate where the robot center
+        // Get onto the 'Grid network'
         double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
-        // startPosition should be about 2 cells behind the colour sensor
-        
-        //debugging - Prints where center of robot was immediately after localization
-        // System.out.printf("%.1f , %.1f", startPosition[0], startPosition[1]);
-        
         double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
-        // calculate diagonal-distance to move based of x coordinate difference
         double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
         r.moveDistance(distToMoveOnDiagonal); 
         
@@ -80,5 +73,6 @@ public class Challenge1 {
 
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
         r.moveToWall();
+        //Sound.beep();
     }
 }
