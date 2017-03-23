@@ -10,6 +10,9 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
+/**
+ * Initial testing for moving forward/backwards 2cm
+ */
 public class BackwardMotion {
 
     private static RegulatedMotor motorL;

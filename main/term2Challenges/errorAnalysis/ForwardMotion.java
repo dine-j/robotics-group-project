@@ -10,10 +10,11 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
+/**
+ * Initial testing for moving forward/backwards 2cm
+ */
 public class ForwardMotion {
-	
-	
-	private static boolean leftFirst = true ;
+    private static boolean leftFirst = true ;
 
     private static EV3LargeRegulatedMotor motorL;
     private static EV3LargeRegulatedMotor motorR;
@@ -57,10 +58,10 @@ public class ForwardMotion {
         int distance = DEGREES_PER_METER / 50;
         
         if (leftFirst){
-        	 motorL.rotate(distance, true);
+             motorL.rotate(distance, true);
              motorR.rotate(distance);
         }else {
-        	 motorR.rotate(distance, true);
+             motorR.rotate(distance, true);
              motorL.rotate(distance);
         }
        
@@ -69,7 +70,7 @@ public class ForwardMotion {
         // TODO: Needs to change the speed of motors when robot is still
 
 //        while(motorL.isMoving() && motorR.isMoving()) {
-//        	System.out.println("entered loop");
+//        System.out.println("entered loop");
 //            float kp = 0.7f;
 //            float ki = 0f;
 //            float kd = 0f;

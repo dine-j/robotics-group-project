@@ -9,6 +9,9 @@ import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
+/**
+ * Initial testing for moving in a square
+ */
 public class SquareRotation {
 
     private static EV3LargeRegulatedMotor motorL;
