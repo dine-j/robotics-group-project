@@ -13,11 +13,11 @@ public class GridTest {
         GridFrame grid = new GridFrame(model.getSize());
         
         for(int i = 0; i < size; ++i){
-        	 for(int j = 0; j < size; ++j){
-        		 if (!model.isInsideBorder(i, j)){
-        			 grid.placeEmpty(i, j);
-        		 }
-        	 }
+             for(int j = 0; j < size; ++j){
+                 if (!model.isInsideBorder(i, j)){
+                     grid.placeEmpty(i, j);
+                 }
+             }
         }
         
 //        double[] tmp = model.inputTunnelPosition(82.5, 110, 90);
