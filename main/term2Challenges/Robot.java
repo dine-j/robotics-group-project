@@ -350,8 +350,6 @@ public class Robot {
         SampleProvider sp = touchSensor.getTouchMode();
         float[] sample = new float[sp.sampleSize()];
         sp.fetchSample(sample, 0);
-
-        //dummy value as not sure how the touch sensor records values
         return sample[0] > 0;
     }
 }
