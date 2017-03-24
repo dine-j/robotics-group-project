@@ -1,4 +1,6 @@
-package main.term2Challenges;
+package pathTest;
+
+import main.term2Challenges.RobotMovement;
 
 import java.util.LinkedList;
 import java.util.List;
