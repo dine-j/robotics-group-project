@@ -25,22 +25,22 @@ public class AStarTestMain {
 
         double[] goalCoords = model.initClosedList1();
         long startTime = System.currentTimeMillis();
-        Node goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(19-2) ,goalCoords );
+        
+        int n = 20;
+        double[] bayesCoordPos = GridGeo.BayesianCoordinate(n);
+        double[] startPosition = GridGeo.actualRobotCenterSW(bayesCoordPos);
+        double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
+        Node goalNode = model.aStarSearch(firstNodePosition ,goalCoords );
         System.out.println(System.currentTimeMillis() - startTime + " ms to find path");
 
         // Forward
-//        LinkedList<Node> list = model.findForwardPath(goalNode);
-//        RobotMovement.direction = RobotMovement.NE;
-//        int wallDirection = RobotMovement.E;
-////        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
-//        actionList.add(RobotMovement.dirChange(wallDirection));
+        LinkedList<Node> list = model.findForwardPath(goalNode);
+
 
         // Backward
-        LinkedList<Node> list = model.findBackwardPath(goalNode);
-//        RobotMovement.direction = RobotMovement.S;
-//        int wallDirection = RobotMovement.SW;
-//        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
-//        actionList.add(RobotMovement.dirChange(wallDirection));
+//        LinkedList<Node> list = model.findBackwardPath(goalNode);
+
+
 
         grid.readGrid(model);
         grid.setVisible(true);

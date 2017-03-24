@@ -115,25 +115,25 @@ public class Robot {
         for (int i = 0; i < instructions.size(); ++i) {
             switch (instructions.get(i)) {
                 case LEFT45:
-                    rotate(45);
+                    rotateSlowly(45);
                     break;
                 case LEFT90:
-                    rotate(90);
+                    rotateSlowly(90);
                     break;
                 case LEFT135:
-                    rotate(135);
+                    rotateSlowly(135);
                     break;
                 case RIGHT45:
-                    rotate(-45);
+                    rotateSlowly(-45);
                     break;
                 case RIGHT90:
-                    rotate(-90);
+                    rotateSlowly(-90);
                     break;
                 case RIGHT135:
-                    rotate(-135);
+                    rotateSlowly(-135);
                     break;
                 case RIGHT180:
-                    rotate(-180);
+                    rotateSlowly(-180);
                     break;
                 case FORWARD:
                     int forwardCount = 1;
@@ -199,7 +199,7 @@ public class Robot {
         // Debugging
 //        System.out.println(sample[0]);
 
-        return isGreen(sample[2]);
+        return isGreen(sample[0]);
     }
 
     /**
@@ -279,6 +279,56 @@ public class Robot {
         motorR.stop();
     }
 
+    private void rotateSlowly(int rotationValue) {
+        gyroSensor.reset();
+        SampleProvider sampleProvider = gyroSensor.getAngleMode();
+        float[] sample = new float[sampleProvider.sampleSize()];
+        sampleProvider.fetchSample(sample, 0);
+
+        float kp = 0.7f;
+        int tp = 10;
+
+        if (rotationValue > 0) {
+            while (sample[0] < rotationValue) {
+                float angle = sample[0];
+                float error = angle - rotationValue;
+
+                float turn = kp * error;
+                float power = tp - turn;
+
+                motorL.setSpeed(power);
+                motorR.setSpeed(power);
+
+                motorR.forward();
+                motorL.backward();
+
+                sampleProvider.fetchSample(sample, 0);
+            }
+        } else {
+            while (Math.abs(sample[0]) < -rotationValue) {
+                float angle = Math.abs(sample[0]);
+                float error = angle + rotationValue;
+
+                float turn = kp * error;
+                float power = tp - turn;
+
+                motorL.setSpeed(power);
+                motorR.setSpeed(power);
+
+                motorL.forward();
+                motorR.backward();
+
+                sampleProvider.fetchSample(sample, 0);
+            }
+        }
+
+        // Debugging
+//        System.out.println(sample[0]);
+
+        motorL.stop();
+        motorR.stop();
+    }
+
     /**
      * Move the robot forward or backward given a certain distance
      * @param distance Distance for movement in cm, can be positive or negative
@@ -297,6 +347,6 @@ public class Robot {
      * @return  True if the color is green, false otherwise
      */
     private boolean isGreen(float colorValue) {
-        return colorValue < 0.05;
+        return colorValue < 0.1;
     }
 }
