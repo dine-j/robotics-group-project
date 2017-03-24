@@ -163,6 +163,26 @@ public class Robot {
         }
     }
 
+    public void tryToEnterTunnel() {
+        Sound.beepSequenceUp();
+        long startingTime = System.currentTimeMillis();
+        int duration = 2000;
+
+        motorL.setSpeed(120);
+        motorR.setSpeed(120);
+
+        while(!isPressed(upperTouchSensor) && System.currentTimeMillis() - startingTime <= duration) {
+            motorL.forward();
+            motorR.forward();
+            if(isPressed(upperTouchSensor)) {
+                Sound.beep();
+                adjustPosition();
+            }
+        }
+
+        Sound.beepSequence();
+    }
+
     /**
      * Move forward until reaches the end of the tunnel
      */
@@ -221,7 +241,7 @@ public class Robot {
         rotate(27);
 
         long startingTime = System.currentTimeMillis();
-        int duration = 2000;
+        int duration = 3000;
         boolean rightHandSide = false;
 
         motorL.setSpeed(120);

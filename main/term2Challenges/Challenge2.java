@@ -39,6 +39,8 @@ public class Challenge2 {
         // Goal using A * (doesn't have to go inside)
         double[] goalCoords = planToGoal(firstNodePosition,r);
 
+        r.tryToEnterTunnel();
+
         // Going inside the tunnel
         r.moveToWall();
         
