@@ -1,4 +1,4 @@
-package tests.sensorsTests;
+package sensorsTests;
 
 import lejos.hardware.Button;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -12,15 +12,7 @@ import main.term2Challenges.Robot;
 public class PositionAdjustmentTest {
 
     public static void main(String[] args) {
-        EV3LargeRegulatedMotor motorL = new EV3LargeRegulatedMotor(MotorPort.A);
-        EV3LargeRegulatedMotor motorR = new EV3LargeRegulatedMotor(MotorPort.D);
-
-        EV3GyroSensor gyroSensor = new EV3GyroSensor(SensorPort.S1);
-        EV3TouchSensor upperTouchSensor = new EV3TouchSensor(SensorPort.S2);
-        EV3TouchSensor bottomTouchSensor = new EV3TouchSensor(SensorPort.S3);
-        EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S4);
-
-        Robot r = new Robot(motorL, motorR, colorSensor, upperTouchSensor, gyroSensor, bottomTouchSensor);
+        Robot r = new Robot();
 
         Button.waitForAnyPress();
 

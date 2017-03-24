@@ -1,9 +1,9 @@
-package tests.aStarTest;
+package tests.pathTest;
+
+import main.term2Challenges.RobotMovement;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import main.term2Challenges.RobotMovement;
 
 /**
  * A test class to test 
@@ -90,14 +90,14 @@ public class MockedPathGenerator {
 	
 	/**
 	 * 
-	 * @return returns a straightline path, moving 2 meters
+	 * @return returns a straightline path, moving 4 meters
 	 */
 	public static List<RobotMovement> testPath5(){
 		
 		
 		List<RobotMovement> listEg = new LinkedList<RobotMovement>();
 		
-		for(int i = 0; i < 100; ++i){
+		for(int i = 0; i < 200; ++i){
 			listEg.add(RobotMovement.FORWARD);
 		}
 		return listEg;

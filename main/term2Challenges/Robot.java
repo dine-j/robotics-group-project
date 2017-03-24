@@ -4,6 +4,8 @@ import java.util.List;
 
 import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.port.MotorPort;
+import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.*;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
@@ -30,15 +32,15 @@ public class Robot {
 
     private static final double DISTANCE_PER_REVOLUTION = 17.27; // cm per 360° rotation
 
-    public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3ColorSensor colorSensor, EV3TouchSensor upperTouchSensor, EV3GyroSensor gyroSensor, EV3TouchSensor bottomTouchSensor) {
-        this.motorL = motorL;
-        this.motorR = motorR;
+    public Robot() {  	
+    	this.motorL = new EV3LargeRegulatedMotor(MotorPort.A);
+        this.motorR = new EV3LargeRegulatedMotor(MotorPort.D);
 
-        this.colorSensor = colorSensor;
-        this.upperTouchSensor = upperTouchSensor;
-        this.gyroSensor = gyroSensor;
-        this.bottomTouchSensor = bottomTouchSensor;
-
+        this.gyroSensor = new EV3GyroSensor(SensorPort.S1);
+        this.upperTouchSensor = new EV3TouchSensor(SensorPort.S2);
+        this.bottomTouchSensor = new EV3TouchSensor(SensorPort.S3);
+        this.colorSensor = new EV3ColorSensor(SensorPort.S4);
+         
         this.motorL.setSpeed(120);
         this.motorR.setSpeed(120);
 
@@ -213,35 +215,35 @@ public class Robot {
     }
 
     public void adjustPosition() {
-        //move back 1 cm
-        moveDistance(-1);
+        moveDistance(-14);
+        rotate(-27);
+        moveDistance(8.2);
+        rotate(27);
 
-        //try rotating left
-        rotate(30);
+        long startingTime = System.currentTimeMillis();
+        int duration = 2000;
+        boolean rightHandSide = false;
 
-        //move forward 5cm, check if button is pressed
-        moveDistance(5);
-        if (isPressed(upperTouchSensor)) {
-            //we originally hit right wall
-            moveDistance(-5);
-            rotate(15);
-            moveDistance(3);
-            rotate(-45);
-            return;
+        motorL.setSpeed(120);
+        motorR.setSpeed(120);
+
+        while(!isPressed(bottomTouchSensor) && System.currentTimeMillis() - startingTime <= duration) {
+            motorL.forward();
+            motorR.forward();
+            if(isPressed(bottomTouchSensor)) {
+                rightHandSide = true;
+                Sound.beep();
+            }
         }
 
-        moveDistance(-5);
+        motorL.setSpeed(0);
+        motorR.setSpeed(0);
 
-        //try rotating right
-        rotate(-60);
-        moveDistance(5);
-        if (isPressed(upperTouchSensor)) {
-            //we originally hit left wall
-            moveDistance(-5);
-            rotate(-15);
-            moveDistance(3);
+        if(rightHandSide) {
+            moveDistance(-11);
             rotate(45);
-            return;
+            moveDistance(13);
+            rotate(-45);
         }
     }
 
