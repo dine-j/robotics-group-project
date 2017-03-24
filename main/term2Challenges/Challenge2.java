@@ -4,12 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import lejos.hardware.Button;
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import lejos.hardware.port.MotorPort;
-import lejos.hardware.port.SensorPort;
-import lejos.hardware.sensor.EV3ColorSensor;
-import lejos.hardware.sensor.EV3GyroSensor;
-import lejos.hardware.sensor.EV3TouchSensor;
 
 /**
  * Localize Robot, follow path to tunnel, enter tunnel and read color,
@@ -21,15 +15,8 @@ import lejos.hardware.sensor.EV3TouchSensor;
 public class Challenge2 {
 
     public static void main(String[] args) {
-        EV3LargeRegulatedMotor motorL = new EV3LargeRegulatedMotor(MotorPort.A);
-        EV3LargeRegulatedMotor motorR = new EV3LargeRegulatedMotor(MotorPort.D);
-
-        EV3GyroSensor gyroSensor = new EV3GyroSensor(SensorPort.S1);
-        EV3TouchSensor upperTouchSensor = new EV3TouchSensor(SensorPort.S2);
-        EV3TouchSensor bottomTouchSensor = new EV3TouchSensor(SensorPort.S3);
-        EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S4);
-
-        Robot r = new Robot(motorL, motorR, colorSensor, upperTouchSensor, gyroSensor, bottomTouchSensor);
+    	
+        Robot r = new Robot();
 
         Button.waitForAnyPress();
 
@@ -75,9 +62,11 @@ public class Challenge2 {
         double[] goalCoords = model.initClosedList1();
         Node goalNode = model.aStarSearch(start, goalCoords);
         LinkedList<Node> list = model.findForwardPath(goalNode);
-        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
         int tunnelWallDirection = RobotMovement.E;
-        actionList.add(RobotMovement.dirChange(tunnelWallDirection));
+        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list, tunnelWallDirection);
+        
+//        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
+//        actionList.add(RobotMovement.dirChange(tunnelWallDirection));
         double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
         return goalCoords;
@@ -92,9 +81,13 @@ public class Challenge2 {
         //TODO: unhardcode this
         Node goalNode = model.aStarSearch(new double[]{110,62} ,GridGeo.CHALLENGE2_BACK_TO_START );
         LinkedList<Node> list = model.findForwardPath(goalNode);
-        List<RobotMovement> actionList =RobotMovement.parsePathToMovements(list);
         int wallDirection = RobotMovement.SW;
-        actionList.add(RobotMovement.dirChange(wallDirection));
+        
+        
+//        List<RobotMovement> actionList =RobotMovement.parsePathToMovements(list);
+//        actionList.add(RobotMovement.dirChange(wallDirection));
+        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list, wallDirection);
+        
         double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
     }

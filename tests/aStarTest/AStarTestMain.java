@@ -25,18 +25,18 @@ public class AStarTestMain {
 
         double[] goalCoords = model.initClosedList1();
         long startTime = System.currentTimeMillis();
-        Node goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(20-2) ,goalCoords );
+        Node goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(19-2) ,goalCoords );
         System.out.println(System.currentTimeMillis() - startTime + " ms to find path");
 
         // Forward
-        LinkedList<Node> list = model.findForwardPath(goalNode);
+//        LinkedList<Node> list = model.findForwardPath(goalNode);
 //        RobotMovement.direction = RobotMovement.NE;
 //        int wallDirection = RobotMovement.E;
 ////        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
 //        actionList.add(RobotMovement.dirChange(wallDirection));
 
         // Backward
-//        LinkedList<Node> list = model.findBackwardPath(goalNode);
+        LinkedList<Node> list = model.findBackwardPath(goalNode);
 //        RobotMovement.direction = RobotMovement.S;
 //        int wallDirection = RobotMovement.SW;
 //        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);

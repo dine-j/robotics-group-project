@@ -309,6 +309,7 @@ public class Grid {
         // compute a sensible ideal goal to plan to & return
         final int extraDist = 11;
         final int depthToCenter = 10;
+        // TODO: find a better way then just subracting - 2
         return rotateVector(x - 2, y - depthToCenter - extraDist, x, y, radians);
     }
 
