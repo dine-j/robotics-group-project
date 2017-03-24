@@ -67,6 +67,20 @@ public enum RobotMovement {
         }
         return list;
     }
+    
+    /**
+     * @param path The sequence of nodes that represents the path
+     * @return A list of RobotMovement's for robot to follow
+     */
+    public static List<RobotMovement> parsePathToMovements(LinkedList<Node> path, int endDirection) {
+    	List<RobotMovement> list =  parsePathToMovements(path);
+    	RobotMovement lastStep = RobotMovement.dirChange(endDirection);
+    	if(lastStep != null){
+    		list.add(lastStep);
+    	}
+    	return list;
+    }
+    
 
     // precondition is: direction != newDirection
     public static RobotMovement dirChange(int newDirection) {

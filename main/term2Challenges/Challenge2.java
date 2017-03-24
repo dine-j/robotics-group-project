@@ -62,9 +62,11 @@ public class Challenge2 {
         double[] goalCoords = model.initClosedList1();
         Node goalNode = model.aStarSearch(start, goalCoords);
         LinkedList<Node> list = model.findForwardPath(goalNode);
-        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
         int tunnelWallDirection = RobotMovement.E;
-        actionList.add(RobotMovement.dirChange(tunnelWallDirection));
+        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list, tunnelWallDirection);
+        
+//        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
+//        actionList.add(RobotMovement.dirChange(tunnelWallDirection));
         double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
         return goalCoords;
@@ -79,9 +81,13 @@ public class Challenge2 {
         //TODO: unhardcode this
         Node goalNode = model.aStarSearch(new double[]{110,62} ,GridGeo.CHALLENGE2_BACK_TO_START );
         LinkedList<Node> list = model.findForwardPath(goalNode);
-        List<RobotMovement> actionList =RobotMovement.parsePathToMovements(list);
         int wallDirection = RobotMovement.SW;
-        actionList.add(RobotMovement.dirChange(wallDirection));
+        
+        
+//        List<RobotMovement> actionList =RobotMovement.parsePathToMovements(list);
+//        actionList.add(RobotMovement.dirChange(wallDirection));
+        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list, wallDirection);
+        
         double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
     }
