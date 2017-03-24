@@ -28,10 +28,12 @@ public class Challenge1 {
 //        System.out.println(n);
         int n = 20; // stub - the last white square within two lines
 
+        //TODO: not reliably going to first node : keep adjusting OFFSET_CORRECTION
         // Get onto the 'Grid network'
         double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
         double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
-        double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
+        double distToMoveOnDiagonal = GridGeo.OFFSET_CORRECTION + 
+        		(firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
         r.moveDistance(distToMoveOnDiagonal); 
         
         // Goal using A * (doesn't have to go inside)
