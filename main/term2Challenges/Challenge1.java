@@ -24,9 +24,9 @@ public class Challenge1 {
             return;
         
         // Localize with Bayesian 'strip'
-        int n = r.localize();  
-        System.out.println(n);
-        //int n = 20; // stub - the last white square within two lines
+//        int n = r.localize();  
+//        System.out.println(n);
+        int n = 20; // stub - the last white square within two lines
 
         // Get onto the 'Grid network'
         double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
