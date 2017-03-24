@@ -212,21 +212,6 @@ public class Robot {
         RobotMovement.direction = RobotMovement.S;
     }
 
-    /*
-    The robot is 15cm wide & the upper bumper about the same width. The tunnel is 20cm width, but has 2cm walls each side making it 24cm in total.
-    If the robot is perfectly centered, there should be 2.5cm gap on each side.
-    We can assume that if the upper bumper is activated it is about 3.5 cm off-center.
-
-    The algorithm could perhaps,
-
-    move robot back small distance (about 1cm)
-    rotate small angle left and right, see if touch sensor gets activated
-    If activated while turning left, then hit right wall, else left wall
-    Move backwards 4cm
-    Turn left/right 45degrees,
-    Move forward 5.6cm. (or more since already moved back 1cm to get away from wall)
-    turn to face back of wall. (45 degrees)
-     */
     public void adjustPosition() {
         //move back 1 cm
         moveDistance(-1);
