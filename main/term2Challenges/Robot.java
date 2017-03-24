@@ -19,19 +19,18 @@ import lejos.utility.Delay;
  * Port 3: Bottom Touch - back of tunnel bumper
  * Port 4: Color
  */
-
 public class Robot {
 
     private EV3LargeRegulatedMotor motorL, motorR;
 
     private EV3ColorSensor colorSensor;
-    private EV3UltrasonicSensor upperTouchSensor;
+    private EV3TouchSensor upperTouchSensor;
     private EV3GyroSensor gyroSensor;
     private EV3TouchSensor bottomTouchSensor;
 
     private static final double DISTANCE_PER_REVOLUTION = 17.27; // cm per 360° rotation
 
-    public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3ColorSensor colorSensor, EV3UltrasonicSensor upperTouchSensor, EV3GyroSensor gyroSensor, EV3TouchSensor bottomTouchSensor) {
+    public Robot(EV3LargeRegulatedMotor motorL, EV3LargeRegulatedMotor motorR, EV3ColorSensor colorSensor, EV3TouchSensor upperTouchSensor, EV3GyroSensor gyroSensor, EV3TouchSensor bottomTouchSensor) {
         this.motorL = motorL;
         this.motorR = motorR;
 
@@ -42,8 +41,6 @@ public class Robot {
 
         this.motorL.setSpeed(120);
         this.motorR.setSpeed(120);
-
-        this.upperTouchSensor.getDistanceMode();
 
         RobotMovement.direction = RobotMovement.NE;
     }

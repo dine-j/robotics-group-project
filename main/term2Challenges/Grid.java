@@ -187,10 +187,10 @@ public class Grid {
      * @return An ideal position in 'cm' coordinates of goal node.
      */
     public double[] initClosedList1(){
-        inputCylinderPosition(GridGeo.RAND_CYCL_14cm_Center); 
+        inputCylinderPosition(GridGeo.RAND_CYCL_40cm_Center); 
         inputCorners();
         double[] goalIdeal = inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
-        inputWallPosition(new double[]{61,61}, new double[]{51,51}  , 3);
+        inputWallPosition(GridGeo.WALL_END1_20cm_Center, GridGeo.WALL_END2_20cm_Center,ROBOT_RADIUS);
         
         // Maybe good idea:
         inputWallPosition(62, 54, 26,20, 2);   // 'invisible' wall to reduce search-space
@@ -208,6 +208,43 @@ public class Grid {
         inputWallPosition(0,0 , 60, 60, 4);
         
         if( isGreen){
+            inputCylinderPosition(GridGeo.GREEN_CYCL_40cm_Center);
+        }
+        else{
+            inputCylinderPosition(GridGeo.RED_CYCL_60cm_Center); 
+        }
+        inputCylinderPosition(GridGeo.RAND_CYCL_40cm_Center); 
+        inputCorners();
+        inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
+        inputWallPosition(GridGeo.WALL_END1_20cm_Center, GridGeo.WALL_END2_20cm_Center,ROBOT_RADIUS);
+        
+        // Maybe good idea:
+        inputWallPosition(62, 54, 26,20, 2);   // 'invisible' wall to reduce search-space
+        
+        //return goalIdeal;
+    }
+    
+    /**
+     * Old Method
+     */
+    public double[] initOldClosedList1(){
+        inputCylinderPosition(GridGeo.RAND_CYCL_14cm_Center); 
+        inputCorners();
+        double[] goalIdeal = inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
+        inputWallPosition(new double[]{61,61}, new double[]{51,51}  , 3);
+        inputWallPosition(62, 54, 26,20, 2);   // 'invisible' wall
+        return goalIdeal;
+    }
+    
+    /**
+     * Old Method
+     */
+    public void initOldClosedList2(boolean isGreen){
+        //test invisible walls on way back (challenge 2)
+        inputWallPosition(0, 120, 60, 60, 4);
+        inputWallPosition(0,0 , 60, 60, 4);
+        
+        if( isGreen){
             inputCylinderPosition(GridGeo.GREEN_CYCL_14cm_Center);
         }
         else{
@@ -217,11 +254,7 @@ public class Grid {
         inputCorners();
         inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
         inputWallPosition(new double[]{61,61}, new double[]{51,51}  , 3);
-        
-        // Maybe good idea:
-        inputWallPosition(62, 54, 26,20, 2);   // 'invisible' wall to reduce search-space
-        
-        //return goalIdeal;
+        inputWallPosition(62, 54, 26,20, 2);   // 'invisible' wall
     }
     
 

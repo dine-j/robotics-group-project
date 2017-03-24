@@ -19,24 +19,31 @@ public class GridGeo {
     public static final double BAYESIAN_GAP_DIST = 2; //in cm
     public static final double CYLINDER_RADIUS = 2.5 + 3; // in cm
     public static final double TUNNEL_WALL_RADIUS = 0.9; // in cm
-    public static final double[] TUNNEL_FRONT_LEFT = new double[]{-11,-14}; //new double[]{-11,-10};
-    public static final double[] TUNNEL_FRONT_RIGHT = new double[]{11,-14};//new double[]{11,-10};
+    private static final double SafetyDist = 4.0; //in cm (for tunnel only)
+    public static final double[] TUNNEL_FRONT_LEFT = new double[]{-11,-10 -SafetyDist};
+    public static final double[] TUNNEL_FRONT_RIGHT = new double[]{11,-10 -SafetyDist};
     public static final double[] TUNNEL_BACK_LEFT = new double[]{-11,9};
     public static final double[] TUNNEL_BACK_RIGHT = new double[]{11,9};
+    // Exam positions
+    public static final double[] TUNNEL_BeginMarch_Center = new double[]{82.5, 110};
+    public static final double[] CHALLENGE2_BACK_TO_START = new double[]{30, 16};
     
-    /*
-     *Can add as many cylinder positions as want to test out 
-     */
+    public static final double[] WALL_END1_20cm_Center = new double[]{46.9 ,75.1};
+    public static final double[] WALL_END2_20cm_Center = new double[]{75.1, 46.9};
+    public static final double[] GREEN_CYCL_40cm_Center = new double[]{89.3 , 32.7};
+    public static final double[] RED_CYCL_60cm_Center = new double[]{103.4, 18.6};
+    public static final double[] RAND_CYCL_40cm_Center = new double[]{32.7 , 89.3};
+    public static final double[] RAND_CYCL_60cm_Center = new double[]{18.6, 103.4};
+    
+    
+    // old positions tested
     public static final double[] RAND_CYCL_31cm_Center = new double[]{40, 82};
     public static final double[] RAND_CYCL_14cm_Center = new double[]{50, 72};
     public static final double[] GREEN_CYCL_14cm_Center = new double[]{72, 50};
     public static final double[] RED_CYCL_31cm_Center = new double[]{82, 40};
-    public static final double[] TUNNEL_BeginMarch_Center = new double[]{82.5, 110};
     
-    // public static final double[] TUNNEL_BeginMarch_Center = new double[]{82.5, 112};
     
-    public static final double[] CHALLENGE2_BACK_TO_START = new double[]{30, 16};
-    
+    //following method used only to build tunnel out of constants
     /**
      * @return The result of adding offsetVector[] to {x, y}
      */
@@ -52,8 +59,6 @@ public class GridGeo {
         double tmpy = y / NODE_SIZE;
         tmpx = Math.round(tmpx);
         tmpy = Math.round(tmpy);
-        //debugging println statement
-        //System.out.println("closestNodeResults: x = " + tmpx + " , y = " + tmpy);
         return new int[]{(int) tmpx, (int) tmpy};
     }
     
