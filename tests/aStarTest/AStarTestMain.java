@@ -25,7 +25,7 @@ public class AStarTestMain {
 
         double[] goalCoords = model.initClosedList1();
         long startTime = System.currentTimeMillis();
-        Node goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(26-2) ,goalCoords );
+        Node goalNode = model.aStarSearch(GridGeo.BayesianCoordinate(19-2) ,goalCoords );
         System.out.println(System.currentTimeMillis() - startTime + " ms to find path");
 
         // Forward
