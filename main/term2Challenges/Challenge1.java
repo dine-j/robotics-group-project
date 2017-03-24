@@ -27,7 +27,7 @@ public class Challenge1 {
         EV3LargeRegulatedMotor motorR = new EV3LargeRegulatedMotor(MotorPort.D);
 
         EV3GyroSensor gyroSensor = new EV3GyroSensor(SensorPort.S1);
-        EV3UltrasonicSensor upperTouchSensor = new EV3UltrasonicSensor(SensorPort.S2);
+        EV3TouchSensor upperTouchSensor = new EV3TouchSensor(SensorPort.S2);
         EV3TouchSensor bottomTouchSensor = new EV3TouchSensor(SensorPort.S3);
         EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S4);
 
