@@ -24,10 +24,6 @@ public class Robot {
     private EV3LargeRegulatedMotor motorL, motorR;
 
     private EV3ColorSensor colorSensor;
-<<<<<<< Updated upstream
-=======
-    private EV3UltrasonicSensor ultrasonicSensor;
->>>>>>> Stashed changes
     private EV3TouchSensor upperTouchSensor;
     private EV3GyroSensor gyroSensor;
     private EV3TouchSensor bottomTouchSensor;
@@ -46,11 +42,6 @@ public class Robot {
         this.motorL.setSpeed(120);
         this.motorR.setSpeed(120);
 
-<<<<<<< Updated upstream
-=======
-        //this.upperTouchSensor.getDistanceMode();
-
->>>>>>> Stashed changes
         RobotMovement.direction = RobotMovement.NE;
     }
 
@@ -240,28 +231,32 @@ public class Robot {
         //move back 1 cm
         moveDistance(-1);
 
-        //try rotating right
-        rotate(-20);
+        //try rotating left
+        rotate(30);
 
-        //move forward 5cm or until button is pressed
+        //move forward 5cm, check if button is pressed
+        moveDistance(5);
+        if (isPressed(upperTouchSensor)) {
+            //we originally hit right wall
+            moveDistance(-5);
+            rotate(15);
+            moveDistance(3);
+            rotate(-45);
+            return;
+        }
+
+        moveDistance(-5);
+
+        //try rotating right
+        rotate(-60);
         moveDistance(5);
         if (isPressed(upperTouchSensor)) {
             //we originally hit left wall
-            motorL.stop();
-            motorR.stop();
-
-            moveDistance(-4);
+            moveDistance(-5);
+            rotate(-15);
+            moveDistance(3);
             rotate(45);
-            moveDistance(5.6);
-            rotate(-45);
-        }
-
-
-
-        //try rotating left
-        rotate(40);
-        if (isPressed(upperTouchSensor)) {
-            //we originally hit right wall
+            return;
         }
     }
 
