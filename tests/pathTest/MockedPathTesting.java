@@ -1,4 +1,4 @@
-package pathTest;
+package tests.pathTest;
 
 import java.util.List;
 
