@@ -163,6 +163,26 @@ public class Robot {
         }
     }
 
+    public void tryToEnterTunnel() {
+        Sound.beepSequenceUp();
+        long startingTime = System.currentTimeMillis();
+        int duration = 2000;
+
+        motorL.setSpeed(120);
+        motorR.setSpeed(120);
+
+        while(!isPressed(upperTouchSensor) && System.currentTimeMillis() - startingTime <= duration) {
+            motorL.forward();
+            motorR.forward();
+            if(isPressed(upperTouchSensor)) {
+                Sound.beep();
+                adjustPosition();
+            }
+        }
+
+        Sound.beepSequence();
+    }
+
     /**
      * Move forward until reaches the end of the tunnel
      */
@@ -212,6 +232,39 @@ public class Robot {
     public void turnToGoAway() {
         rotate(-90);
         RobotMovement.direction = RobotMovement.S;
+    }
+
+    public void adjustPosition() {
+        moveDistance(-14);
+        rotate(-27);
+        moveDistance(8.2);
+        rotate(27);
+
+        long startingTime = System.currentTimeMillis();
+        int duration = 3000;
+        boolean rightHandSide = false;
+
+        motorL.setSpeed(120);
+        motorR.setSpeed(120);
+
+        while(!isPressed(bottomTouchSensor) && System.currentTimeMillis() - startingTime <= duration) {
+            motorL.forward();
+            motorR.forward();
+            if(isPressed(bottomTouchSensor)) {
+                rightHandSide = true;
+                Sound.beep();
+            }
+        }
+
+        motorL.setSpeed(0);
+        motorR.setSpeed(0);
+
+        if(rightHandSide) {
+            moveDistance(-11);
+            rotate(45);
+            moveDistance(13);
+            rotate(-45);
+        }
     }
 
     /**
@@ -348,5 +401,12 @@ public class Robot {
      */
     private boolean isGreen(float colorValue) {
         return colorValue < 0.1;
+    }
+
+    private boolean isPressed(EV3TouchSensor touchSensor) {
+        SampleProvider sp = touchSensor.getTouchMode();
+        float[] sample = new float[sp.sampleSize()];
+        sp.fetchSample(sample, 0);
+        return sample[0] > 0;
     }
 }

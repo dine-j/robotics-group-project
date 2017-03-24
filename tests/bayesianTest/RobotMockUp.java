@@ -1,4 +1,4 @@
-package tests.bayesianTest;
+package bayesianTest;
 
 public class RobotMockUp {
 
