@@ -1,8 +1,11 @@
-package main.term2Challenges;
+package pathTest;
 
 import java.util.List;
 
 import lejos.hardware.Button;
+import main.term2Challenges.Grid;
+import main.term2Challenges.Robot;
+import main.term2Challenges.RobotMovement;
 
 /**
  * A class for testing abitary RobotMovement lists
