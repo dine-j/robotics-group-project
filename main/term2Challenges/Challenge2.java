@@ -41,7 +41,7 @@ public class Challenge2 {
         // Get onto the 'Grid network'
         double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
         double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
-        double distToMoveOnDiagonal = GridGeo.OFFSET_CORRECTION + 
+        double distToMoveOnDiagonal = //GridGeo.OFFSET_CORRECTION +
         		(firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
         r.moveDistance(distToMoveOnDiagonal); 
         
