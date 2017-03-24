@@ -10,7 +10,7 @@ import main.term2Challenges.RobotMovement;
 /**
  * Creates grid gui, to see how A* search will perform
  */
-public class aStarTestMain {
+public class AStarTestMain {
     public static void main(String[] args) throws InterruptedException {
         Grid model = new Grid();
         int size = model.getSize();
