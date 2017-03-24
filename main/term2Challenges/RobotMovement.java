@@ -74,10 +74,9 @@ public enum RobotMovement {
      */
     public static List<RobotMovement> parsePathToMovements(LinkedList<Node> path, int endDirection) {
     	List<RobotMovement> list =  parsePathToMovements(path);
-    	RobotMovement lastStep = RobotMovement.dirChange(endDirection);
-    	if(lastStep != null){
-    		list.add(lastStep);
-    	}
+        if(endDirection != direction) {
+            list.add(RobotMovement.dirChange(endDirection));
+        }
     	return list;
     }
     
@@ -100,10 +99,6 @@ public enum RobotMovement {
                 return RIGHT135;
             case -4:
                 return RIGHT180;
-//            case 7:
-//                return RIGHT45;
-//            case -7:
-//                return LEFT45;
         }
         return null; 
     }
