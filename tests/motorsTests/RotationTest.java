@@ -22,5 +22,4 @@ public class RotationTest {
         
         visionMotor.close();
     }
-
 }

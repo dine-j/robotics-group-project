@@ -199,7 +199,7 @@ public class Robot {
         // Debugging
 //        System.out.println(sample[0]);
 
-        return isGreen(sample[2]);
+        return isGreen(sample[0]);
     }
 
     /**
@@ -347,6 +347,6 @@ public class Robot {
      * @return  True if the color is green, false otherwise
      */
     private boolean isGreen(float colorValue) {
-        return colorValue < 0.05;
+        return colorValue < 0.1;
     }
 }

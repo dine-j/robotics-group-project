@@ -19,7 +19,7 @@ public class GridGeo {
     public static final double BAYESIAN_GAP_DIST = 1.85; //2; //in cm
     
     // required to get more accurate results
-    public static final double OFFSET_CORRECTION = 1.2;
+    public static final double OFFSET_CORRECTION = 2.5;
     public static final double CYLINDER_RADIUS = 2.5 + 3; // in cm
     public static final double TUNNEL_WALL_RADIUS = 0.9; // in cm
     private static final double SafetyDist = 4.0; //in cm (for tunnel only)
@@ -100,5 +100,4 @@ public class GridGeo {
         y -= BAYESIAN_DETECTOR_TO_ROBOT_CENTER_DIST / RobotMovement.SQRT2;
         return new double[]{x,y};
     }
-    
 }
