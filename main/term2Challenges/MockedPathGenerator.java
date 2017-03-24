@@ -1,9 +1,7 @@
-package tests.aStarTest;
+package main.term2Challenges;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import main.term2Challenges.RobotMovement;
 
 /**
  * A test class to test 

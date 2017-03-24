@@ -1,4 +1,4 @@
-package main.term2Challenges.errorAnalysis;
+package main.term2Challenges;
 
 import java.util.List;
 
@@ -11,10 +11,6 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
-import main.term2Challenges.Grid;
-import main.term2Challenges.Robot;
-import main.term2Challenges.RobotMovement;
-import tests.aStarTest.MockedPathGenerator;
 
 /**
  * A class for testing abitary RobotMovement lists
