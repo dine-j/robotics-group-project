@@ -86,4 +86,37 @@ public class MockedPathGenerator {
 		return listEg;
 		
 	}
+	
+	
+	/**
+	 * 
+	 * @return returns a straightline path, moving 2 meters
+	 */
+	public static List<RobotMovement> testPath5(){
+		
+		
+		List<RobotMovement> listEg = new LinkedList<RobotMovement>();
+		
+		for(int i = 0; i < 100; ++i){
+			listEg.add(RobotMovement.FORWARD);
+		}
+		return listEg;
+		
+	}
+	
+	/**
+	 * 
+	 * @return returns a straightline path, moving 1.414 meters
+	 */
+	public static List<RobotMovement> testPath6(){
+		
+		
+		List<RobotMovement> listEg = new LinkedList<RobotMovement>();
+		
+		for(int i = 0; i < 50; ++i){
+			listEg.add(RobotMovement.FORWARD_ON_DIAGONAL);
+		}
+		return listEg;
+		
+	}
 }
