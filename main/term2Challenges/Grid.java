@@ -190,7 +190,7 @@ public class Grid {
         inputCylinderPosition(GridGeo.RAND_CYCL_40cm_Center); 
         inputCorners();
         double[] goalIdeal = inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
-        inputWallPosition(GridGeo.WALL_END1_20cm_Center, GridGeo.WALL_END2_20cm_Center,ROBOT_RADIUS);
+        inputWallPosition(GridGeo.WALL_END1_20cm_Center, GridGeo.WALL_END2_20cm_Center,ROBOT_RADIUS + 2);
         
         // Maybe good idea:
         inputWallPosition(62, 54, 26,20, 2);   // 'invisible' wall to reduce search-space
@@ -216,7 +216,7 @@ public class Grid {
         inputCylinderPosition(GridGeo.RAND_CYCL_40cm_Center); 
         inputCorners();
         inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
-        inputWallPosition(GridGeo.WALL_END1_20cm_Center, GridGeo.WALL_END2_20cm_Center,ROBOT_RADIUS);
+        inputWallPosition(GridGeo.WALL_END1_20cm_Center, GridGeo.WALL_END2_20cm_Center,ROBOT_RADIUS + 2);
         
         // Maybe good idea:
         inputWallPosition(62, 54, 26,20, 2);   // 'invisible' wall to reduce search-space

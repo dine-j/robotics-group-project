@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import lejos.hardware.Button;
+import lejos.hardware.Sound;
 import lejos.utility.Delay;
 
 /**
@@ -23,15 +24,21 @@ public class Challenge1 {
             return;
         
         // Localize with Bayesian 'strip'
-//        int n = r.localize();  
-//        System.out.println(n);
-        int n = 20; // stub - the last white square within two lines
+        int n = r.localize();
+        System.out.println(n);
+        if(n < 15)
+            Sound.beepSequenceUp();
+        else if(n < 22)
+            Sound.beep();
+        else
+            Sound.beepSequence();
+//        int n = 20; // stub - the last white square within two lines
 
         //TODO: not reliably going to first node : keep adjusting OFFSET_CORRECTION
         // Get onto the 'Grid network'
         double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
         double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
-        double distToMoveOnDiagonal = GridGeo.OFFSET_CORRECTION + 
+        double distToMoveOnDiagonal = //GridGeo.OFFSET_CORRECTION +
         		(firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
         r.moveDistance(distToMoveOnDiagonal); 
         
@@ -43,21 +50,16 @@ public class Challenge1 {
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
         double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
-        
-        Delay.msDelay(3000); // found goal (hopefully)
-        //Sound.beep();
+
+        Sound.beep(); // Goal found
         
         // Going back to starting point
-        // System.out.println("Start to go back");
         list = model.findBackwardPath(goalNode);
-        actionList = RobotMovement.parsePathToMovements(list);
-
-        // Add extra movement to face wall
         int wallDirection = RobotMovement.SW;
-        actionList.add(RobotMovement.dirChange(wallDirection));
+        actionList = RobotMovement.parsePathToMovements(list, wallDirection);
 
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
         r.moveToWall();
-        //Sound.beep();
+        Sound.beep();
     }
 }
