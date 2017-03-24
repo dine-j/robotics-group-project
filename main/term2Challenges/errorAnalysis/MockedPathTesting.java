@@ -30,7 +30,7 @@ public class MockedPathTesting {
         EV3TouchSensor bottomTouchSensor = new EV3TouchSensor(SensorPort.S3);
         EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S4);
 
-        Robot r = new Robot(motorL, motorR, colorSensor, upperTouchSensor, gyroSensor, bottomTouchSensor);
+        Robot r = new Robot();
         Button.waitForAnyPress();
         Grid model = new Grid();
         double nodeSize = model.getNodeSize();
