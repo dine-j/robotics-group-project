@@ -4,12 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import lejos.hardware.Button;
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import lejos.hardware.port.MotorPort;
-import lejos.hardware.port.SensorPort;
-import lejos.hardware.sensor.EV3ColorSensor;
-import lejos.hardware.sensor.EV3GyroSensor;
-import lejos.hardware.sensor.EV3TouchSensor;
 
 /**
  * Localize Robot, follow path to tunnel, enter tunnel and read color,
