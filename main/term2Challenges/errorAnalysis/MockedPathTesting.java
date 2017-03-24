@@ -56,7 +56,7 @@ public class MockedPathTesting {
         //tests inside of tunnel
         // List<RobotMovement> egActions = MockedPathGenerator.testPath4(); //PASSED
         
-        //tests moves forward 2 meters
+        //tests moves forward 4 meters
         List<RobotMovement> egActions = MockedPathGenerator.testPath5(); //TODO:
         
         //tests moves forward 1.414 * 100 = 1.414 meters
