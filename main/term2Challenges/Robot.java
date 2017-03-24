@@ -24,6 +24,10 @@ public class Robot {
     private EV3LargeRegulatedMotor motorL, motorR;
 
     private EV3ColorSensor colorSensor;
+<<<<<<< Updated upstream
+=======
+    private EV3UltrasonicSensor ultrasonicSensor;
+>>>>>>> Stashed changes
     private EV3TouchSensor upperTouchSensor;
     private EV3GyroSensor gyroSensor;
     private EV3TouchSensor bottomTouchSensor;
@@ -42,6 +46,11 @@ public class Robot {
         this.motorL.setSpeed(120);
         this.motorR.setSpeed(120);
 
+<<<<<<< Updated upstream
+=======
+        //this.upperTouchSensor.getDistanceMode();
+
+>>>>>>> Stashed changes
         RobotMovement.direction = RobotMovement.NE;
     }
 
@@ -212,6 +221,50 @@ public class Robot {
         RobotMovement.direction = RobotMovement.S;
     }
 
+    /*
+    The robot is 15cm wide & the upper bumper about the same width. The tunnel is 20cm width, but has 2cm walls each side making it 24cm in total.
+    If the robot is perfectly centered, there should be 2.5cm gap on each side.
+    We can assume that if the upper bumper is activated it is about 3.5 cm off-center.
+
+    The algorithm could perhaps,
+
+    move robot back small distance (about 1cm)
+    rotate small angle left and right, see if touch sensor gets activated
+    If activated while turning left, then hit right wall, else left wall
+    Move backwards 4cm
+    Turn left/right 45degrees,
+    Move forward 5.6cm. (or more since already moved back 1cm to get away from wall)
+    turn to face back of wall. (45 degrees)
+     */
+    public void adjustPosition() {
+        //move back 1 cm
+        moveDistance(-1);
+
+        //try rotating right
+        rotate(-20);
+
+        //move forward 5cm or until button is pressed
+        moveDistance(5);
+        if (isPressed(upperTouchSensor)) {
+            //we originally hit left wall
+            motorL.stop();
+            motorR.stop();
+
+            moveDistance(-4);
+            rotate(45);
+            moveDistance(5.6);
+            rotate(-45);
+        }
+
+
+
+        //try rotating left
+        rotate(40);
+        if (isPressed(upperTouchSensor)) {
+            //we originally hit right wall
+        }
+    }
+
     /**
      * Rotate robot by given angle, which can be positive (anticlockwise) or negative (clockwise)
      * @param rotationValue Angle of rotation
@@ -296,5 +349,14 @@ public class Robot {
      */
     private boolean isGreen(float colorValue) {
         return colorValue < 0.05;
+    }
+
+    private boolean isPressed(EV3TouchSensor touchSensor) {
+        SampleProvider sp = touchSensor.getTouchMode();
+        float[] sample = new float[sp.sampleSize()];
+        sp.fetchSample(sample, 0);
+
+        //dummy value as not sure how the touch sensor records values
+        return sample[0] > 0;
     }
 }
