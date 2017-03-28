@@ -111,6 +111,12 @@ public class Robot {
         return localizationStrip.getLocation();
     }
 
+    /**
+     * Follow series of instructions
+     * @param instructions List of RobotMovements
+     * @param straightDistance Width of grid node in cm
+     * @param diagonalDistance Diagonal of grid node in cm
+     */
     public void followInstructions(List<RobotMovement> instructions, double straightDistance, double diagonalDistance) {
         for (int i = 0; i < instructions.size(); ++i) {
             switch (instructions.get(i)) {
@@ -163,6 +169,9 @@ public class Robot {
         }
     }
 
+    /**
+     * Try to enter tunnel and if not able call adjustPosition()
+     */
     public void tryToEnterTunnel() {
         Sound.beepSequenceUp();
         long startingTime = System.currentTimeMillis();
@@ -229,11 +238,17 @@ public class Robot {
         moveDistance(-21.5);
     }
 
+    /**
+     * Turn the robot right by 90° and update its direction on the grid
+     */
     public void turnToGoAway() {
         rotate(-90);
         RobotMovement.direction = RobotMovement.S;
     }
 
+    /**
+     * Adjust robot position to be able to enter tunnel
+     */
     public void adjustPosition() {
         moveDistance(-14);
         rotate(-27);
@@ -269,6 +284,7 @@ public class Robot {
 
     /**
      * Rotate robot by given angle, which can be positive (anticlockwise) or negative (clockwise)
+     * Use PID with high correction for 90% of the turn and a slow correction for the remaining 10%
      * @param rotationValue Angle of rotation
      */
     private void rotate(int rotationValue) {
@@ -332,6 +348,11 @@ public class Robot {
         motorR.stop();
     }
 
+    /**
+     * Rotate robot by given angle, which can be positive (anticlockwise) or negative (clockwise)
+     * Use PID with high correction for 90% of the turn and a slow correction for the remaining 10%
+     * @param rotationValue Angle of rotation
+     */
     private void rotateSlowly(int rotationValue) {
         gyroSensor.reset();
         SampleProvider sampleProvider = gyroSensor.getAngleMode();
@@ -403,6 +424,11 @@ public class Robot {
         return colorValue < 0.1;
     }
 
+    /**
+     * Check if touch sensor is pressed
+     * @param touchSensor
+     * @return True if touch sensor is pressed
+     */
     private boolean isPressed(EV3TouchSensor touchSensor) {
         SampleProvider sp = touchSensor.getTouchMode();
         float[] sample = new float[sp.sampleSize()];
