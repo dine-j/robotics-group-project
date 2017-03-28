@@ -75,7 +75,7 @@ public class Challenge2 {
     
     private static double[] planToGoal(double[] start, Robot r){
         Grid model = new Grid();
-        double[] goalCoords = model.initClosedList1();
+        double[] goalCoords = model.initialiseClosedList1();
         Node goalNode = model.aStarSearch(start, goalCoords);
         LinkedList<Node> list = model.findForwardPath(goalNode);
         int tunnelWallDirection = RobotMovement.E;

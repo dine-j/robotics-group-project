@@ -186,7 +186,7 @@ public class Grid {
      * Initialises ClosedNodes and closed list
      * @return An ideal position in 'cm' coordinates of goal node.
      */
-    public double[] initClosedList1(){
+    public double[] initialiseClosedList1(){
         inputCylinderPosition(GridGeo.RAND_CYCL_40cm_Center); 
         inputCorners();
         double[] goalIdeal = inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     

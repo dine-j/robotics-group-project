@@ -1,11 +1,10 @@
 package tests.aStarTest;
 
 import java.util.LinkedList;
-import java.util.List;
+
 import main.term2Challenges.Node;
 import main.term2Challenges.Grid;
 import main.term2Challenges.GridGeo;
-import main.term2Challenges.RobotMovement;
 
 /**
  * Creates grid gui, to see how A* search will perform
@@ -23,7 +22,7 @@ public class AStarTestMain {
             }
         }
 
-        double[] goalCoords = model.initClosedList1();
+        double[] goalCoords = model.initialiseClosedList1();
         long startTime = System.currentTimeMillis();
         
         int n = 20;
