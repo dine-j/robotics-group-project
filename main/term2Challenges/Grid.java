@@ -59,14 +59,11 @@ public class Grid {
      * precondition: (xStart, yStart) in cm and should line up with a node.
      */
     public Node aStarSearch(double xStart, double yStart, double xGoal, double yGoal) {
-        
-        // 1. Add closed list stuff & get cm coordinates of goalNode
-        
-        
+
         double[] goalIdeal = new double[] {xGoal, yGoal};
 
-        // 1b. Add goal node
-        int goalNodeXY[] = GridGeo.closestNodeInNodeCoords((int) goalIdeal[1], (int) goalIdeal[0]); //TODO: why reversed?
+        // 1. Add goal node
+        int goalNodeXY[] = GridGeo.closestNodeInNodeCoords((int) goalIdeal[1], (int) goalIdeal[0]);
         Node goal = new Node(goalNodeXY[0], goalNodeXY[1]);
         grid[goalNodeXY[0]][goalNodeXY[1]] = goal; //add to grid
 
@@ -129,10 +126,9 @@ public class Grid {
                     }
                     // otherwise if closed do nothing
                 }
-            }// end of for loop
+            }
             toExpand.setClosed(); // add expanded node to closed list
         }
-
         return null; //default return if no path found
     }
     
@@ -143,7 +139,12 @@ public class Grid {
     public Node aStarSearch(double[] start, double[] goal) {
         return aStarSearch(start[0], start[1], goal[0], goal[1]);
     }
-    
+
+    /**
+     * Find path by getting parent nodes
+     * @param goal Node goal found by A*
+     * @return LinkedList of Nodes representing a path
+     */
     public LinkedList<Node> findPath(Node goal) {
         LinkedList<Node> list = new LinkedList<Node>();
         list.add(goal);
@@ -151,17 +152,6 @@ public class Grid {
         while (!current.isRoot()) {
             current = current.getParent();
             list.addFirst(current); //as starting at goal: this results in the forward order.
-        }
-        return list;
-    }
-    
-    public LinkedList<Node> findBackwardPath(Node goal) {
-        LinkedList<Node> list = new LinkedList<Node>();
-        list.add(goal);
-        Node current = goal;
-        while (!current.isRoot()) {
-            current = current.getParent();
-            list.addLast(current);//starts at goal: so results in reversed list
         }
         return list;
     }

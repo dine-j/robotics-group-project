@@ -13,7 +13,7 @@ public class Node implements Comparable<Node>{
     private double hn;
     private double gn; 
     private double fn; // may be recomputed when gn changes
-    
+
     public Node(int x, int y, double hn, double gn, Node parent, boolean open){
         this.x = x;
         this.y = y;
