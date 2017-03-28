@@ -6,10 +6,14 @@ public class LocalizationStrip {
     private double[] bayesianProbs;
 
     public LocalizationStrip() {
-        stripIsBlue = new boolean[] { true, false, true, false, false, true, true, false, true, true, 
-                false, false, true, true, true, false, true, true, true, false, false,
-                true, true, true, false, false, true, true, true, false, false, false, false,
-                true, true, true, true, false, false, false};
+        stripIsBlue = new boolean[] {
+                true, false, true, false, false,
+                true, true, false, true, true,
+                false, false, true, true, true,
+                false, true, true, true, false,
+                false, true, true, true, false,
+                false, false, true, true, true,
+                true, false, false };
         
         bayesianProbs = new double[stripIsBlue.length];
 
@@ -46,10 +50,18 @@ public class LocalizationStrip {
         }
 
         if(movedFoward) {
-            for (int i = bayesianProbs.length - 2; i > 0; --i) {
+            for (int i = bayesianProbs.length - 1; i > 0; --i) {
                 bayesianProbs[i] = bayesianProbs[i - 1] * moveProba + bayesianProbs[i] * (1 - moveProba);
             }
             bayesianProbs[0] = bayesianProbs[bayesianProbs.length - 1] * moveProba + bayesianProbs[0] * (1 - moveProba);
+//            double lastProba = bayesianProbs[bayesianProbs.length - 1];
+//            double previous = bayesianProbs[0];
+//            for (int i = 1; i < bayesianProbs.length; ++i) {
+//                double swap = bayesianProbs[i];
+//                bayesianProbs[i] = previous * moveProba + bayesianProbs[i] * (1 - moveProba);
+//                previous = swap;
+//            }
+//            bayesianProbs[0] = lastProba;
         } else {
             double lastProba = bayesianProbs[0];
             double previous = bayesianProbs[bayesianProbs.length - 1];
