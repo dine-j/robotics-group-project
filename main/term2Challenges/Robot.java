@@ -94,21 +94,12 @@ public class Robot {
 //            else
 //                System.out.println("W");
 
-            Delay.msDelay(2000);
+            Delay.msDelay(1000);
             moveDistance(2);
             localizationStrip.updateProbs(true, isBlue, sensorProbability, 1);
         }
 
-        if (localizationStrip.getHighestProbability() < 0.5) { // if by any chance the probabilities are too low, take one more step to correct it
-            colorMode.fetchSample(sample, 0);
-            boolean isBlue = false;
-
-            if (sample[2] < threshold) // if robot senses blue
-                isBlue = true;
-
-            moveDistance(2);
-            localizationStrip.updateProbs(true, isBlue, sensorProbability, 1);
-        }
+        System.out.println(localizationStrip.getHighestProbability());
         return localizationStrip.getLocation();
     }
 
@@ -409,8 +400,8 @@ public class Robot {
      * @param distance Distance for movement in cm, can be positive or negative
      */
     public void moveDistance(double distance) {
-        motorL.setSpeed(120);
-        motorR.setSpeed(120);
+        motorL.setSpeed(200);
+        motorR.setSpeed(200);
         double angle = distance * 360 / DISTANCE_PER_REVOLUTION;
         motorL.rotate((int) angle, true);
         motorR.rotate((int) angle);

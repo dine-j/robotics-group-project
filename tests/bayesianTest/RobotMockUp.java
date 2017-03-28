@@ -12,10 +12,14 @@ public class RobotMockUp {
     public RobotMockUp(int currentLocation, double sensorProba) {
         this.currentLocation = currentLocation;
         this.sensorProba = sensorProba;
-        stripIsBlue = new boolean[] { true, false, true, false, false, true, true, false, true, true,
-                false, false, true, true, true, false, true, true, true, false, false,
-                true, true, true, false, false, true, true, true, false, false, false, false,
-                true, true, true, true, false, false, false};
+        stripIsBlue = new boolean[] {
+                true, false, true, false, false,
+                true, true, false, true, true,
+                false, false, true, true, true,
+                false, true, true, true, false,
+                false, true, true, true, false,
+                false, false, true, true, true,
+                true, false, false };
     }
 
     public void moveForward() {

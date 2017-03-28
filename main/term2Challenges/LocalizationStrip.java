@@ -6,18 +6,22 @@ public class LocalizationStrip {
     private double[] bayesianProbs;
 
     public LocalizationStrip() {
-        stripIsBlue = new boolean[] { true, false, true, false, false, true, true, false, true, true, 
-                false, false, true, true, true, false, true, true, true, false, false,
-                true, true, true, false, false, true, true, true, false, false, false, false,
-                true, true, true, true, false, false, false};
+        stripIsBlue = new boolean[] {
+                true, false, true, false, false,
+                true, true, false, true, true,
+                false, false, true, true, true,
+                false, true, true, true, false,
+                false, true, true, true, false,
+                false, false, true, true, true,
+                true, false, false };
         
         bayesianProbs = new double[stripIsBlue.length];
 
-        for(int i = 0; i < 8; ++i){
+        for(int i = 0; i < 7; ++i){
             bayesianProbs[i] = 0; // Because the robot can only start to read the 8th square
         }
 
-        for(int i = 8; i < bayesianProbs.length; ++i){
+        for(int i = 7; i < bayesianProbs.length; ++i){
             bayesianProbs[i] = 1.0 / (stripIsBlue.length - 8);
         }
     }
@@ -45,20 +49,32 @@ public class LocalizationStrip {
             bayesianProbs[i] /= normalization;
         }
 
+        normalization = 0.0;
+
+        // move update
         if(movedFoward) {
-            for (int i = bayesianProbs.length - 2; i > 0; --i) {
-                bayesianProbs[i] = bayesianProbs[i - 1] * moveProba + bayesianProbs[i] * (1 - moveProba);
+            for (int i = bayesianProbs.length - 1; i > 0; --i) {
+                bayesianProbs[i] = bayesianProbs[i - 1]; //+ bayesianProbs[i] * (1 - moveProba);
+                normalization += bayesianProbs[i];
             }
             bayesianProbs[0] = bayesianProbs[bayesianProbs.length - 1] * moveProba + bayesianProbs[0] * (1 - moveProba);
+            normalization += bayesianProbs[0];
         } else {
             double lastProba = bayesianProbs[0];
             double previous = bayesianProbs[bayesianProbs.length - 1];
             for (int i = bayesianProbs.length - 2; i > 0; --i) {
                 double swap = bayesianProbs[i];
                 bayesianProbs[i] = previous * moveProba + bayesianProbs[i] * (1 - moveProba);
+                normalization += bayesianProbs[i];
                 previous = swap;
             }
             bayesianProbs[bayesianProbs.length - 1] = lastProba;
+            normalization += bayesianProbs[bayesianProbs.length - 1];
+        }
+
+        // normalization
+        for(int i = 0; i < bayesianProbs.length; ++i) {
+            bayesianProbs[i] /= normalization;
         }
     }
 

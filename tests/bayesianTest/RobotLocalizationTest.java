@@ -1,5 +1,4 @@
 package tests.bayesianTest;
-
 //import org.junit.Test;
 
 //import static org.junit.Assert.assertEquals;
@@ -27,14 +26,18 @@ public class RobotLocalizationTest {
      */
 //    @Test
     public static void test1() {
-        robot = new RobotMockUp(20, 0.95);
+        robot = new RobotMockUp(23, 0.98);
         localizationStrip.reinitializeProbabilities();
 
-        for(int i = 0; i < 7; ++i) {
+        int steps = 0;
+
+        while(localizationStrip.getHighestProbability() < 0.85) {
             localizationStrip.updateProbs(true, robot.getColorIsBlue(), 0.95, 1);
             robot.moveForward();
+            ++steps;
         }
         localizationStrip.printBayesianResults();
+        System.out.println("Steps: " + steps);
 //        assertEquals(robot.getCurrentLocation(), localizationStrip.getLocation());
     }
 
@@ -43,14 +46,18 @@ public class RobotLocalizationTest {
      */
 //    @Test
     public static void test2() {
-        robot = new RobotMockUp(25, 0.9);
+        robot = new RobotMockUp(21, 0.95);
         localizationStrip.reinitializeProbabilities();
 
-        for(int i = 0; i < 9; ++i) {
-            localizationStrip.updateProbs(false, robot.getColorIsBlue(), 0.9, 1);
-            robot.moveBackward();
-        }
+        int steps = 0;
 
+        for(int i = 0; i < 7; ++i) {
+            localizationStrip.updateProbs(true, robot.getColorIsBlue(), 0.95, 1);
+            robot.moveForward();
+            ++steps;
+        }
+        localizationStrip.printBayesianResults();
+        System.out.println(steps);
 //        assertEquals(robot.getCurrentLocation(), localizationStrip.getLocation());
     }
 
