@@ -5,16 +5,16 @@ import java.util.List;
 
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
-import lejos.utility.Delay;
 
 /**
- * Localize Robot, follow path to infront of goal, follow path to wall at start location
+ * Localize Robot, follow path to in front of goal, follow path to wall at start location
  * Motors: left= A right = D
  * Sensors: Color= 4,lowerTouch=3, upperTouch=2,  Gyro = 1
  */
 public class Challenge1 {
 
     public static void main(String[] args) {
+        boolean firstObstacle = false;
         Robot r = new Robot();
 
         Button.waitForAnyPress();
@@ -32,33 +32,31 @@ public class Challenge1 {
             Sound.beep();
         else
             Sound.beepSequence();
-//        int n = 20; // stub - the last white square within two lines
 
-        //TODO: not reliably going to first node : keep adjusting OFFSET_CORRECTION
         // Get onto the 'Grid network'
         double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
         double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
-        double distToMoveOnDiagonal = //GridGeo.OFFSET_CORRECTION +
-        		(firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
+        double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * Math.sqrt(2);
         r.moveDistance(distToMoveOnDiagonal); 
         
         // Goal using A * (doesn't have to go inside)
         Grid model = new Grid();
-        double[] goalCoords = model.initClosedList1();
-        Node goalNode = model.aStarSearch(firstNodePosition, goalCoords);
-        LinkedList<Node> list = model.findForwardPath(goalNode);
+        double[] goalCoordinates = model.initialiseClosedList1(firstObstacle);
+        Node goalNode = model.aStarSearch(firstNodePosition, goalCoordinates);
+        LinkedList<Node> list = model.findPath(goalNode);
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
-        double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
-        r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
+
+        r.followInstructions(actionList, GridGeo.NODE_SIZE, GridGeo.NODE_DIAGONAL);
 
         Sound.beep(); // Goal found
         
         // Going back to starting point
-        list = model.findBackwardPath(goalNode);
+        list = model.findPath(goalNode);
         int wallDirection = RobotMovement.SW;
         actionList = RobotMovement.parsePathToMovements(list, wallDirection);
+        r.followInstructions(actionList, GridGeo.NODE_SIZE, GridGeo.NODE_DIAGONAL);
 
-        r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
+        // Move to wall to finish task
         r.moveToWall();
         Sound.beep();
     }

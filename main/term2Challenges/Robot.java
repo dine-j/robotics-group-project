@@ -26,9 +26,9 @@ public class Robot {
     private EV3LargeRegulatedMotor motorL, motorR;
 
     private EV3ColorSensor colorSensor;
-    private EV3TouchSensor upperTouchSensor;
+    private EV3TouchSensor leftTouchSensor;
     private EV3GyroSensor gyroSensor;
-    private EV3TouchSensor bottomTouchSensor;
+    private EV3TouchSensor rightTouchSensor;
 
     private static final double DISTANCE_PER_REVOLUTION = 17.27; // cm per 360° rotation
 
@@ -37,8 +37,8 @@ public class Robot {
         this.motorR = new EV3LargeRegulatedMotor(MotorPort.D);
 
         this.gyroSensor = new EV3GyroSensor(SensorPort.S1);
-        this.upperTouchSensor = new EV3TouchSensor(SensorPort.S2);
-        this.bottomTouchSensor = new EV3TouchSensor(SensorPort.S3);
+        this.leftTouchSensor = new EV3TouchSensor(SensorPort.S2);
+        this.rightTouchSensor = new EV3TouchSensor(SensorPort.S3);
         this.colorSensor = new EV3ColorSensor(SensorPort.S4);
          
         this.motorL.setSpeed(120);
@@ -81,43 +81,28 @@ public class Robot {
         SensorMode colorMode = colorSensor.getRGBMode();
         float[] sample = new float[colorMode.sampleSize()];
 
-        int steps = 0;
-
-        while(localizationStrip.getHighestProbability() < 0.8) {
+        while(localizationStrip.getHighestProbability() < 0.85) {
             colorMode.fetchSample(sample, 0);
             boolean isBlue = false;
 
             if (sample[2] < threshold) // if robot senses blue
                 isBlue = true;
 
-            // Debugging
-//            if(isBlue)
-//                System.out.println("B");
-//            else
-//                System.out.println("W");
-
-            Delay.msDelay(2000);
-            moveDistance(2);
-            localizationStrip.updateProbs(true, isBlue, sensorProbability, 1);
-            ++steps;
+            Delay.msDelay(500);
+            moveDistance(2, 120);
+            localizationStrip.updateProbabilities(true, isBlue, sensorProbability, 1);
         }
 
-        if (localizationStrip.getHighestProbability() < 0.5) { // if by any chance the probabilities are too low, take one more step to correct it
-            colorMode.fetchSample(sample, 0);
-            boolean isBlue = false;
-
-            if (sample[2] < threshold) // if robot senses blue
-                isBlue = true;
-
-            moveDistance(2);
-            localizationStrip.updateProbs(true, isBlue, sensorProbability, 1);
-            ++steps;
-        }
-        System.out.println(steps);
         System.out.println(localizationStrip.getHighestProbability());
         return localizationStrip.getLocation();
     }
 
+    /**
+     * Follow series of instructions
+     * @param instructions List of RobotMovements
+     * @param straightDistance Width of grid node in cm
+     * @param diagonalDistance Diagonal of grid node in cm
+     */
     public void followInstructions(List<RobotMovement> instructions, double straightDistance, double diagonalDistance) {
         for (int i = 0; i < instructions.size(); ++i) {
             switch (instructions.get(i)) {
@@ -170,6 +155,9 @@ public class Robot {
         }
     }
 
+    /**
+     * Try to enter tunnel and if not able call adjustPosition()
+     */
     public void tryToEnterTunnel() {
         Sound.beepSequenceUp();
         long startingTime = System.currentTimeMillis();
@@ -178,12 +166,15 @@ public class Robot {
         motorL.setSpeed(120);
         motorR.setSpeed(120);
 
-        while(!isPressed(upperTouchSensor) && System.currentTimeMillis() - startingTime <= duration) {
+        while(!isPressed(leftTouchSensor) && !isPressed(rightTouchSensor) && System.currentTimeMillis() - startingTime <= duration) {
             motorL.forward();
             motorR.forward();
-            if(isPressed(upperTouchSensor)) {
+            if(isPressed(leftTouchSensor) || isPressed(rightTouchSensor)) {
                 Sound.beep();
-                adjustPosition();
+                if(isPressed(leftTouchSensor))
+                    adjustPosition(false);
+                if(isPressed(rightTouchSensor))
+                    adjustPosition(true);
             }
         }
 
@@ -194,21 +185,23 @@ public class Robot {
      * Move forward until reaches the end of the tunnel
      */
     public void moveToWall() {
-        SampleProvider sampleProvider = bottomTouchSensor.getTouchMode();
-        float[] sample = new float[sampleProvider.sampleSize()];
-        sampleProvider.fetchSample(sample, 0);
+        SampleProvider leftSampleProvider = leftTouchSensor.getTouchMode();
+        float[] leftSample = new float[leftSampleProvider.sampleSize()];
+        leftSampleProvider.fetchSample(leftSample, 0);
+
+        SampleProvider rightSampleProvider = rightTouchSensor.getTouchMode();
+        float[] rightSample = new float[rightSampleProvider.sampleSize()];
+        rightSampleProvider.fetchSample(rightSample, 0);
 
         motorL.setSpeed(120);
         motorR.setSpeed(120);
 
-        while(sample[0] == 0) { // button is not pressed
+        while(!isPressed(leftTouchSensor) && !isPressed(rightTouchSensor)) { // button is not pressed
             motorL.forward();
             motorR.forward();
-            sampleProvider.fetchSample(sample, 0);
+            leftSampleProvider.fetchSample(leftSample, 0);
+            rightSampleProvider.fetchSample(rightSample, 0);
         }
-
-        // Debugging
-//        System.out.println("Button pressed");
 
         motorL.stop();
         motorR.stop();
@@ -220,11 +213,7 @@ public class Robot {
     public boolean getNextObstacle() {
         SensorMode colorMode = colorSensor.getRGBMode();
         float[] sample = new float[colorMode.sampleSize()];
-
         colorMode.fetchSample(sample, 0);
-
-        // Debugging
-//        System.out.println(sample[0]);
 
         return isGreen(sample[0]);
     }
@@ -236,46 +225,31 @@ public class Robot {
         moveDistance(-21.5);
     }
 
+    /**
+     * Turn the robot right by 90° and update its direction on the grid
+     */
     public void turnToGoAway() {
         rotate(-90);
         RobotMovement.direction = RobotMovement.S;
     }
 
-    public void adjustPosition() {
-        moveDistance(-14);
-        rotate(-27);
-        moveDistance(8.2);
-        rotate(27);
-
-        long startingTime = System.currentTimeMillis();
-        int duration = 3000;
-        boolean rightHandSide = false;
-
-        motorL.setSpeed(120);
-        motorR.setSpeed(120);
-
-        while(!isPressed(bottomTouchSensor) && System.currentTimeMillis() - startingTime <= duration) {
-            motorL.forward();
-            motorR.forward();
-            if(isPressed(bottomTouchSensor)) {
-                rightHandSide = true;
-                Sound.beep();
-            }
-        }
-
-        motorL.setSpeed(0);
-        motorR.setSpeed(0);
-
+    public void adjustPosition(boolean rightHandSide) {
         if(rightHandSide) {
-            moveDistance(-11);
-            rotate(45);
-            moveDistance(13);
-            rotate(-45);
+            moveDistance(-14);
+            rotate(27);
+            moveDistance(8.2);
+            rotate(-27);
+        } else {
+            moveDistance(-14);
+            rotate(-27);
+            moveDistance(8.2);
+            rotate(27);
         }
     }
 
     /**
      * Rotate robot by given angle, which can be positive (anticlockwise) or negative (clockwise)
+     * Use PID with high correction for 90% of the turn and a slow correction for the remaining 10%
      * @param rotationValue Angle of rotation
      */
     private void rotate(int rotationValue) {
@@ -332,13 +306,15 @@ public class Robot {
             }
         }
 
-        // Debugging
-//        System.out.println(sample[0]);
-
         motorL.stop();
         motorR.stop();
     }
 
+    /**
+     * Rotate robot by given angle, which can be positive (anticlockwise) or negative (clockwise)
+     * Use PID with high correction for 90% of the turn and a slow correction for the remaining 10%
+     * @param rotationValue Angle of rotation
+     */
     private void rotateSlowly(int rotationValue) {
         gyroSensor.reset();
         SampleProvider sampleProvider = gyroSensor.getAngleMode();
@@ -382,20 +358,30 @@ public class Robot {
             }
         }
 
-        // Debugging
-//        System.out.println(sample[0]);
-
         motorL.stop();
         motorR.stop();
     }
 
     /**
-     * Move the robot forward or backward given a certain distance
+     * Move the robot forward or backward given a certain distance in cm
      * @param distance Distance for movement in cm, can be positive or negative
      */
     public void moveDistance(double distance) {
-        motorL.setSpeed(120);
-        motorR.setSpeed(120);
+        motorL.setSpeed(200);
+        motorR.setSpeed(200);
+        double angle = distance * 360 / DISTANCE_PER_REVOLUTION;
+        motorL.rotate((int) angle, true);
+        motorR.rotate((int) angle);
+    }
+
+    /**
+     * Move the robot forward or backward given a certain distance in cm
+     * @param distance Distance for movement in cm, can be positive or negative
+     * @param speed Speed given to the motors
+     */
+    public void moveDistance(double distance, int speed) {
+        motorL.setSpeed(speed);
+        motorR.setSpeed(speed);
         double angle = distance * 360 / DISTANCE_PER_REVOLUTION;
         motorL.rotate((int) angle, true);
         motorR.rotate((int) angle);
@@ -410,6 +396,11 @@ public class Robot {
         return colorValue < 0.1;
     }
 
+    /**
+     * Check if touch sensor is pressed
+     * @param touchSensor EV3 Touch Sensor
+     * @return True if touch sensor is pressed
+     */
     private boolean isPressed(EV3TouchSensor touchSensor) {
         SampleProvider sp = touchSensor.getTouchMode();
         float[] sample = new float[sp.sampleSize()];

@@ -1,7 +1,6 @@
 package tests.aStarTest;
 
 import main.term2Challenges.Grid;
-import main.term2Challenges.GridGeo;
 
 /**
  * Used to check if all the Grid map-placing methods functioned correctly
@@ -31,7 +30,7 @@ public class GridTest {
 //        //test invisible walls on way back (challenge 2)
 //        model.inputWallPosition(0, 120, 60, 60, 4);
 //        model.inputWallPosition(0,0 , 60, 60, 4);
-        model.initClosedList2(false);
+        model.initialiseClosedList2(false);
         
         grid.readGrid(model);
         //grid.placeGoal(GridGeo.closestNodeInNodeCoords(tmp[1], tmp[0]));

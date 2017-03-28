@@ -3,12 +3,9 @@ package tests;
 import java.util.LinkedList;
 import java.util.List;
 
-import lejos.hardware.Button;
-import lejos.utility.Delay;
 import main.term2Challenges.Grid;
 import main.term2Challenges.GridGeo;
 import main.term2Challenges.Node;
-import main.term2Challenges.Robot;
 import main.term2Challenges.RobotMovement;
 
 /**
@@ -28,13 +25,13 @@ public class test {
         
         // Goal using A * (doesn't have to go inside)
         Grid model = new Grid();
-        double[] goalCoords = model.initClosedList1();
+        double[] goalCoords = model.initialiseClosedList1();
         Node goalNode = model.aStarSearch(firstNodePosition, goalCoords);
-        LinkedList<Node> list = model.findForwardPath(goalNode);
+        LinkedList<Node> list = model.findPath(goalNode);
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
 
 
-        list = model.findBackwardPath(goalNode);
+        list = model.findPath(goalNode);
         actionList = RobotMovement.parsePathToMovements(list);
 
         // Add extra movement to face wall

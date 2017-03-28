@@ -15,7 +15,8 @@ public class GridGeo {
     public static final double BAYESIAN_ZEROTH_DIAG = CORNER_DIAG_WIDTH + 3; // in cm
     public static final double BAYESIAN_DETECTOR_TO_ROBOT_CENTER_DIST = 4.5; // in cm
     
-    public static final double NODE_SIZE = (double) COURSE_WIDTH / (double) (NODES_PER_EDGE - 1);    
+    public static final double NODE_SIZE = (double) COURSE_WIDTH / (double) (NODES_PER_EDGE - 1);
+    public static final double NODE_DIAGONAL = NODE_SIZE * Math.sqrt(2);
     public static final double BAYESIAN_GAP_DIST = 1.85; //2; //in cm
     
     // required to get more accurate results
@@ -27,6 +28,7 @@ public class GridGeo {
     public static final double[] TUNNEL_FRONT_RIGHT = new double[]{11,-10 -SafetyDist};
     public static final double[] TUNNEL_BACK_LEFT = new double[]{-11,9};
     public static final double[] TUNNEL_BACK_RIGHT = new double[]{11,9};
+
     // Exam positions
     public static final double[] TUNNEL_BeginMarch_Center = new double[]{82.5, 110};
     public static final double[] CHALLENGE2_BACK_TO_START = new double[]{30, 16};
@@ -36,21 +38,13 @@ public class GridGeo {
     public static final double[] GREEN_CYCL_40cm_Center = new double[]{89.3 , 32.7};
     public static final double[] RED_CYCL_60cm_Center = new double[]{103.4, 18.6};
     public static final double[] RAND_CYCL_40cm_Center = new double[]{32.7 , 89.3};
-    public static final double[] RAND_CYCL_60cm_Center = new double[]{18.6, 103.4};
-    
-    
-    // old positions tested
-    public static final double[] RAND_CYCL_31cm_Center = new double[]{40, 82};
-    public static final double[] RAND_CYCL_14cm_Center = new double[]{50, 72};
-    public static final double[] GREEN_CYCL_14cm_Center = new double[]{72, 50};
-    public static final double[] RED_CYCL_31cm_Center = new double[]{82, 40};
-    
-    
-    //following method used only to build tunnel out of constants
+    public static final double[] RAND_CYCL_60cm_Center = new double[]{18.6 , 103.4};
+
     /**
+     * Used only to build tunnel out of constants
      * @return The result of adding offsetVector[] to {x, y}
      */
-    public static double[] correctOffset(double x, double y, double[] offsetVector){
+    public static double[] correctOffset(double x, double y, double[] offsetVector) {
         return new double[]{x + offsetVector[0], y + offsetVector[1]};
     }
     
@@ -81,19 +75,20 @@ public class GridGeo {
         double xOrY = distanceOnDiagonal / RobotMovement.SQRT2;
         return new double[]{ xOrY, xOrY};
     }
+
     /**
      * @return The next node on leading diagonal relative to currPos[] in 'cm' coordinates
      */
-    public static double[] nextNodeOnLeadingDiagonal( double[] currPos){
+    public static double[] nextNodeOnLeadingDiagonal(double[] currPos) {
         double xOrY = (Math.ceil(currPos[0]/ NODE_SIZE)) * NODE_SIZE;
         return new double[]{ xOrY, xOrY};
     }
     
     /**
      * @param colourReaderCenter The center of the colourReader in 'cm' coordinates
-     * @return The center of the robot in 'cm' coordinates, if center is SW behind colour sensor
+     * @return The center of the robot in 'cm' coordinates, if center is SW (South West) behind colour sensor
      */
-    public static double[] actualRobotCenterSW(double[] colourReaderCenter){
+    public static double[] actualRobotCenterSW(double[] colourReaderCenter) {
         double x = colourReaderCenter[0];
         double y = colourReaderCenter[1];
         x -= BAYESIAN_DETECTOR_TO_ROBOT_CENTER_DIST / RobotMovement.SQRT2;
