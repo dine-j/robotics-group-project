@@ -16,7 +16,7 @@ import lejos.hardware.Sound;
 public class Challenge2 {
 
     public static void main(String[] args) {
-    	
+    	boolean firstObstacle = false;
         Robot robot = new Robot();
 
         Button.waitForAnyPress();
@@ -42,7 +42,7 @@ public class Challenge2 {
         robot.moveDistance(distToMoveOnDiagonal);
         
         // Goal using A * (doesn't have to go inside)
-        planToGoal(firstNodePosition, robot);
+        planToGoal(firstNodePosition, robot, firstObstacle);
 
         robot.tryToEnterTunnel();
 
@@ -62,16 +62,16 @@ public class Challenge2 {
         robot.turnToGoAway();
 
         // Going to assigned obstacle then back starting point
-        planBackToStart(new double[]{110,62}, robot, isGreen);
+        planBackToStart(new double[]{110,62}, robot, isGreen, firstObstacle);
 
         // Move until reaches wall
         robot.moveToWall();
         Sound.beep();
     }
     
-    private static void planToGoal(double[] start, Robot r) {
+    private static void planToGoal(double[] start, Robot r, boolean firstObstacle) {
         Grid model = new Grid();
-        double[] goalCoordinates = model.initialiseClosedList1();
+        double[] goalCoordinates = model.initialiseClosedList1(firstObstacle);
         Node goalNode = model.aStarSearch(start, goalCoordinates);
         LinkedList<Node> list = model.findPath(goalNode);
         int tunnelWallDirection = RobotMovement.E;
@@ -80,10 +80,10 @@ public class Challenge2 {
         r.followInstructions(actionList, GridGeo.NODE_SIZE, GridGeo.NODE_DIAGONAL);
     }
     
-    private static void planBackToStart(double[] start, Robot r, boolean isGreen) {
+    private static void planBackToStart(double[] start, Robot r, boolean isGreen, boolean firstObstacle) {
         Grid model = new Grid();
 
-        model.initialiseClosedList2(isGreen);
+        model.initialiseClosedList2(firstObstacle, isGreen);
 
         Node goalNode = model.aStarSearch(start, GridGeo.CHALLENGE2_BACK_TO_START);
         LinkedList<Node> list = model.findPath(goalNode);

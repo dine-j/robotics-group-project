@@ -38,6 +38,7 @@ public class GridGeo {
     public static final double[] GREEN_CYCL_40cm_Center = new double[]{89.3 , 32.7};
     public static final double[] RED_CYCL_60cm_Center = new double[]{103.4, 18.6};
     public static final double[] RAND_CYCL_40cm_Center = new double[]{32.7 , 89.3};
+    public static final double[] RAND_CYCL_60cm_Center = new double[]{18.6 , 103.4};
 
     /**
      * Used only to build tunnel out of constants

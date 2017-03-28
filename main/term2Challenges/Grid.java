@@ -186,8 +186,11 @@ public class Grid {
      * Initialises ClosedNodes and closed list
      * @return An ideal position in 'cm' coordinates of goal node.
      */
-    public double[] initialiseClosedList1(){
-        inputCylinderPosition(GridGeo.RAND_CYCL_40cm_Center); 
+    public double[] initialiseClosedList1(boolean firstObstacle) {
+        if(firstObstacle)
+            inputCylinderPosition(GridGeo.RAND_CYCL_40cm_Center);
+        else
+            inputCylinderPosition(GridGeo.RAND_CYCL_60cm_Center);
         inputCorners();
         inputWallPosition(GridGeo.WALL_END1_20cm_Center, GridGeo.WALL_END2_20cm_Center, ROBOT_RADIUS + 2);
         inputWallPosition(62, 54, 26,20, 2);   // 'invisible' wall to reduce search-space
@@ -200,7 +203,7 @@ public class Grid {
      * Initialises ClosedNodes and closed list
      * @return An ideal position in 'cm' coordinates of goal node.
      */
-    public void initialiseClosedList2(boolean isGreen){
+    public void initialiseClosedList2(boolean firstObstacle, boolean isGreen){
         //test invisible walls on way back (challenge 2)
         inputWallPosition(0, 120, 60, 60, 4);
         inputWallPosition(0,0 , 60, 60, 4);
@@ -210,7 +213,11 @@ public class Grid {
         else
             inputCylinderPosition(GridGeo.RED_CYCL_60cm_Center);
 
-        inputCylinderPosition(GridGeo.RAND_CYCL_40cm_Center);
+        if(firstObstacle)
+            inputCylinderPosition(GridGeo.RAND_CYCL_40cm_Center);
+        else
+            inputCylinderPosition(GridGeo.RAND_CYCL_60cm_Center);
+
         inputCorners();
         inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
         inputWallPosition(GridGeo.WALL_END1_20cm_Center, GridGeo.WALL_END2_20cm_Center,ROBOT_RADIUS + 2);

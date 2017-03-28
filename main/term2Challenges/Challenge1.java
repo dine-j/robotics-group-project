@@ -14,6 +14,7 @@ import lejos.hardware.Sound;
 public class Challenge1 {
 
     public static void main(String[] args) {
+        boolean firstObstacle = false;
         Robot r = new Robot();
 
         Button.waitForAnyPress();
@@ -40,7 +41,7 @@ public class Challenge1 {
         
         // Goal using A * (doesn't have to go inside)
         Grid model = new Grid();
-        double[] goalCoordinates = model.initialiseClosedList1();
+        double[] goalCoordinates = model.initialiseClosedList1(firstObstacle);
         Node goalNode = model.aStarSearch(firstNodePosition, goalCoordinates);
         LinkedList<Node> list = model.findPath(goalNode);
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
