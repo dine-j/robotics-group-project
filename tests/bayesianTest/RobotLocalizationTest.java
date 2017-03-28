@@ -1,9 +1,10 @@
 package bayesianTest;
 
-import main.term2Challenges.LocalizationStrip;
 //import org.junit.Test;
 
 //import static org.junit.Assert.assertEquals;
+
+import main.term2Challenges.LocalizationStrip;
 
 public class RobotLocalizationTest {
 
@@ -29,7 +30,7 @@ public class RobotLocalizationTest {
         robot = new RobotMockUp(10, 0.95);
         localizationStrip.reinitializeProbabilities();
 
-        for(int i = 0; i < 10; ++i) {
+        for(int i = 0; i < 7; ++i) {
             localizationStrip.updateProbs(true, robot.getColorIsBlue(), 0.95, 1);
             robot.moveForward();
         }
@@ -47,6 +48,18 @@ public class RobotLocalizationTest {
 
         for(int i = 0; i < 9; ++i) {
             localizationStrip.updateProbs(false, robot.getColorIsBlue(), 0.9, 1);
+            robot.moveBackward();
+        }
+
+//        assertEquals(robot.getCurrentLocation(), localizationStrip.getLocation());
+    }
+
+    public static void test3() {
+        robot = new RobotMockUp(10, 0.95);
+        localizationStrip.reinitializeProbabilities();
+
+        for(int i = 0; i < 9; ++i) {
+            localizationStrip.updateProbs(false, robot.getColorIsBlue(), 0.95, 1);
             robot.moveBackward();
         }
 
