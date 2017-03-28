@@ -1,4 +1,4 @@
-package sensorsTests;
+package tests.sensorsTests;
 
 import lejos.hardware.Button;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;

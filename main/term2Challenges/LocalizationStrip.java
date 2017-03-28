@@ -45,16 +45,11 @@ public class LocalizationStrip {
             bayesianProbs[i] /= normalization;
         }
 
-        // move update
         if(movedFoward) {
-            double lastProba = bayesianProbs[bayesianProbs.length - 1];
-            double previous = bayesianProbs[0];
-            for (int i = 1; i < bayesianProbs.length; ++i) {
-                double swap = bayesianProbs[i];
-                bayesianProbs[i] = previous * moveProba + bayesianProbs[i] * (1 - moveProba);
-                previous = swap;
+            for (int i = bayesianProbs.length - 2; i > 0; --i) {
+                bayesianProbs[i] = bayesianProbs[i - 1] * moveProba + bayesianProbs[i] * (1 - moveProba);
             }
-            bayesianProbs[0] = lastProba;
+            bayesianProbs[0] = bayesianProbs[bayesianProbs.length - 1] * moveProba + bayesianProbs[0] * (1 - moveProba);
         } else {
             double lastProba = bayesianProbs[0];
             double previous = bayesianProbs[bayesianProbs.length - 1];

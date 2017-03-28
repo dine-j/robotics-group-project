@@ -76,15 +76,16 @@ public class Robot {
         LocalizationStrip localizationStrip = new LocalizationStrip();
 
         double sensorProbability = 0.95;
+        double threshold = 0.1;
 
         SensorMode colorMode = colorSensor.getRGBMode();
         float[] sample = new float[colorMode.sampleSize()];
 
-        for (int i = 0; i < 10; ++i) {
+        while(localizationStrip.getHighestProbability() < 0.8) {
             colorMode.fetchSample(sample, 0);
             boolean isBlue = false;
 
-            if (sample[2] < 0.1) // if robot senses blue
+            if (sample[2] < threshold) // if robot senses blue
                 isBlue = true;
 
             // Debugging
@@ -102,7 +103,7 @@ public class Robot {
             colorMode.fetchSample(sample, 0);
             boolean isBlue = false;
 
-            if (sample[0] == 2) // if robot senses blue
+            if (sample[2] < threshold) // if robot senses blue
                 isBlue = true;
 
             moveDistance(2);
