@@ -88,14 +88,8 @@ public class Robot {
             if (sample[2] < threshold) // if robot senses blue
                 isBlue = true;
 
-            // Debugging
-//            if(isBlue)
-//                System.out.println("B");
-//            else
-//                System.out.println("W");
-
-            Delay.msDelay(1000);
-            moveDistance(2);
+            Delay.msDelay(500);
+            moveDistance(2, 120);
             localizationStrip.updateProbs(true, isBlue, sensorProbability, 1);
         }
 
@@ -201,9 +195,6 @@ public class Robot {
             sampleProvider.fetchSample(sample, 0);
         }
 
-        // Debugging
-//        System.out.println("Button pressed");
-
         motorL.stop();
         motorR.stop();
     }
@@ -214,11 +205,7 @@ public class Robot {
     public boolean getNextObstacle() {
         SensorMode colorMode = colorSensor.getRGBMode();
         float[] sample = new float[colorMode.sampleSize()];
-
         colorMode.fetchSample(sample, 0);
-
-        // Debugging
-//        System.out.println(sample[0]);
 
         return isGreen(sample[0]);
     }
@@ -333,9 +320,6 @@ public class Robot {
             }
         }
 
-        // Debugging
-//        System.out.println(sample[0]);
-
         motorL.stop();
         motorR.stop();
     }
@@ -388,20 +372,30 @@ public class Robot {
             }
         }
 
-        // Debugging
-//        System.out.println(sample[0]);
-
         motorL.stop();
         motorR.stop();
     }
 
     /**
-     * Move the robot forward or backward given a certain distance
+     * Move the robot forward or backward given a certain distance in cm
      * @param distance Distance for movement in cm, can be positive or negative
      */
     public void moveDistance(double distance) {
         motorL.setSpeed(200);
         motorR.setSpeed(200);
+        double angle = distance * 360 / DISTANCE_PER_REVOLUTION;
+        motorL.rotate((int) angle, true);
+        motorR.rotate((int) angle);
+    }
+
+    /**
+     * Move the robot forward or backward given a certain distance in cm
+     * @param distance Distance for movement in cm, can be positive or negative
+     * @param speed Speed given to the motors
+     */
+    public void moveDistance(double distance, int speed) {
+        motorL.setSpeed(speed);
+        motorR.setSpeed(speed);
         double angle = distance * 360 / DISTANCE_PER_REVOLUTION;
         motorL.rotate((int) angle, true);
         motorR.rotate((int) angle);
@@ -418,7 +412,7 @@ public class Robot {
 
     /**
      * Check if touch sensor is pressed
-     * @param touchSensor
+     * @param touchSensor EV3 Touch Sensor
      * @return True if touch sensor is pressed
      */
     private boolean isPressed(EV3TouchSensor touchSensor) {
