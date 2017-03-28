@@ -81,6 +81,8 @@ public class Robot {
         SensorMode colorMode = colorSensor.getRGBMode();
         float[] sample = new float[colorMode.sampleSize()];
 
+        int steps = 0;
+
         while(localizationStrip.getHighestProbability() < 0.8) {
             colorMode.fetchSample(sample, 0);
             boolean isBlue = false;
@@ -97,6 +99,7 @@ public class Robot {
             Delay.msDelay(2000);
             moveDistance(2);
             localizationStrip.updateProbs(true, isBlue, sensorProbability, 1);
+            ++steps;
         }
 
         if (localizationStrip.getHighestProbability() < 0.5) { // if by any chance the probabilities are too low, take one more step to correct it
@@ -108,7 +111,10 @@ public class Robot {
 
             moveDistance(2);
             localizationStrip.updateProbs(true, isBlue, sensorProbability, 1);
+            ++steps;
         }
+        System.out.println(steps);
+        System.out.println(localizationStrip.getHighestProbability());
         return localizationStrip.getLocation();
     }
 
