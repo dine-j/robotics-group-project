@@ -17,40 +17,40 @@ public class Challenge2 {
 
     public static void main(String[] args) {
     	
-        Robot r = new Robot();
+        Robot robot = new Robot();
 
         Button.waitForAnyPress();
 
         // Measure drift 
-        if(r.isSensorDrifting())
+        if(robot.isSensorDrifting())
             return;
 
         // Localize with Bayesian 'strip'
-        int n = r.localize();
-        System.out.println(n);
-        if(n < 15)
+        int position = robot.localize();
+        System.out.println(position);
+        if(position < 15)
             Sound.beepSequenceUp();
-        else if(n < 22)
+        else if(position < 22)
             Sound.beep();
         else
             Sound.beepSequence();
 
         // Get onto the 'Grid network'
-        double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
+        double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(position));
         double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
         double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
-        r.moveDistance(distToMoveOnDiagonal); 
+        robot.moveDistance(distToMoveOnDiagonal);
         
         // Goal using A * (doesn't have to go inside)
-        double[] goalCoordinates = planToGoal(firstNodePosition, r);
+        planToGoal(firstNodePosition, robot);
 
-        r.tryToEnterTunnel();
+        robot.tryToEnterTunnel();
 
         // Going inside the tunnel
-        r.moveToWall();
+        robot.moveToWall();
         
         // Sensing color
-        boolean isGreen = r.getNextObstacle();
+        boolean isGreen = robot.getNextObstacle();
 
         if (isGreen)
             Sound.beep();
@@ -58,18 +58,18 @@ public class Challenge2 {
             Sound.twoBeeps();
 
         // Moving back
-        r.exitTunnel();
-        r.turnToGoAway();
+        robot.exitTunnel();
+        robot.turnToGoAway();
 
         // Going to assigned obstacle then back starting point
-        planBackToStart(new double[]{110,62}, r, isGreen);
+        planBackToStart(new double[]{110,62}, robot, isGreen);
 
         // Move until reaches wall
-        r.moveToWall();
+        robot.moveToWall();
         Sound.beep();
     }
     
-    private static double[] planToGoal(double[] start, Robot r){
+    private static void planToGoal(double[] start, Robot r) {
         Grid model = new Grid();
         double[] goalCoordinates = model.initialiseClosedList1();
         Node goalNode = model.aStarSearch(start, goalCoordinates);
@@ -79,10 +79,9 @@ public class Challenge2 {
 
         double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
-        return goalCoordinates;
     }
     
-    private static void planBackToStart(double[] start, Robot r, boolean isGreen){
+    private static void planBackToStart(double[] start, Robot r, boolean isGreen) {
         Grid model = new Grid();
 
         model.initialiseClosedList2(isGreen);
@@ -93,7 +92,7 @@ public class Challenge2 {
 
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list, wallDirection);
         
-        double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
-        r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
+        double nodeDiagonalLength = RobotMovement.SQRT2 * model.getNodeSize();
+        r.followInstructions(actionList, model.getNodeSize(), nodeDiagonalLength);
     }
 }
