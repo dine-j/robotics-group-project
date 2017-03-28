@@ -35,7 +35,7 @@ public class Challenge1 {
         // Get onto the 'Grid network'
         double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
         double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
-        double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
+        double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * Math.sqrt(2);
         r.moveDistance(distToMoveOnDiagonal); 
         
         // Goal using A * (doesn't have to go inside)
@@ -44,10 +44,8 @@ public class Challenge1 {
         Node goalNode = model.aStarSearch(firstNodePosition, goalCoordinates);
         LinkedList<Node> list = model.findPath(goalNode);
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
-        double nodeSize = GridGeo.NODE_SIZE;
-        double nodeDiagonalLength = RobotMovement.SQRT2 * GridGeo.NODE_SIZE;
 
-        r.followInstructions(actionList, nodeSize, nodeDiagonalLength);
+        r.followInstructions(actionList, GridGeo.NODE_SIZE, GridGeo.NODE_DIAGONAL);
 
         Sound.beep(); // Goal found
         
@@ -55,7 +53,7 @@ public class Challenge1 {
         list = model.findPath(goalNode);
         int wallDirection = RobotMovement.SW;
         actionList = RobotMovement.parsePathToMovements(list, wallDirection);
-        r.followInstructions(actionList, nodeSize, nodeDiagonalLength);
+        r.followInstructions(actionList, GridGeo.NODE_SIZE, GridGeo.NODE_DIAGONAL);
 
         // Move to wall to finish task
         r.moveToWall();

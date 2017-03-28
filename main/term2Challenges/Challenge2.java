@@ -38,7 +38,7 @@ public class Challenge2 {
         // Get onto the 'Grid network'
         double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(position));
         double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
-        double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
+        double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * Math.sqrt(2);
         robot.moveDistance(distToMoveOnDiagonal);
         
         // Goal using A * (doesn't have to go inside)
@@ -77,8 +77,7 @@ public class Challenge2 {
         int tunnelWallDirection = RobotMovement.E;
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list, tunnelWallDirection);
 
-        double nodeDiagonal = RobotMovement.SQRT2 * GridGeo.NODE_SIZE;
-        r.followInstructions(actionList, GridGeo.NODE_SIZE, nodeDiagonal);
+        r.followInstructions(actionList, GridGeo.NODE_SIZE, GridGeo.NODE_DIAGONAL);
     }
     
     private static void planBackToStart(double[] start, Robot r, boolean isGreen) {
@@ -91,8 +90,7 @@ public class Challenge2 {
         int wallDirection = RobotMovement.SW;
 
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list, wallDirection);
-        
-        double nodeDiagonalLength = RobotMovement.SQRT2 * GridGeo.NODE_SIZE;
-        r.followInstructions(actionList, GridGeo.NODE_SIZE, nodeDiagonalLength);
+
+        r.followInstructions(actionList, GridGeo.NODE_SIZE, GridGeo.NODE_DIAGONAL);
     }
 }

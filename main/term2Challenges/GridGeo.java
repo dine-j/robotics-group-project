@@ -15,7 +15,8 @@ public class GridGeo {
     public static final double BAYESIAN_ZEROTH_DIAG = CORNER_DIAG_WIDTH + 3; // in cm
     public static final double BAYESIAN_DETECTOR_TO_ROBOT_CENTER_DIST = 4.5; // in cm
     
-    public static final double NODE_SIZE = (double) COURSE_WIDTH / (double) (NODES_PER_EDGE - 1);    
+    public static final double NODE_SIZE = (double) COURSE_WIDTH / (double) (NODES_PER_EDGE - 1);
+    public static final double NODE_DIAGONAL = NODE_SIZE * Math.sqrt(2);
     public static final double BAYESIAN_GAP_DIST = 1.85; //2; //in cm
     
     // required to get more accurate results
