@@ -1,7 +1,7 @@
 package tests.aStarTest;
 
 import java.util.LinkedList;
-import java.util.List;
+
 import main.term2Challenges.Node;
 import main.term2Challenges.RobotMovement;
 import main.term2Challenges.Grid;
@@ -26,13 +26,13 @@ public class AStarWayBack {
         boolean isGreen = true;
 //        boolean isGreen = false;
 
-        model.initClosedList2(isGreen);
+        model.initialiseClosedList2(isGreen);
         long startTime = System.currentTimeMillis();
         
         Node goalNode = model.aStarSearch(new double[]{110,62} ,GridGeo.CHALLENGE2_BACK_TO_START );
         System.out.println(System.currentTimeMillis() - startTime);
         
-        LinkedList<Node> list = model.findForwardPath(goalNode);
+        LinkedList<Node> list = model.findPath(goalNode);
 //        List<Node> list = model.findBackwardPath(goalNode);
         RobotMovement.direction = RobotMovement.S;
         int wallDirection = RobotMovement.SW;

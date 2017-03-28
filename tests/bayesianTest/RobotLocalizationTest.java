@@ -26,7 +26,7 @@ public class RobotLocalizationTest {
      */
 //    @Test
     public static void test1() {
-        robot = new RobotMockUp(10, 0.95);
+        robot = new RobotMockUp(20, 0.95);
         localizationStrip.reinitializeProbabilities();
 
         for(int i = 0; i < 10; ++i) {

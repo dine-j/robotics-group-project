@@ -27,11 +27,11 @@ public class test {
         Grid model = new Grid();
         double[] goalCoords = model.initialiseClosedList1();
         Node goalNode = model.aStarSearch(firstNodePosition, goalCoords);
-        LinkedList<Node> list = model.findForwardPath(goalNode);
+        LinkedList<Node> list = model.findPath(goalNode);
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
 
 
-        list = model.findBackwardPath(goalNode);
+        list = model.findPath(goalNode);
         actionList = RobotMovement.parsePathToMovements(list);
 
         // Add extra movement to face wall

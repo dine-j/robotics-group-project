@@ -33,7 +33,7 @@ public class AStarTestMain {
         System.out.println(System.currentTimeMillis() - startTime + " ms to find path");
 
         // Forward
-        LinkedList<Node> list = model.findForwardPath(goalNode);
+        LinkedList<Node> list = model.findPath(goalNode);
 
 
         // Backward

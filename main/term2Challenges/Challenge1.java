@@ -42,7 +42,7 @@ public class Challenge1 {
         Grid model = new Grid();
         double[] goalCoordinates = model.initialiseClosedList1();
         Node goalNode = model.aStarSearch(firstNodePosition, goalCoordinates);
-        LinkedList<Node> list = model.findForwardPath(goalNode);
+        LinkedList<Node> list = model.findPath(goalNode);
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
         double nodeSize = model.getNodeSize();
         double nodeDiagonalLength = RobotMovement.SQRT2 * nodeSize;
@@ -52,7 +52,7 @@ public class Challenge1 {
         Sound.beep(); // Goal found
         
         // Going back to starting point
-        list = model.findBackwardPath(goalNode);
+        list = model.findPath(goalNode);
         int wallDirection = RobotMovement.SW;
         actionList = RobotMovement.parsePathToMovements(list, wallDirection);
         r.followInstructions(actionList, nodeSize, nodeDiagonalLength);

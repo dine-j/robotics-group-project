@@ -35,18 +35,14 @@ public class Challenge2 {
         else
             Sound.beepSequence();
 
-        // int n = 20; // stub - the last white square within two lines
-
-        //TODO: not reliably going to first node : keep adjusting OFFSET_CORRECTION
         // Get onto the 'Grid network'
         double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
         double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
-        double distToMoveOnDiagonal = //GridGeo.OFFSET_CORRECTION +
-        		(firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
+        double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * RobotMovement.SQRT2;
         r.moveDistance(distToMoveOnDiagonal); 
         
         // Goal using A * (doesn't have to go inside)
-        double[] goalCoords = planToGoal(firstNodePosition,r);
+        double[] goalCoordinates = planToGoal(firstNodePosition, r);
 
         r.tryToEnterTunnel();
 
@@ -66,7 +62,7 @@ public class Challenge2 {
         r.turnToGoAway();
 
         // Going to assigned obstacle then back starting point
-        planBackToStart(goalCoords, r, isGreen);
+        planBackToStart(new double[]{110,62}, r, isGreen);
 
         // Move until reaches wall
         r.moveToWall();
@@ -75,31 +71,26 @@ public class Challenge2 {
     
     private static double[] planToGoal(double[] start, Robot r){
         Grid model = new Grid();
-        double[] goalCoords = model.initialiseClosedList1();
-        Node goalNode = model.aStarSearch(start, goalCoords);
-        LinkedList<Node> list = model.findForwardPath(goalNode);
+        double[] goalCoordinates = model.initialiseClosedList1();
+        Node goalNode = model.aStarSearch(start, goalCoordinates);
+        LinkedList<Node> list = model.findPath(goalNode);
         int tunnelWallDirection = RobotMovement.E;
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list, tunnelWallDirection);
-        
-//        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
-//        actionList.add(RobotMovement.dirChange(tunnelWallDirection));
+
         double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
         r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
-        return goalCoords;
+        return goalCoordinates;
     }
     
     private static void planBackToStart(double[] start, Robot r, boolean isGreen){
         Grid model = new Grid();
-        model.initClosedList2(isGreen);
-        //Node goalNode = model.aStarSearch(start, GridGeo.CHALLENGE2_BACK_TO_START);
-        
-        //TODO: unhardcode this
-        Node goalNode = model.aStarSearch(new double[]{110,62} ,GridGeo.CHALLENGE2_BACK_TO_START );
-        LinkedList<Node> list = model.findForwardPath(goalNode);
+
+        model.initialiseClosedList2(isGreen);
+
+        Node goalNode = model.aStarSearch(start, GridGeo.CHALLENGE2_BACK_TO_START);
+        LinkedList<Node> list = model.findPath(goalNode);
         int wallDirection = RobotMovement.SW;
-        
-//        List<RobotMovement> actionList =RobotMovement.parsePathToMovements(list);
-//        actionList.add(RobotMovement.dirChange(wallDirection));
+
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list, wallDirection);
         
         double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();

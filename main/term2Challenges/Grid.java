@@ -144,7 +144,7 @@ public class Grid {
         return aStarSearch(start[0], start[1], goal[0], goal[1]);
     }
     
-    public LinkedList<Node> findForwardPath(Node goal) {
+    public LinkedList<Node> findPath(Node goal) {
         LinkedList<Node> list = new LinkedList<Node>();
         list.add(goal);
         Node current = goal;
@@ -202,7 +202,7 @@ public class Grid {
      * Initialises ClosedNodes and closed list
      * @return An ideal position in 'cm' coordinates of goal node.
      */
-    public void initClosedList2(boolean isGreen){
+    public void initialiseClosedList2(boolean isGreen){
         //test invisible walls on way back (challenge 2)
         inputWallPosition(0, 120, 60, 60, 4);
         inputWallPosition(0,0 , 60, 60, 4);
