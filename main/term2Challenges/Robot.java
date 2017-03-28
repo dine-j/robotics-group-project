@@ -166,7 +166,7 @@ public class Robot {
     public void tryToEnterTunnel() {
         Sound.beepSequenceUp();
         long startingTime = System.currentTimeMillis();
-        int duration = 2000;
+        int duration = 3000;
 
         motorL.setSpeed(120);
         motorR.setSpeed(120);
