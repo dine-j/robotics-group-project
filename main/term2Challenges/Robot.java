@@ -183,7 +183,10 @@ public class Robot {
             motorR.forward();
             if(isPressed(leftTouchSensor) || isPressed(rightTouchSensor)) {
                 Sound.beep();
-                adjustPosition();
+                if(isPressed(leftTouchSensor))
+                    adjustPosition(false);
+                if(isPressed(rightTouchSensor))
+                    adjustPosition(true);
             }
         }
 
@@ -205,7 +208,7 @@ public class Robot {
         motorL.setSpeed(120);
         motorR.setSpeed(120);
 
-        while(!isPressed(leftTouchSensor) || !isPressed(rightTouchSensor)) { // button is not pressed
+        while(!isPressed(leftTouchSensor) && !isPressed(rightTouchSensor)) { // button is not pressed
             motorL.forward();
             motorR.forward();
             leftSampleProvider.fetchSample(leftSample, 0);
@@ -246,36 +249,17 @@ public class Robot {
         RobotMovement.direction = RobotMovement.S;
     }
 
-    public void adjustPosition() {
-        moveDistance(-14);
-        rotate(-27);
-        moveDistance(8.2);
-        rotate(27);
-
-        long startingTime = System.currentTimeMillis();
-        int duration = 3000;
-        boolean rightHandSide = false;
-
-        motorL.setSpeed(120);
-        motorR.setSpeed(120);
-
-        while(!isPressed(rightTouchSensor) && !isPressed(leftTouchSensor) && System.currentTimeMillis() - startingTime <= duration) {
-            motorL.forward();
-            motorR.forward();
-            if(isPressed(rightTouchSensor)) {
-                rightHandSide = true;
-                Sound.beep();
-            }
-        }
-
-        motorL.setSpeed(0);
-        motorR.setSpeed(0);
-
+    public void adjustPosition(boolean rightHandSide) {
         if(rightHandSide) {
-            moveDistance(-11);
-            rotate(45);
-            moveDistance(13);
-            rotate(-45);
+            moveDistance(-14);
+            rotate(27);
+            moveDistance(8.2);
+            rotate(-27);
+        } else {
+            moveDistance(-14);
+            rotate(-27);
+            moveDistance(8.2);
+            rotate(27);
         }
     }
 
