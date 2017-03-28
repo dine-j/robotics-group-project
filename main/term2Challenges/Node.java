@@ -14,7 +14,6 @@ public class Node implements Comparable<Node>{
     private double gn; 
     private double fn; // may be recomputed when gn changes
     
-    
     public Node(int x, int y, double hn, double gn, Node parent, boolean open){
         this.x = x;
         this.y = y;
@@ -49,7 +48,7 @@ public class Node implements Comparable<Node>{
     }
     
     
-    public void setGn(double gn){
+    public void setGn(double gn) {
         this.gn = gn;
         fn = gn + hn; // recompute fn;
     }
@@ -78,21 +77,12 @@ public class Node implements Comparable<Node>{
         return parent;
     }
 
-    public double getHn() {
-        return hn;
-    }
-
     public double getGn() {
         return gn;
     }
-
-    public double getFn() {
-        return fn;
-    }
     
     @Override
-    public String toString(){
+    public String toString() {
         return "["+x+","+y+"] "+(isOpen() ? "OPEN":"CLOSED")+ " h,g,f = " + String.format("%.1f,%.1f,%.1f", hn,gn,fn);
     }
-    
 }
