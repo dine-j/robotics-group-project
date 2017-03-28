@@ -4,6 +4,7 @@ import java.util.List;
 
 import lejos.hardware.Button;
 import main.term2Challenges.Grid;
+import main.term2Challenges.GridGeo;
 import main.term2Challenges.Robot;
 import main.term2Challenges.RobotMovement;
 
@@ -17,8 +18,8 @@ public class MockedPathTesting {
         Robot r = new Robot();
         Button.waitForAnyPress();
         Grid model = new Grid();
-        double nodeSize = model.getNodeSize();
-        double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
+        double nodeSize = GridGeo.NODE_SIZE;
+        double nodeDiagonal = RobotMovement.SQRT2 * GridGeo.NODE_SIZE;
 
         //tests moves forward 60cm
         //List<RobotMovement> egActions = MockedPathGenerator.testPath1(); //PASSED

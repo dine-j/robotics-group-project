@@ -44,8 +44,8 @@ public class Challenge1 {
         Node goalNode = model.aStarSearch(firstNodePosition, goalCoordinates);
         LinkedList<Node> list = model.findPath(goalNode);
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
-        double nodeSize = model.getNodeSize();
-        double nodeDiagonalLength = RobotMovement.SQRT2 * nodeSize;
+        double nodeSize = GridGeo.NODE_SIZE;
+        double nodeDiagonalLength = RobotMovement.SQRT2 * GridGeo.NODE_SIZE;
 
         r.followInstructions(actionList, nodeSize, nodeDiagonalLength);
 

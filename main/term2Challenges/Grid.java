@@ -11,8 +11,7 @@ public class Grid {
     final private static int ROBOT_RADIUS = 8; // in cm
     
     //number of definitely inaccessible nodes away from course-edges
-    final private static int BORDER_NODE_WIDTH = (int) ((ROBOT_RADIUS) / GridGeo.NODE_SIZE); 
-    
+    final private static int BORDER_NODE_WIDTH = (int) ((ROBOT_RADIUS) / GridGeo.NODE_SIZE);
     
     /*
      * Nodes are stored as follows in the 'map' , where b's represent the bayesian strip.
@@ -26,11 +25,8 @@ public class Grid {
      *  |
      *  Matrix coordinate (0,0)
      */
-    private Node[][] grid; 
-    // use of grid storing closedNodes makes storing separate closed list unnecessary
-    // private TreeSet<Node> closedList;
+    private Node[][] grid;
     private PriorityQueue<Node> openList;
-
 
     public Grid() {
         this(GridGeo.NODES_PER_EDGE);
@@ -40,18 +36,6 @@ public class Grid {
         openList = new PriorityQueue<Node>();
         // pointers stored in grid for easy x,y access
         grid = new Node[numberOfNodesPerEdge][numberOfNodesPerEdge]; 
-    }
-
-    public int getSize() {
-        return grid.length;
-    }
-
-    public Node[][] getGrid() {
-        return grid;
-    }
-    
-    private static int manhattanHeuristic(int x, int y, Node goalNode) {
-        return Math.abs(x - goalNode.getX()) + Math.abs(y - goalNode.getY());
     }
 
     /**
@@ -69,13 +53,13 @@ public class Grid {
 
         // 2. Add initial pos to open list
         int[] startNodeXY = GridGeo.closestNodeInNodeCoords(xStart, yStart);
-        
+
         Node init = new Node(startNodeXY[0], startNodeXY[1], manhattanHeuristic(startNodeXY[0], startNodeXY[1], goal), 0, null, true);
         openList.add(init);
         grid[startNodeXY[0]][startNodeXY[1]] = init; //add to grid
 
         boolean isFacingDiagonal = true;
-        
+
         // list of possible actions to use in while loop
         int[][] ACTION = new int[][]{{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
         while (!openList.isEmpty()) {
@@ -88,7 +72,7 @@ public class Grid {
                 else
                     isFacingDiagonal = false;
             }
-            
+
             for (int i = 0; i < ACTION.length; ++i) {
                 final int x = toExpand.getX() + ACTION[i][0];
                 final int y = toExpand.getY() + ACTION[i][1];
@@ -131,7 +115,7 @@ public class Grid {
         }
         return null; //default return if no path found
     }
-    
+
     /**
      * Does A* search after initialising closed list
      * precondition: start[] vector in cm and should line up with a node.
@@ -156,16 +140,42 @@ public class Grid {
         return list;
     }
 
+    /**
+     * Check if a given node is inside the grid (border excluded)
+     * @param x X position of the node
+     * @param y Y position of the node
+     * @return True if the node is inside the grid (excluding border)
+     */
     public boolean isInsideBorder(int x, int y) {
-        int tmp1 = GridGeo.NODES_PER_EDGE - BORDER_NODE_WIDTH;
-        if (x >= BORDER_NODE_WIDTH && y >= BORDER_NODE_WIDTH && x < tmp1 && y < tmp1) {
-            return true;
-        }
-        return false;
+        int insideLength = GridGeo.NODES_PER_EDGE - BORDER_NODE_WIDTH;
+        return x >= BORDER_NODE_WIDTH && y >= BORDER_NODE_WIDTH && x < insideLength && y < insideLength;
     }
 
-    public double getNodeSize() {
-        return GridGeo.NODE_SIZE;
+    /**
+     * Compute manhattan heuristic with respect to the goal node
+     * @param x X position of current node
+     * @param y Y position of current node
+     * @param goalNode Goal node
+     * @return Manhattan heuristic for current node
+     */
+    private static int manhattanHeuristic(int x, int y, Node goalNode) {
+        return Math.abs(x - goalNode.getX()) + Math.abs(y - goalNode.getY());
+    }
+
+    /**
+     * Get size of the grid
+     * @return Size of the grid
+     */
+    public int getSize() {
+        return grid.length;
+    }
+
+    /**
+     * Get grid
+     * @return Grid represented by 2-d array of nodes
+     */
+    public Node[][] getGrid() {
+        return grid;
     }
 
 /////////////////////////////////////////////////////////////////////////////

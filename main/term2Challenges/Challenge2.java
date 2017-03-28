@@ -77,8 +77,8 @@ public class Challenge2 {
         int tunnelWallDirection = RobotMovement.E;
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list, tunnelWallDirection);
 
-        double nodeDiagonal = RobotMovement.SQRT2 * model.getNodeSize();
-        r.followInstructions(actionList, model.getNodeSize(), nodeDiagonal);
+        double nodeDiagonal = RobotMovement.SQRT2 * GridGeo.NODE_SIZE;
+        r.followInstructions(actionList, GridGeo.NODE_SIZE, nodeDiagonal);
     }
     
     private static void planBackToStart(double[] start, Robot r, boolean isGreen) {
@@ -92,7 +92,7 @@ public class Challenge2 {
 
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list, wallDirection);
         
-        double nodeDiagonalLength = RobotMovement.SQRT2 * model.getNodeSize();
-        r.followInstructions(actionList, model.getNodeSize(), nodeDiagonalLength);
+        double nodeDiagonalLength = RobotMovement.SQRT2 * GridGeo.NODE_SIZE;
+        r.followInstructions(actionList, GridGeo.NODE_SIZE, nodeDiagonalLength);
     }
 }
