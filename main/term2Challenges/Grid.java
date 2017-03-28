@@ -189,12 +189,10 @@ public class Grid {
     public double[] initialiseClosedList1(){
         inputCylinderPosition(GridGeo.RAND_CYCL_40cm_Center); 
         inputCorners();
-        double[] goalIdeal = inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
-        inputWallPosition(GridGeo.WALL_END1_20cm_Center, GridGeo.WALL_END2_20cm_Center,ROBOT_RADIUS + 2);
-        
-        // Maybe good idea:
+        inputWallPosition(GridGeo.WALL_END1_20cm_Center, GridGeo.WALL_END2_20cm_Center, ROBOT_RADIUS + 2);
         inputWallPosition(62, 54, 26,20, 2);   // 'invisible' wall to reduce search-space
-        
+        double[] goalIdeal = inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);
+
         return goalIdeal;
     }
     
@@ -207,56 +205,17 @@ public class Grid {
         inputWallPosition(0, 120, 60, 60, 4);
         inputWallPosition(0,0 , 60, 60, 4);
         
-        if( isGreen){
+        if(isGreen)
             inputCylinderPosition(GridGeo.GREEN_CYCL_40cm_Center);
-        }
-        else{
-            inputCylinderPosition(GridGeo.RED_CYCL_60cm_Center); 
-        }
-        inputCylinderPosition(GridGeo.RAND_CYCL_40cm_Center); 
+        else
+            inputCylinderPosition(GridGeo.RED_CYCL_60cm_Center);
+
+        inputCylinderPosition(GridGeo.RAND_CYCL_40cm_Center);
         inputCorners();
         inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
         inputWallPosition(GridGeo.WALL_END1_20cm_Center, GridGeo.WALL_END2_20cm_Center,ROBOT_RADIUS + 2);
-        
-        // Maybe good idea:
         inputWallPosition(62, 54, 26,20, 2);   // 'invisible' wall to reduce search-space
-        
-        //return goalIdeal;
     }
-    
-    /**
-     * Old Method
-     */
-    public double[] initOldClosedList1(){
-        inputCylinderPosition(GridGeo.RAND_CYCL_14cm_Center); 
-        inputCorners();
-        double[] goalIdeal = inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
-        inputWallPosition(new double[]{61,61}, new double[]{51,51}  , 3);
-        inputWallPosition(62, 54, 26,20, 2);   // 'invisible' wall
-        return goalIdeal;
-    }
-    
-    /**
-     * Old Method
-     */
-    public void initOldClosedList2(boolean isGreen){
-        //test invisible walls on way back (challenge 2)
-        inputWallPosition(0, 120, 60, 60, 4);
-        inputWallPosition(0,0 , 60, 60, 4);
-        
-        if( isGreen){
-            inputCylinderPosition(GridGeo.GREEN_CYCL_14cm_Center);
-        }
-        else{
-            inputCylinderPosition(GridGeo.RED_CYCL_31cm_Center); 
-        }
-        inputCylinderPosition(GridGeo.RAND_CYCL_14cm_Center); 
-        inputCorners();
-        inputTunnelPosition(GridGeo.TUNNEL_BeginMarch_Center, 90);     
-        inputWallPosition(new double[]{61,61}, new double[]{51,51}  , 3);
-        inputWallPosition(62, 54, 26,20, 2);   // 'invisible' wall
-    }
-    
 
     /**
      * Updates the map so that it won't navigate though a CYLINDER OBJECT
@@ -265,6 +224,7 @@ public class Grid {
         addClosedNodeCircle(x / GridGeo.NODE_SIZE, y / GridGeo.NODE_SIZE,
                 (GridGeo.CYLINDER_RADIUS + ROBOT_RADIUS) / GridGeo.NODE_SIZE);
     }
+
     /**
      * Updates the map so that it won't navigate though a CYLINDER OBJECT
      */
@@ -317,6 +277,7 @@ public class Grid {
         if (center.length != 2) throw new IllegalArgumentException();
         return inputTunnelPosition(center[0], center[1], degrees);
     }
+
     /**
      * Updates the map so that it won't navigate though a WALL OBJECT
      */
@@ -339,7 +300,9 @@ public class Grid {
         inputWallPosition(pntA[0], pntA[1], pntB[0], pntB[1], r);
     }
 
-    //(x1,y1), (x2,y2) are mid points of rectangle ends
+    /**
+     * (x1,y1), (x2,y2) are mid points of rectangle ends
+     */
     private void addClosedNodeRectangle(double x1, double y1, double x2, double y2, double r) {
         if (x1 == x2 || y1 == y2) { // CODE IF MID-LINE ALIGNED TO X OR Y AXIS
             if (x1 == x2 && y1 == y2) {
@@ -407,7 +370,7 @@ public class Grid {
         }
     }
 
-    // lineEqs must be inputed as first two being upper-bounding and second two being lower-bounding
+    // lineEqs must be input as first two being upper-bounding and second two being lower-bounding
     private void addClosedNodeQuadrangle(double x, double y, double h, double w, double[][] lineEqs) {
         boolean[] isUpperBounding = new boolean[]{true, true, false, false};
         if (lineEqs.length > 4) throw new IllegalArgumentException("upto four line equations!");
