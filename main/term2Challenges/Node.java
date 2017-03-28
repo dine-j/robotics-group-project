@@ -1,7 +1,7 @@
 package main.term2Challenges;
 
 /**
- * Represents A* nodes, sorted by f(n) values or a comparator
+ * Represents A* nodes, sorted by f(n) values
  *
  */
 public class Node implements Comparable<Node>{
@@ -12,9 +12,9 @@ public class Node implements Comparable<Node>{
 
     private double hn;
     private double gn; 
-    private double fn; // may be recomputed when gn changes
+    private double fn;
 
-    public Node(int x, int y, double hn, double gn, Node parent, boolean open){
+    public Node(int x, int y, double hn, double gn, Node parent, boolean open) {
         this.x = x;
         this.y = y;
         this.hn = hn;
@@ -29,7 +29,7 @@ public class Node implements Comparable<Node>{
      * @param x
      * @param y
      */
-    public Node (int x, int y){
+    public Node (int x, int y) {
         this.x = x;
         this.y = y;
         this.hn = 0;
@@ -46,8 +46,7 @@ public class Node implements Comparable<Node>{
     public boolean isOpen(){
         return open;
     }
-    
-    
+
     public void setGn(double gn) {
         this.gn = gn;
         fn = gn + hn; // recompute fn;
@@ -62,7 +61,7 @@ public class Node implements Comparable<Node>{
     }
     
     public int compareTo(Node other){
-        return Double.compare(this.fn,other.fn);
+        return Double.compare(this.fn, other.fn);
     }
     
     public int getX() {
