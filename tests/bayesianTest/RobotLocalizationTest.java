@@ -26,12 +26,12 @@ public class RobotLocalizationTest {
      */
 //    @Test
     public static void test1() {
-        robot = new RobotMockUp(20, 0.98);
+        robot = new RobotMockUp(23, 0.98);
         localizationStrip.reinitializeProbabilities();
 
         int steps = 0;
 
-        while(localizationStrip.getHighestProbability() < 0.8) {
+        while(localizationStrip.getHighestProbability() < 0.85) {
             localizationStrip.updateProbs(true, robot.getColorIsBlue(), 0.95, 1);
             robot.moveForward();
             ++steps;
@@ -46,7 +46,7 @@ public class RobotLocalizationTest {
      */
 //    @Test
     public static void test2() {
-        robot = new RobotMockUp(20, 0.95);
+        robot = new RobotMockUp(21, 0.95);
         localizationStrip.reinitializeProbabilities();
 
         int steps = 0;
