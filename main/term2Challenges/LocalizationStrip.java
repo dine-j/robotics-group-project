@@ -26,13 +26,12 @@ public class LocalizationStrip {
         }
     }
 
-    /*
+    /**
      * Update probabilities after:
      * First, sensing the color at current location
      * Second, moving in a given direction (forward or backward)
-     * TODO: remove duplicated code
      */
-    public void updateProbs(boolean movedFoward, boolean readBlue, double sensorProba, double moveProba) {
+    public void updateProbabilities(boolean movedFoward, boolean readBlue, double sensorProba, double moveProba) {
         // sensing update
         double normalization = 0.0;
         for(int i = 0; i < bayesianProbs.length; ++i) {
@@ -45,41 +44,43 @@ public class LocalizationStrip {
         }
 
         // normalization
-        for(int i = 0; i < bayesianProbs.length; ++i) {
-            bayesianProbs[i] /= normalization;
-        }
+        normalize(normalization);
 
         normalization = 0.0;
 
         // move update
         if(movedFoward) {
             for (int i = bayesianProbs.length - 1; i > 0; --i) {
-                bayesianProbs[i] = bayesianProbs[i - 1]; //+ bayesianProbs[i] * (1 - moveProba);
+                bayesianProbs[i] = bayesianProbs[i - 1] * moveProba + bayesianProbs[i] * (1 - moveProba);
                 normalization += bayesianProbs[i];
             }
             bayesianProbs[0] = bayesianProbs[bayesianProbs.length - 1] * moveProba + bayesianProbs[0] * (1 - moveProba);
             normalization += bayesianProbs[0];
         } else {
-            double lastProba = bayesianProbs[0];
-            double previous = bayesianProbs[bayesianProbs.length - 1];
-            for (int i = bayesianProbs.length - 2; i > 0; --i) {
-                double swap = bayesianProbs[i];
-                bayesianProbs[i] = previous * moveProba + bayesianProbs[i] * (1 - moveProba);
+            for (int i = 0; i < bayesianProbs.length - 1; ++i) {
+                bayesianProbs[i] = bayesianProbs[i + 1] * moveProba + bayesianProbs[i] * (1 - moveProba);
                 normalization += bayesianProbs[i];
-                previous = swap;
             }
-            bayesianProbs[bayesianProbs.length - 1] = lastProba;
+            bayesianProbs[bayesianProbs.length - 1] = bayesianProbs[0] * moveProba + bayesianProbs[bayesianProbs.length - 1] * (1 - moveProba);
             normalization += bayesianProbs[bayesianProbs.length - 1];
         }
 
         // normalization
+        normalize(normalization);
+    }
+
+    /**
+     * Normalize probabilities with normalization coefficient
+     * @param normalization Coefficient for normalization
+     */
+    private void normalize(double normalization) {
         for(int i = 0; i < bayesianProbs.length; ++i) {
             bayesianProbs[i] /= normalization;
         }
     }
 
-    /*
-     * For testing
+    /**
+     * Print probabilities for testing
      */
     public void printBayesianResults() {
         for(int index = 0; index < stripIsBlue.length; ++index) {
@@ -91,7 +92,8 @@ public class LocalizationStrip {
         System.out.println("Highest proba: " + Math.floor(bayesianProbs[getLocation()] * 100) / 100 + " at " + getLocation());
     }
 
-    /*
+    /**
+     * Reinitialize probabilities
      * Useful for testing
      */
     public void reinitializeProbabilities() {
@@ -100,8 +102,9 @@ public class LocalizationStrip {
         }
     }
 
-    /*
-     * Return index of highest probability
+    /**
+     * Get position on hardocded strip
+     * @return Position with highest probability
      */
     public int getLocation() {
         double max = bayesianProbs[0];
@@ -117,10 +120,18 @@ public class LocalizationStrip {
         return index;
     }
 
+    /**
+     * Get length of strip
+     * @return Length of strip
+     */
     public int getLength() {
         return bayesianProbs.length;
     }
 
+    /**
+     * Get highest probability
+     * @return Highest probability
+     */
     public double getHighestProbability() {
         return bayesianProbs[getLocation()];
     }

@@ -32,7 +32,7 @@ public class RobotLocalizationTest {
         int steps = 0;
 
         while(localizationStrip.getHighestProbability() < 0.85) {
-            localizationStrip.updateProbs(true, robot.getColorIsBlue(), 0.95, 1);
+            localizationStrip.updateProbabilities(true, robot.getColorIsBlue(), 0.95, 1);
             robot.moveForward();
             ++steps;
         }
@@ -52,7 +52,7 @@ public class RobotLocalizationTest {
         int steps = 0;
 
         for(int i = 0; i < 7; ++i) {
-            localizationStrip.updateProbs(true, robot.getColorIsBlue(), 0.95, 1);
+            localizationStrip.updateProbabilities(true, robot.getColorIsBlue(), 0.95, 1);
             robot.moveForward();
             ++steps;
         }
@@ -66,7 +66,7 @@ public class RobotLocalizationTest {
         localizationStrip.reinitializeProbabilities();
 
         for(int i = 0; i < 9; ++i) {
-            localizationStrip.updateProbs(false, robot.getColorIsBlue(), 0.95, 1);
+            localizationStrip.updateProbabilities(false, robot.getColorIsBlue(), 0.95, 1);
             robot.moveBackward();
         }
 
