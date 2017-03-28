@@ -26,9 +26,9 @@ public class Robot {
     private EV3LargeRegulatedMotor motorL, motorR;
 
     private EV3ColorSensor colorSensor;
-    private EV3TouchSensor upperTouchSensor;
+    private EV3TouchSensor leftTouchSensor;
     private EV3GyroSensor gyroSensor;
-    private EV3TouchSensor bottomTouchSensor;
+    private EV3TouchSensor rightTouchSensor;
 
     private static final double DISTANCE_PER_REVOLUTION = 17.27; // cm per 360° rotation
 
@@ -37,8 +37,8 @@ public class Robot {
         this.motorR = new EV3LargeRegulatedMotor(MotorPort.D);
 
         this.gyroSensor = new EV3GyroSensor(SensorPort.S1);
-        this.upperTouchSensor = new EV3TouchSensor(SensorPort.S2);
-        this.bottomTouchSensor = new EV3TouchSensor(SensorPort.S3);
+        this.leftTouchSensor = new EV3TouchSensor(SensorPort.S2);
+        this.rightTouchSensor = new EV3TouchSensor(SensorPort.S3);
         this.colorSensor = new EV3ColorSensor(SensorPort.S4);
          
         this.motorL.setSpeed(120);
@@ -166,10 +166,10 @@ public class Robot {
         motorL.setSpeed(120);
         motorR.setSpeed(120);
 
-        while(!isPressed(upperTouchSensor) && System.currentTimeMillis() - startingTime <= duration) {
+        while(!isPressed(leftTouchSensor) && !isPressed(rightTouchSensor) && System.currentTimeMillis() - startingTime <= duration) {
             motorL.forward();
             motorR.forward();
-            if(isPressed(upperTouchSensor)) {
+            if(isPressed(leftTouchSensor) || isPressed(rightTouchSensor)) {
                 Sound.beep();
                 adjustPosition();
             }
@@ -182,17 +182,22 @@ public class Robot {
      * Move forward until reaches the end of the tunnel
      */
     public void moveToWall() {
-        SampleProvider sampleProvider = bottomTouchSensor.getTouchMode();
-        float[] sample = new float[sampleProvider.sampleSize()];
-        sampleProvider.fetchSample(sample, 0);
+        SampleProvider leftSampleProvider = leftTouchSensor.getTouchMode();
+        float[] leftSample = new float[leftSampleProvider.sampleSize()];
+        leftSampleProvider.fetchSample(leftSample, 0);
+
+        SampleProvider rightSampleProvider = rightTouchSensor.getTouchMode();
+        float[] rightSample = new float[rightSampleProvider.sampleSize()];
+        rightSampleProvider.fetchSample(rightSample, 0);
 
         motorL.setSpeed(120);
         motorR.setSpeed(120);
 
-        while(sample[0] == 0) { // button is not pressed
+        while(!isPressed(leftTouchSensor) || !isPressed(rightTouchSensor)) { // button is not pressed
             motorL.forward();
             motorR.forward();
-            sampleProvider.fetchSample(sample, 0);
+            leftSampleProvider.fetchSample(leftSample, 0);
+            rightSampleProvider.fetchSample(rightSample, 0);
         }
 
         motorL.stop();
@@ -241,10 +246,10 @@ public class Robot {
         motorL.setSpeed(120);
         motorR.setSpeed(120);
 
-        while(!isPressed(bottomTouchSensor) && System.currentTimeMillis() - startingTime <= duration) {
+        while(!isPressed(rightTouchSensor) && !isPressed(leftTouchSensor) && System.currentTimeMillis() - startingTime <= duration) {
             motorL.forward();
             motorR.forward();
-            if(isPressed(bottomTouchSensor)) {
+            if(isPressed(rightTouchSensor)) {
                 rightHandSide = true;
                 Sound.beep();
             }
