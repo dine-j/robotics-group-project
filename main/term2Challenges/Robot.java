@@ -159,6 +159,10 @@ public class Robot {
      * Try to enter tunnel and if not able call adjustPosition()
      */
     public void tryToEnterTunnel() {
+        gyroSensor.reset();
+        SampleProvider sampleProvider = gyroSensor.getAngleMode();
+        float[] sample = new float[sampleProvider.sampleSize()];
+
         Sound.beepSequenceUp();
         long startingTime = System.currentTimeMillis();
         int duration = 3000;
@@ -171,10 +175,14 @@ public class Robot {
             motorR.forward();
             if(isPressed(leftTouchSensor) || isPressed(rightTouchSensor)) {
                 Sound.beep();
-                if(isPressed(leftTouchSensor))
-                    adjustPosition(false);
-                if(isPressed(rightTouchSensor))
-                    adjustPosition(true);
+                if(isPressed(leftTouchSensor)) {
+                    sampleProvider.fetchSample(sample, 0);
+                    adjustPosition(false, (int) sample[0]);
+                }
+                if(isPressed(rightTouchSensor)) {
+                    sampleProvider.fetchSample(sample, 0);
+                    adjustPosition(true, (int) sample[0]);
+                }
             }
         }
 
@@ -233,13 +241,17 @@ public class Robot {
         RobotMovement.direction = RobotMovement.S;
     }
 
-    public void adjustPosition(boolean rightHandSide) {
+    public void adjustPosition(boolean rightHandSide, int angle) {
         if(rightHandSide) {
+            moveDistance(-2, 120);
+            rotateSlowly(-angle);
             moveDistance(-14);
             rotate(27);
             moveDistance(8.2);
             rotate(-27);
         } else {
+            moveDistance(-2, 120);
+            rotateSlowly(-angle);
             moveDistance(-14);
             rotate(-27);
             moveDistance(8.2);

@@ -22,7 +22,7 @@ public class AStarTestMain {
             }
         }
 
-        double[] goalCoords = model.initialiseClosedList1();
+        double[] goalCoords = model.initialiseClosedList1(true);
         long startTime = System.currentTimeMillis();
         
         int n = 20;

@@ -26,7 +26,7 @@ public class AStarWayBack {
         boolean isGreen = true;
 //        boolean isGreen = false;
 
-        model.initialiseClosedList2(isGreen);
+        model.initialiseClosedList2(isGreen, true);
         long startTime = System.currentTimeMillis();
         
         Node goalNode = model.aStarSearch(new double[]{110,62} ,GridGeo.CHALLENGE2_BACK_TO_START );

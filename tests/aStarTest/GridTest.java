@@ -30,7 +30,7 @@ public class GridTest {
 //        //test invisible walls on way back (challenge 2)
 //        model.inputWallPosition(0, 120, 60, 60, 4);
 //        model.inputWallPosition(0,0 , 60, 60, 4);
-        model.initialiseClosedList2(false);
+        model.initialiseClosedList2(false, true);
         
         grid.readGrid(model);
         //grid.placeGoal(GridGeo.closestNodeInNodeCoords(tmp[1], tmp[0]));

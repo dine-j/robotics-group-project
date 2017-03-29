@@ -25,7 +25,7 @@ public class test {
         
         // Goal using A * (doesn't have to go inside)
         Grid model = new Grid();
-        double[] goalCoords = model.initialiseClosedList1();
+        double[] goalCoords = model.initialiseClosedList1(true);
         Node goalNode = model.aStarSearch(firstNodePosition, goalCoords);
         LinkedList<Node> list = model.findPath(goalNode);
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
