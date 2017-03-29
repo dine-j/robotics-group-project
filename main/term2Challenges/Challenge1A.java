@@ -43,7 +43,7 @@ public class Challenge1A {
         Grid model = new Grid();
         double[] goalCoordinates = model.initialiseClosedList1(firstObstacle);
         Node goalNode = model.aStarSearch(firstNodePosition, goalCoordinates);
-        LinkedList<Node> list = model.findPath(goalNode);
+        LinkedList<Node> list = model.findFowardPath(goalNode);
         int tunnelDirection = RobotMovement.E;
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list, tunnelDirection);
 
@@ -52,7 +52,7 @@ public class Challenge1A {
         Sound.beep(); // Goal found
         
         // Going back to starting point
-        list = model.findPath(goalNode);
+        list = model.findBackwardPath(goalNode);
         int wallDirection = RobotMovement.SW;
         actionList = RobotMovement.parsePathToMovements(list, wallDirection);
         r.followInstructions(actionList, GridGeo.NODE_SIZE, GridGeo.NODE_DIAGONAL);

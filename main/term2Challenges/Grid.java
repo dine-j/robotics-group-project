@@ -125,17 +125,33 @@ public class Grid {
     }
 
     /**
-     * Find path by getting parent nodes
+     * Find path by getting parent nodes and adding them at front of list
      * @param goal Node goal found by A*
      * @return LinkedList of Nodes representing a path
      */
-    public LinkedList<Node> findPath(Node goal) {
+    public LinkedList<Node> findFowardPath(Node goal) {
         LinkedList<Node> list = new LinkedList<Node>();
         list.add(goal);
         Node current = goal;
         while (!current.isRoot()) {
             current = current.getParent();
             list.addFirst(current); //as starting at goal: this results in the forward order.
+        }
+        return list;
+    }
+
+    /**
+     * Find backward path from given node and adding them at back of list
+     * @param goal Node goal found by A*
+     * @return LinkedList of Nodes representing a path
+     */
+    public LinkedList<Node> findBackwardPath(Node goal) {
+        LinkedList<Node> list = new LinkedList<Node>();
+        list.add(goal);
+        Node current = goal;
+        while (!current.isRoot()) {
+            current = current.getParent();
+            list.addLast(current); //as starting at goal: this results in the backward order.
         }
         return list;
     }
