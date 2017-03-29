@@ -89,7 +89,7 @@ public class Robot {
                 isBlue = true;
 
             Delay.msDelay(500);
-            moveDistance(2, 120);
+            moveDistance(1.9, 120);
             localizationStrip.updateProbabilities(true, isBlue, sensorProbability, 1);
         }
 
@@ -234,13 +234,10 @@ public class Robot {
     }
 
     /**
-     * Turn the robot right by 90° and update its direction on the grid
+     * 
+     * @param rightHandSide
+     * @param angle
      */
-    public void turnToGoAway() {
-        rotate(-90);
-        RobotMovement.direction = RobotMovement.S;
-    }
-
     public void adjustPosition(boolean rightHandSide, int angle) {
         if(rightHandSide) {
             moveDistance(-2, 120);

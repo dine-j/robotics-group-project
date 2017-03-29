@@ -59,7 +59,7 @@ public class Challenge2 {
 
         // Moving back
         robot.exitTunnel();
-        robot.turnToGoAway();
+        RobotMovement.direction = RobotMovement.E;
 
         // Going to assigned obstacle then back starting point
         planBackToStart(new double[]{110,62}, robot, isGreen, firstObstacle);
