@@ -44,7 +44,8 @@ public class Challenge1A {
         double[] goalCoordinates = model.initialiseClosedList1(firstObstacle);
         Node goalNode = model.aStarSearch(firstNodePosition, goalCoordinates);
         LinkedList<Node> list = model.findPath(goalNode);
-        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
+        int tunnelDirection = RobotMovement.E;
+        List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list, tunnelDirection);
 
         r.followInstructions(actionList, GridGeo.NODE_SIZE, GridGeo.NODE_DIAGONAL);
 
