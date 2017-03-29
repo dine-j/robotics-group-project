@@ -125,17 +125,33 @@ public class Grid {
     }
 
     /**
-     * Find path by getting parent nodes
+     * Find path by getting parent nodes and adding them at front of list
      * @param goal Node goal found by A*
      * @return LinkedList of Nodes representing a path
      */
-    public LinkedList<Node> findPath(Node goal) {
+    public LinkedList<Node> findFowardPath(Node goal) {
         LinkedList<Node> list = new LinkedList<Node>();
         list.add(goal);
         Node current = goal;
         while (!current.isRoot()) {
             current = current.getParent();
             list.addFirst(current); //as starting at goal: this results in the forward order.
+        }
+        return list;
+    }
+
+    /**
+     * Find backward path from given node and adding them at back of list
+     * @param goal Node goal found by A*
+     * @return LinkedList of Nodes representing a path
+     */
+    public LinkedList<Node> findBackwardPath(Node goal) {
+        LinkedList<Node> list = new LinkedList<Node>();
+        list.add(goal);
+        Node current = goal;
+        while (!current.isRoot()) {
+            current = current.getParent();
+            list.addLast(current); //as starting at goal: this results in the backward order.
         }
         return list;
     }
@@ -274,7 +290,7 @@ public class Grid {
         inputWallPosition(bRight, fRight, r);
 
         // compute a sensible ideal goal to plan to & return
-        final int extraDist = 11;
+        final int extraDist = 15;
         final int depthToCenter = 10;
         // TODO: find a better way then just subracting - 2
         return rotateVector(x - 2, y - depthToCenter - extraDist, x, y, radians);

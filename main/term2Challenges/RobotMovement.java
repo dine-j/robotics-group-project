@@ -118,13 +118,13 @@ public enum RobotMovement {
                 return S;
             }
         }
-        if(xChange == 1 && yChange == 1)
+        if(xChange == 1 && yChange == 1) // Up right
             return NE;
-        if(xChange == -1 && yChange == 1)
+        if(xChange == -1 && yChange == 1) // Down right
             return SE;
-        if(xChange == 1 && yChange == -1)
+        if(xChange == 1 && yChange == -1) // Up left
             return NW;
-        if(xChange == -1 && yChange == -1)
+        if(xChange == -1 && yChange == -1) // Down left
             return SW;
 
         return -1;

@@ -25,6 +25,5 @@ public class BumperTest {
 
         // Moving back
         r.exitTunnel();
-        r.turnToGoAway();
     }
 }

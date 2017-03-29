@@ -22,7 +22,7 @@ public class AStarTestMain {
             }
         }
 
-        double[] goalCoords = model.initialiseClosedList1();
+        double[] goalCoords = model.initialiseClosedList1(true);
         long startTime = System.currentTimeMillis();
         
         int n = 20;
@@ -33,7 +33,7 @@ public class AStarTestMain {
         System.out.println(System.currentTimeMillis() - startTime + " ms to find path");
 
         // Forward
-        LinkedList<Node> list = model.findPath(goalNode);
+        LinkedList<Node> list = model.findFowardPath(goalNode);
 
 
         // Backward

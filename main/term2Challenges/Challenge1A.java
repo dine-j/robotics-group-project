@@ -11,10 +11,10 @@ import lejos.hardware.Sound;
  * Motors: left= A right = D
  * Sensors: Color= 4,lowerTouch=3, upperTouch=2,  Gyro = 1
  */
-public class Challenge1 {
+public class Challenge1A {
 
     public static void main(String[] args) {
-        boolean firstObstacle = false;
+        boolean firstObstacle = true;
         Robot r = new Robot();
 
         Button.waitForAnyPress();
@@ -43,7 +43,7 @@ public class Challenge1 {
         Grid model = new Grid();
         double[] goalCoordinates = model.initialiseClosedList1(firstObstacle);
         Node goalNode = model.aStarSearch(firstNodePosition, goalCoordinates);
-        LinkedList<Node> list = model.findPath(goalNode);
+        LinkedList<Node> list = model.findFowardPath(goalNode);
         List<RobotMovement> actionList = RobotMovement.parsePathToMovements(list);
 
         r.followInstructions(actionList, GridGeo.NODE_SIZE, GridGeo.NODE_DIAGONAL);
@@ -51,7 +51,7 @@ public class Challenge1 {
         Sound.beep(); // Goal found
         
         // Going back to starting point
-        list = model.findPath(goalNode);
+        list = model.findBackwardPath(goalNode);
         int wallDirection = RobotMovement.SW;
         actionList = RobotMovement.parsePathToMovements(list, wallDirection);
         r.followInstructions(actionList, GridGeo.NODE_SIZE, GridGeo.NODE_DIAGONAL);
