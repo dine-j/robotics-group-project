@@ -234,7 +234,7 @@ public class Robot {
     }
 
     /**
-     * 
+     *
      * @param rightHandSide
      * @param angle
      */

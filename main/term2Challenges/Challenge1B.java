@@ -11,7 +11,7 @@ import lejos.hardware.Sound;
  * Motors: left= A right = D
  * Sensors: Color= 4,lowerTouch=3, upperTouch=2,  Gyro = 1
  */
-public class Challenge1 {
+public class Challenge1B {
 
     public static void main(String[] args) {
         boolean firstObstacle = false;
@@ -19,10 +19,10 @@ public class Challenge1 {
 
         Button.waitForAnyPress();
 
-        // Measure drift 
+        // Measure drift
         if(r.isSensorDrifting())
             return;
-        
+
         // Localize with Bayesian 'strip'
         int n = r.localize();
         System.out.println(n);
@@ -37,8 +37,8 @@ public class Challenge1 {
         double[] startPosition = GridGeo.actualRobotCenterSW(GridGeo.BayesianCoordinate(n));
         double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);
         double distToMoveOnDiagonal = (firstNodePosition[0] - startPosition[0]) * Math.sqrt(2);
-        r.moveDistance(distToMoveOnDiagonal); 
-        
+        r.moveDistance(distToMoveOnDiagonal);
+
         // Goal using A * (doesn't have to go inside)
         Grid model = new Grid();
         double[] goalCoordinates = model.initialiseClosedList1(firstObstacle);
@@ -49,7 +49,7 @@ public class Challenge1 {
         r.followInstructions(actionList, GridGeo.NODE_SIZE, GridGeo.NODE_DIAGONAL);
 
         Sound.beep(); // Goal found
-        
+
         // Going back to starting point
         list = model.findPath(goalNode);
         int wallDirection = RobotMovement.SW;
