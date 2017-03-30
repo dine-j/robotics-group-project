@@ -25,7 +25,7 @@ public class AStarTestMain {
         double[] goalCoords = model.initialiseClosedList1(true);
         long startTime = System.currentTimeMillis();
         
-        int n = 20;
+        int n = 30;
         double[] bayesCoordPos = GridGeo.BayesianCoordinate(n);
         double[] startPosition = GridGeo.actualRobotCenterSW(bayesCoordPos);
         double[] firstNodePosition = GridGeo.nextNodeOnLeadingDiagonal(startPosition);

@@ -312,8 +312,8 @@ public class Grid {
         y2 = y2 / scale;
         r = r / scale;
         addClosedNodeRectangle(x1, y1, x2, y2, r);
-        addClosedNodeCircle(x1, y1, r);
-        addClosedNodeCircle(x2, y2, r);
+        addClosedNodeCircle(x1, y1, r + 1);
+        addClosedNodeCircle(x2, y2, r + 1);
     }
     
     /**
